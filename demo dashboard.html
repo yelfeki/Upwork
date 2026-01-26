@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Balanced Scorecard Dashboard - Portfolio Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0066CC 0%, #00A651 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .demo-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .filters {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            color: #4a5568;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        select, input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        select:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: #0066CC;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15);
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 28px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+
+        .card-title {
+            color: #718096;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .card-value {
+            font-size: 2.8em;
+            font-weight: 700;
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        .card-subtitle {
+            color: #a0aec0;
+            font-size: 14px;
+        }
+
+        .status-on-track { color: #00A651; }
+        .status-at-risk { color: #FF9500; }
+        .status-off-track { color: #E63946; }
+
+        .perspective-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .perspective-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .perspective-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .perspective-icon {
+            font-size: 2em;
+            margin-right: 12px;
+        }
+
+        .perspective-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .perspective-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(550px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .chart-card h3 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            font-weight: 700;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .kpi-table-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f7fafc;
+        }
+
+        th {
+            padding: 16px;
+            text-align: left;
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            border-bottom: 2px solid #e2e8f0;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #2d3748;
+            font-size: 14px;
+        }
+
+        tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-green {
+            background: #C8E6C9;
+            color: #1B5E20;
+        }
+
+        .badge-yellow {
+            background: #FFE0B2;
+            color: #E65100;
+        }
+
+        .badge-red {
+            background: #FFCDD2;
+            color: #B71C1C;
+        }
+
+        .badge-gray {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .trend-indicator {
+            font-size: 1.2em;
+        }
+
+        .perspective-label {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .perspective-financial { background: #BBDEFB; color: #01579B; }
+        .perspective-customer { background: #C8E6C9; color: #1B5E20; }
+        .perspective-internal { background: #B3E5FC; color: #006064; }
+        .perspective-learning { background: #C5E1A5; color: #33691E; }
+
+        @media (max-width: 768px) {
+            .charts-section, .perspective-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters {
+                flex-direction: column;
+            }
+            
+            .filter-group {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1> Executive Balanced Scorecard Dashboard</h1>
+            <div class="subtitle">Real-time KPI tracking across all perspectives</div>
+            <span class="demo-badge"> Demo Data - Sample Data</span>
+        </div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label>🔍 Search KPI</label>
+                <input type="text" id="searchKPI" placeholder="Type to search KPIs..." />
+            </div>
+            <div class="filter-group">
+                <label> Perspective</label>
+                <select id="filterPerspective">
+                    <option value="">All Perspectives</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label> Status</label>
+                <select id="filterStatus">
+                    <option value="">All Status</option>
+                    <option value="Green">On Track</option>
+                    <option value="Yellow">At Risk</option>
+                    <option value="Red">Off Track</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label> View</label>
+                <select id="viewPeriod">
+                    <option value="monthly">Monthly (MTD)</option>
+                    <option value="yearly">Yearly (YTD)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="summary-cards">
+            <div class="card">
+                <div class="card-title">Total KPIs</div>
+                <div class="card-value" id="totalKPIs">0</div>
+                <div class="card-subtitle">Active Metrics</div>
+            </div>
+            <div class="card">
+                <div class="card-title"> On Track</div>
+                <div class="card-value status-on-track" id="onTrackKPIs">0</div>
+                <div class="card-subtitle" id="onTrackPercent">0% of total</div>
+            </div>
+            <div class="card">
+                <div class="card-title"> At Risk</div>
+                <div class="card-value status-at-risk" id="atRiskKPIs">0</div>
+                <div class="card-subtitle" id="atRiskPercent">0% of total</div>
+            </div>
+            <div class="card">
+                <div class="card-title"> Off Track</div>
+                <div class="card-value status-off-track" id="offTrackKPIs">0</div>
+                <div class="card-subtitle" id="offTrackPercent">0% of total</div>
+            </div>
+        </div>
+
+        <div class="perspective-cards" id="perspectiveCards">
+        </div>
+
+        <div class="charts-section">
+            <div class="chart-card">
+                <h3>Status Distribution</h3>
+                <div class="chart-container">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3>Performance by Perspective</h3>
+                <div class="chart-container">
+                    <canvas id="perspectiveChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-card" style="margin-bottom: 30px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0;">Top 15 KPIs: Achievement vs Target</h3>
+                <select id="sortKPIs" style="width: auto; min-width: 250px;">
+                    <option value="variance">Sorted by Largest Gap from Target</option>
+                    <option value="underperforming">Most Underperforming First</option>
+                    <option value="overperforming">Most Overperforming First</option>
+                    <option value="percentage">Lowest % Achievement First</option>
+                </select>
+            </div>
+            <div style="height: 500px;">
+                <canvas id="topKPIsChart"></canvas>
+            </div>
+        </div>
+
+        <div class="kpi-table-container">
+            <h3 style="margin-bottom: 25px; color: #2d3748; font-size: 1.4em;">Detailed KPI Tracking</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Perspective</th>
+                        <th>KPI</th>
+                        <th>Current (MTD)</th>
+                        <th>Target</th>
+                        <th>% of Goal</th>
+                        <th>Status</th>
+                        <th>Trend</th>
+                        <th>YTD Current</th>
+                        <th>Annual Target</th>
+                    </tr>
+                </thead>
+                <tbody id="kpiTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Sample Data - Replace with your actual data
+        const sampleData = {
+            kpis: [
+                // Financial KPIs
+                { perspective: 'Financial', kpiName: 'Monthly Recurring Revenue', currentMTD: 485000, monthlyTarget: 500000, currentYTD: 5200000, annualTarget: 6000000, direction: 'HIGH', trend: '↗', statusMTD: 'Yellow', statusYTD: 'Yellow', percentGoalMonthly: 97, percentGoalAnnual: 86.7 },
+                { perspective: 'Financial', kpiName: 'Net New Customers', currentMTD: 58, monthlyTarget: 73, currentYTD: 642, annualTarget: 850, direction: 'HIGH', trend: '→', statusMTD: 'Yellow', statusYTD: 'Yellow', percentGoalMonthly: 79.5, percentGoalAnnual: 75.5 },
+                { perspective: 'Financial', kpiName: 'Customer Churn Rate', currentMTD: 2.1, monthlyTarget: 2.5, currentYTD: 2.3, annualTarget: 2.5, direction: 'LOW', trend: '↘', statusMTD: 'Green', statusYTD: 'Green', percentGoalMonthly: 119, percentGoalAnnual: 109 },
+                { perspective: 'Financial', kpiName: 'Average Revenue Per User', currentMTD: 125, monthlyTarget: 120, currentYTD: 118, annualTarget: 125, direction: 'HIGH', trend: '↗', statusMTD: 'Green', statusYTD: 'Yellow', percentGoalMonthly: 104.2, percentGoalAnnual: 94.4 },
+                { perspective: 'Financial', kpiName: 'Gross Profit Margin', currentMTD: 68.5, monthlyTarget: 65, currentYTD: 67.2, annualTarget: 70, direction: 'HIGH', trend: '↗', statusMTD: 'Green', statusYTD: 'Yellow', percentGoalMonthly: 105.4, percentGoalAnnual: 96 },
+                { perspective: 'Financial', kpiName: 'Operating Expenses Ratio', currentMTD: 42, monthlyTarget: 45, currentYTD: 44, annualTarget: 40, direction: 'LOW', trend: '↘', statusMTD: 'Green', statusYTD: 'Red', percentGoalMonthly: 107, percentGoalAnnual: 91 },
+                
+                // Customer KPIs
+                { perspective: 'Customer', kpiName: 'Net Promoter Score', currentMTD: 42, monthlyTarget: 45, currentYTD: 39, annualTarget: 50, direction: 'HIGH', trend: '→', statusMTD: 'Yellow', statusYTD: 'Red', percentGoalMonthly: 93.3, percentGoalAnnual: 78 },
+                { perspective: 'Customer', kpiName: 'Customer Satisfaction Score', currentMTD: 4.6, monthlyTarget: 4.5, currentYTD: 4.5, annualTarget: 4.7, direction: 'HIGH', trend: '↗', statusMTD: 'Green', statusYTD: 'Yellow', percentGoalMonthly: 102.2, percentGoalAnnual: 95.7 },
+                { perspective: 'Customer', kpiName: 'Support Ticket Resolution Time', currentMTD: 18, monthlyTarget: 24, currentYTD: 22, annualTarget: 20, direction: 'LOW', trend: '↘', statusMTD: 'Green', statusYTD: 'Yellow', percentGoalMonthly: 133, percentGoalAnnual: 91 },
+                { perspective: 'Customer', kpiName: 'Feature Adoption Rate', currentMTD: 68, monthlyTarget: 70, currentYTD: 65, annualTarget: 75, direction: 'HIGH', trend: '↗', statusMTD: 'Yellow', statusYTD: 'Yellow', percentGoalMonthly: 97.1, percentGoalAnnual: 86.7 },
+                { perspective: 'Customer', kpiName: 'Customer Retention Rate', currentMTD: 94, monthlyTarget: 92, currentYTD: 93, annualTarget: 95, direction: 'HIGH', trend: '→', statusMTD: 'Green', statusYTD: 'Yellow', percentGoalMonthly: 102.2, percentGoalAnnual: 97.9 },
+                { perspective: 'Customer', kpiName: 'Onboarding Completion Rate', currentMTD: 82, monthlyTarget: 85, currentYTD: 79, annualTarget: 90, direction: 'HIGH', trend: '↗', statusMTD: 'Yellow', statusYTD: 'Yellow', percentGoalMonthly: 96.5, percentGoalAnnual: 87.8 },
+                
+                // Internal Processes KPIs
+                { perspective: 'Internal Processes', kpiName: 'Sprint Velocity', currentMTD: 42, monthlyTarget: 45, currentYTD: 520, annualTarget: 550, direction: 'HIGH', trend: '→', statusMTD: 'Yellow', statusYTD: 'Yellow', percentGoalMonthly: 93.3, percentGoalAnnual: 94.5 },
+                { perspective: 'Internal Processes', kpiName: 'Code Quality Score', currentMTD: 87, monthlyTarget: 85, currentYTD: 86, annualTarget: 90, direction: 'HIGH', trend: '↗', statusMTD: 'Green', statusYTD: 'Yellow', percentGoalMonthly: 102.4, percentGoalAnnual: 95.6 },
+                { perspective: 'Internal Processes', kpiName: 'Deployment Frequency', currentMTD: 24, monthlyTarget: 20, currentYTD: 245, annualTarget: 260, direction: 'HIGH', trend: '↗', statusMTD: 'Green', statusYTD: 'Yellow', percentGoalMonthly: 120, percentGoalAnnual: 94.2 },
+                { perspective: 'Internal Processes', kpiName: 'System Uptime', currentMTD: 99.8, monthlyTarget: 99.5, currentYTD: 99.6, annualTarget: 99.9, direction: 'HIGH', trend: '→', statusMTD: 'Green', statusYTD: 'Yellow', percentGoalMonthly: 100.3, percentGoalAnnual: 99.7 },
+                { perspective: 'Internal Processes', kpiName: 'Bug Resolution Time', currentMTD: 36, monthlyTarget: 48, currentYTD: 42, annualTarget: 36, direction: 'LOW', trend: '↘', statusMTD: 'Green', statusYTD: 'Red', percentGoalMonthly: 133, percentGoalAnnual: 86 },
+                { perspective: 'Internal Processes', kpiName: 'Security Incidents', currentMTD: 2, monthlyTarget: 3, currentYTD: 28, annualTarget: 24, direction: 'LOW', trend: '↗', statusMTD: 'Green', statusYTD: 'Red', percentGoalMonthly: 150, percentGoalAnnual: 86 },
+                { perspective: 'Internal Processes', kpiName: 'API Response Time', currentMTD: 185, monthlyTarget: 200, currentYTD: 195, annualTarget: 180, direction: 'LOW', trend: '↘', statusMTD: 'Green', statusYTD: 'Yellow', percentGoalMonthly: 108, percentGoalAnnual: 92 },
+                
+                // Learning & Growth KPIs
+                { perspective: 'Learning & Growth', kpiName: 'Employee Engagement Score', currentMTD: 7.8, monthlyTarget: 8.0, currentYTD: 7.6, annualTarget: 8.5, direction: 'HIGH', trend: '↗', statusMTD: 'Yellow', statusYTD: 'Yellow', percentGoalMonthly: 97.5, percentGoalAnnual: 89.4 },
+                { perspective: 'Learning & Growth', kpiName: 'Training Hours Per Employee', currentMTD: 8, monthlyTarget: 10, currentYTD: 92, annualTarget: 120, direction: 'HIGH', trend: '→', statusMTD: 'Yellow', statusYTD: 'Yellow', percentGoalMonthly: 80, percentGoalAnnual: 76.7 },
+                { perspective: 'Learning & Growth', kpiName: 'Internal Promotion Rate', currentMTD: 12, monthlyTarget: 15, currentYTD: 18, annualTarget: 20, direction: 'HIGH', trend: '↗', statusMTD: 'Yellow', statusYTD: 'Yellow', percentGoalMonthly: 80, percentGoalAnnual: 90 },
+                { perspective: 'Learning & Growth', kpiName: 'Employee Turnover Rate', currentMTD: 8, monthlyTarget: 10, currentYTD: 11, annualTarget: 10, direction: 'LOW', trend: '→', statusMTD: 'Green', statusYTD: 'Yellow', percentGoalMonthly: 125, percentGoalAnnual: 91 },
+                { perspective: 'Learning & Growth', kpiName: 'Skills Certification Rate', currentMTD: 68, monthlyTarget: 75, currentYTD: 62, annualTarget: 80, direction: 'HIGH', trend: '↗', statusMTD: 'Yellow', statusYTD: 'Red', percentGoalMonthly: 90.7, percentGoalAnnual: 77.5 },
+                { perspective: 'Learning & Growth', kpiName: 'Innovation Index', currentMTD: 42, monthlyTarget: 50, currentYTD: 38, annualTarget: 55, direction: 'HIGH', trend: '→', statusMTD: 'Yellow', statusYTD: 'Red', percentGoalMonthly: 84, percentGoalAnnual: 69.1 }
+            ]
+        };
+
+        let dashboardData = {
+            allKPIs: [],
+            currentView: 'monthly'
+        };
+
+        let charts = {};
+
+        // Initialize dashboard with sample data
+        function initDashboard() {
+            dashboardData.allKPIs = sampleData.kpis;
+            
+            // Populate perspective filter
+            const perspectives = [...new Set(dashboardData.allKPIs.map(k => k.perspective))].sort();
+            const perspectiveSelect = document.getElementById('filterPerspective');
+            perspectiveSelect.innerHTML = '<option value="">All Perspectives</option>';
+            perspectives.forEach(p => {
+                perspectiveSelect.innerHTML += `<option value="${p}">${p}</option>`;
+            });
+
+            renderDashboard();
+        }
+
+        function renderDashboard() {
+            renderSummaryCards();
+            renderPerspectiveCards();
+            renderCharts();
+            renderKPITable();
+            setupFilters();
+        }
+
+        function renderSummaryCards() {
+            const total = dashboardData.allKPIs.length;
+            const statusField = dashboardData.currentView === 'monthly' ? 'statusMTD' : 'statusYTD';
+            
+            const onTrack = dashboardData.allKPIs.filter(k => k[statusField] === 'Green').length;
+            const atRisk = dashboardData.allKPIs.filter(k => k[statusField] === 'Yellow').length;
+            const offTrack = dashboardData.allKPIs.filter(k => k[statusField] === 'Red').length;
+
+            document.getElementById('totalKPIs').textContent = total;
+            document.getElementById('onTrackKPIs').textContent = onTrack;
+            document.getElementById('atRiskKPIs').textContent = atRisk;
+            document.getElementById('offTrackKPIs').textContent = offTrack;
+
+            if (total > 0) {
+                document.getElementById('onTrackPercent').textContent = `${((onTrack/total)*100).toFixed(1)}% of total`;
+                document.getElementById('atRiskPercent').textContent = `${((atRisk/total)*100).toFixed(1)}% of total`;
+                document.getElementById('offTrackPercent').textContent = `${((offTrack/total)*100).toFixed(1)}% of total`;
+            }
+        }
+
+        function renderPerspectiveCards() {
+            const perspectives = ['Financial', 'Customer', 'Internal Processes', 'Learning & Growth'];
+            const icons = {
+                'Financial': '💰',
+                'Customer': '👥',
+                'Internal Processes': '⚙️',
+                'Learning & Growth': '📚'
+            };
+
+            const statusField = dashboardData.currentView === 'monthly' ? 'statusMTD' : 'statusYTD';
+            const container = document.getElementById('perspectiveCards');
+            container.innerHTML = '';
+
+            perspectives.forEach(perspective => {
+                const kpis = dashboardData.allKPIs.filter(k => k.perspective === perspective);
+                if (kpis.length === 0) return;
+
+                const onTrack = kpis.filter(k => k[statusField] === 'Green').length;
+                const atRisk = kpis.filter(k => k[statusField] === 'Yellow').length;
+                const offTrack = kpis.filter(k => k[statusField] === 'Red').length;
+
+                const card = document.createElement('div');
+                card.className = 'perspective-card';
+                card.innerHTML = `
+                    <div class="perspective-header">
+                        <div class="perspective-icon">${icons[perspective] || ''}</div>
+                        <div class="perspective-title">${perspective}</div>
+                    </div>
+                    <div class="perspective-stats">
+                        <div class="stat-item">
+                            <div class="stat-value status-on-track">${onTrack}</div>
+                            <div class="stat-label">On Track</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value status-at-risk">${atRisk}</div>
+                            <div class="stat-label">At Risk</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value status-off-track">${offTrack}</div>
+                            <div class="stat-label">Off Track</div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderCharts() {
+            // Destroy existing charts
+            if (charts.statusChart) charts.statusChart.destroy();
+            if (charts.perspectiveChart) charts.perspectiveChart.destroy();
+            if (charts.topKPIsChart) charts.topKPIsChart.destroy();
+
+            const statusField = dashboardData.currentView === 'monthly' ? 'statusMTD' : 'statusYTD';
+
+            // Status Distribution Chart
+            const statusCtx = document.getElementById('statusChart').getContext('2d');
+            
+            const onTrack = dashboardData.allKPIs.filter(k => k[statusField] === 'Green').length;
+            const atRisk = dashboardData.allKPIs.filter(k => k[statusField] === 'Yellow').length;
+            const offTrack = dashboardData.allKPIs.filter(k => k[statusField] === 'Red').length;
+
+            charts.statusChart = new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['On Track', 'At Risk', 'Off Track'],
+                    datasets: [{
+                        data: [onTrack, atRisk, offTrack],
+                        backgroundColor: ['#00A651', '#FF9500', '#E63946'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                font: { size: 12, weight: '600' }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Perspective Performance Chart
+            const perspectiveCtx = document.getElementById('perspectiveChart').getContext('2d');
+            const perspectives = ['Financial', 'Customer', 'Internal Processes', 'Learning & Growth'];
+            const perspectiveData = { green: [], yellow: [], red: [] };
+
+            perspectives.forEach(p => {
+                const kpis = dashboardData.allKPIs.filter(k => k.perspective === p);
+                perspectiveData.green.push(kpis.filter(k => k[statusField] === 'Green').length);
+                perspectiveData.yellow.push(kpis.filter(k => k[statusField] === 'Yellow').length);
+                perspectiveData.red.push(kpis.filter(k => k[statusField] === 'Red').length);
+            });
+
+            charts.perspectiveChart = new Chart(perspectiveCtx, {
+                type: 'bar',
+                data: {
+                    labels: perspectives,
+                    datasets: [
+                        { label: 'On Track', data: perspectiveData.green, backgroundColor: '#00A651' },
+                        { label: 'At Risk', data: perspectiveData.yellow, backgroundColor: '#FF9500' },
+                        { label: 'Off Track', data: perspectiveData.red, backgroundColor: '#E63946' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { stacked: true, ticks: { font: { size: 11 } } },
+                        y: { stacked: true, beginAtZero: true, ticks: { stepSize: 1 } }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { padding: 15, font: { size: 12, weight: '600' } }
+                        }
+                    }
+                }
+            });
+
+            renderTopKPIsChart();
+        }
+
+        function renderTopKPIsChart(sortBy = 'variance') {
+            const topKPIsCtx = document.getElementById('topKPIsChart').getContext('2d');
+            
+            const isMonthly = dashboardData.currentView === 'monthly';
+            const currentField = isMonthly ? 'currentMTD' : 'currentYTD';
+            const targetField = isMonthly ? 'monthlyTarget' : 'annualTarget';
+            const statusField = isMonthly ? 'statusMTD' : 'statusYTD';
+
+            let validKPIs = dashboardData.allKPIs
+                .filter(k => k[currentField] !== null && k[targetField] !== null && k[targetField] !== 0)
+                .map(k => {
+                    const current = k[currentField];
+                    const target = k[targetField];
+                    let percentOfTarget, actualGap;
+                    
+                    if (k.direction === 'LOW') {
+                        percentOfTarget = (target / current) * 100;
+                        actualGap = target - current;
+                    } else {
+                        percentOfTarget = (current / target) * 100;
+                        actualGap = current - target;
+                    }
+                    
+                    return { ...k, current, target, percentOfTarget, variance: Math.abs(actualGap), actualGap };
+                });
+
+            switch(sortBy) {
+                case 'variance': validKPIs = validKPIs.sort((a, b) => b.variance - a.variance); break;
+                case 'underperforming': validKPIs = validKPIs.sort((a, b) => a.actualGap - b.actualGap); break;
+                case 'overperforming': validKPIs = validKPIs.sort((a, b) => b.actualGap - a.actualGap); break;
+                case 'percentage': validKPIs = validKPIs.sort((a, b) => a.percentOfTarget - b.percentOfTarget); break;
+            }
+
+            validKPIs = validKPIs.slice(0, 15);
+            if (validKPIs.length === 0) return;
+
+            const labels = validKPIs.map(k => {
+                const name = k.kpiName;
+                const directionIndicator = k.direction === 'LOW' ? ' ↓' : ' ↑';
+                return (name.length > 45 ? name.substring(0, 45) + '...' : name) + directionIndicator;
+            });
+
+            charts.topKPIsChart = new Chart(topKPIsCtx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '% of Target Achieved',
+                        data: validKPIs.map(k => k.percentOfTarget),
+                        backgroundColor: validKPIs.map(k => 
+                            k[statusField] === 'Green' ? 'rgba(0, 166, 81, 0.85)' :
+                            k[statusField] === 'Yellow' ? 'rgba(255, 149, 0, 0.85)' :
+                            'rgba(230, 57, 70, 0.85)'
+                        ),
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { position: 'top', labels: { padding: 15, font: { size: 12, weight: '600' } } },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const kpi = validKPIs[context.dataIndex];
+                                    let performanceText;
+                                    
+                                    if (kpi.direction === 'LOW') {
+                                        performanceText = kpi.actualGap >= 0 ? 
+                                            `${Math.abs(kpi.actualGap).toLocaleString()} below target ✓ (Good)` :
+                                            `${Math.abs(kpi.actualGap).toLocaleString()} above target ✗ (Needs Work)`;
+                                    } else {
+                                        performanceText = kpi.actualGap >= 0 ?
+                                            `${Math.abs(kpi.actualGap).toLocaleString()} above target ✓ (Good)` :
+                                            `${Math.abs(kpi.actualGap).toLocaleString()} below target ✗ (Needs Work)`;
+                                    }
+                                    
+                                    return [
+                                        `Achievement: ${context.parsed.x.toFixed(1)}%`,
+                                        `Current: ${kpi.current.toLocaleString()}`,
+                                        `Target: ${kpi.target.toLocaleString()}`,
+                                        performanceText
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { 
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: `% of ${isMonthly ? 'Monthly' : 'Annual'} Target`,
+                                font: { size: 13, weight: '600' },
+                                color: '#0066CC'
+                            },
+                            ticks: { callback: function(value) { return value + '%'; } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderKPITable(filteredKPIs = null) {
+            const kpis = filteredKPIs || dashboardData.allKPIs;
+            const tbody = document.getElementById('kpiTableBody');
+            tbody.innerHTML = '';
+
+            const isMonthly = dashboardData.currentView === 'monthly';
+            const currentField = isMonthly ? 'currentMTD' : 'currentYTD';
+            const targetField = isMonthly ? 'monthlyTarget' : 'annualTarget';
+            const statusField = isMonthly ? 'statusMTD' : 'statusYTD';
+            const percentField = isMonthly ? 'percentGoalMonthly' : 'percentGoalAnnual';
+
+            kpis.forEach(kpi => {
+                const row = document.createElement('tr');
+                
+                const statusBadge = kpi[statusField] === 'Green' ? 'badge-green' :
+                                  kpi[statusField] === 'Yellow' ? 'badge-yellow' :
+                                  kpi[statusField] === 'Red' ? 'badge-red' : 'badge-gray';
+                
+                const statusText = kpi[statusField] === 'Green' ? 'On Track' :
+                                 kpi[statusField] === 'Yellow' ? 'At Risk' :
+                                 kpi[statusField] === 'Red' ? 'Off Track' : 'Unknown';
+
+                const perspectiveClass = kpi.perspective === 'Financial' ? 'perspective-financial' :
+                                       kpi.perspective === 'Customer' ? 'perspective-customer' :
+                                       kpi.perspective === 'Internal Processes' ? 'perspective-internal' :
+                                       'perspective-learning';
+                
+                row.innerHTML = `
+                    <td><span class="perspective-label ${perspectiveClass}">${kpi.perspective}</span></td>
+                    <td><strong>${kpi.kpiName}</strong></td>
+                    <td>${kpi[currentField].toLocaleString()}</td>
+                    <td>${kpi[targetField].toLocaleString()}</td>
+                    <td>${kpi[percentField].toFixed(1)}%</td>
+                    <td><span class="status-badge ${statusBadge}">${statusText}</span></td>
+                    <td><span class="trend-indicator">${kpi.trend}</span></td>
+                    <td>${kpi.currentYTD.toLocaleString()}</td>
+                    <td>${kpi.annualTarget.toLocaleString()}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function setupFilters() {
+            const searchInput = document.getElementById('searchKPI');
+            const perspectiveSelect = document.getElementById('filterPerspective');
+            const statusSelect = document.getElementById('filterStatus');
+            const sortKPIsSelect = document.getElementById('sortKPIs');
+            const viewPeriodSelect = document.getElementById('viewPeriod');
+
+            function applyFilters() {
+                let filtered = dashboardData.allKPIs;
+
+                const searchTerm = searchInput.value.toLowerCase();
+                if (searchTerm) {
+                    filtered = filtered.filter(k => k.kpiName.toLowerCase().includes(searchTerm));
+                }
+
+                const perspectiveFilter = perspectiveSelect.value;
+                if (perspectiveFilter) {
+                    filtered = filtered.filter(k => k.perspective === perspectiveFilter);
+                }
+
+                const statusFilter = statusSelect.value;
+                if (statusFilter) {
+                    const statusField = dashboardData.currentView === 'monthly' ? 'statusMTD' : 'statusYTD';
+                    filtered = filtered.filter(k => k[statusField] === statusFilter);
+                }
+
+                renderKPITable(filtered);
+            }
+
+            searchInput.addEventListener('input', applyFilters);
+            perspectiveSelect.addEventListener('change', applyFilters);
+            statusSelect.addEventListener('change', applyFilters);
+            
+            sortKPIsSelect.addEventListener('change', function() {
+                if (charts.topKPIsChart) {
+                    charts.topKPIsChart.destroy();
+                    charts.topKPIsChart = null;
+                }
+                renderTopKPIsChart(this.value);
+            });
+
+            viewPeriodSelect.addEventListener('change', function() {
+                dashboardData.currentView = this.value;
+                renderSummaryCards();
+                renderPerspectiveCards();
+                renderCharts();
+                applyFilters();
+            });
+        }
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', initDashboard);
+    </script>
+</body>
+</html>
