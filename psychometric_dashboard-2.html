@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psychometric Validation Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f4f8;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #4a90e2;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 { font-size: 2em; margin-bottom: 5px; }
+        .header p { font-size: 0.95em; opacity: 0.9; }
+        
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            overflow-x: auto;
+            flex-wrap: wrap;
+        }
+        
+        .nav-tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-size: 1em;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s;
+        }
+        
+        .nav-tab:hover { background: rgba(74, 144, 226, 0.1); color: #4a90e2; }
+        .nav-tab.active { color: #4a90e2; border-bottom: 3px solid #4a90e2; background: white; }
+        
+        .tab-content { display: none; padding: 30px; }
+        .tab-content.active { display: block; }
+        
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .metric-card {
+            background: #4a90e2;
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+        }
+        
+        .metric-card:nth-child(even) {
+            background: #f39c63;
+        }
+        
+        .metric-card h3 { font-size: 0.75em; opacity: 0.9; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .metric-card .value { font-size: 2em; font-weight: 700; margin-bottom: 3px; }
+        .metric-card .label { font-size: 0.8em; opacity: 0.85; }
+        
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        
+        .chart-title { font-size: 1.3em; font-weight: 600; margin-bottom: 15px; color: #333; }
+        
+        .stat-box {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 3px solid #4a90e2;
+        }
+        
+        .stat-box h4 { color: #4a90e2; margin-bottom: 8px; font-size: 1em; }
+        .stat-box p { color: #495057; margin: 8px 0; line-height: 1.6; }
+        .stat-box ul { margin-left: 20px; margin-top: 10px; }
+        .stat-box li { margin: 8px 0; line-height: 1.6; }
+        
+        select {
+            padding: 12px 20px;
+            font-size: 1em;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            margin-bottom: 20px;
+            min-width: 200px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.95em;
+        }
+        
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        th {
+            background: #4a90e2;
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:nth-child(even) { background: #f8f9fa; }
+        
+        .matrix-table td { text-align: center; }
+        
+        .metric-excellent { background: #d4edda !important; color: #155724; font-weight: 600; }
+        .metric-good { background: #fff3cd !important; color: #856404; font-weight: 600; }
+        .metric-poor { background: #f8d7da !important; color: #721c24; font-weight: 600; }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .comparison-grid { grid-template-columns: 1fr; }
+            .metric-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Psychometric Validation Dashboard</h1>
+            <p>Comprehensive Scale Development & Validation Analytics (Demo Data)</p>
+        </div>
+        
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab(0)">Overview</button>
+            <button class="nav-tab" onclick="showTab(1)">Factor Analysis</button>
+            <button class="nav-tab" onclick="showTab(2)">Reliability</button>
+            <button class="nav-tab" onclick="showTab(3)">Construct Validity</button>
+            <button class="nav-tab" onclick="showTab(4)">Score Distributions</button>
+            <button class="nav-tab" onclick="showTab(5)">Group Comparisons</button>
+        </div>
+        
+        <div id="tab0" class="tab-content active"></div>
+        <div id="tab1" class="tab-content"></div>
+        <div id="tab2" class="tab-content"></div>
+        <div id="tab3" class="tab-content"></div>
+        <div id="tab4" class="tab-content"></div>
+        <div id="tab5" class="tab-content"></div>
+    </div>
+
+    <script>
+        // Embedded demo data
+        const demoData = {
+            sampleSize: 487,
+            scales: {
+                conscientiousness: {
+                    name: "Conscientiousness",
+                    items: 8,
+                    alpha: 0.87,
+                    testRetest: 0.82,
+                    meanScore: 4.23,
+                    sdScore: 0.68,
+                    itemLoadings: [0.78, 0.81, 0.75, 0.72, 0.69, 0.83, 0.77, 0.74],
+                    itemNames: ["Organized", "Careful", "Thorough", "Responsible", "Hardworking", "Persevering", "Efficient", "Systematic"]
+                },
+                openness: {
+                    name: "Openness to Experience",
+                    items: 7,
+                    alpha: 0.82,
+                    testRetest: 0.79,
+                    meanScore: 3.87,
+                    sdScore: 0.74,
+                    itemLoadings: [0.73, 0.76, 0.71, 0.68, 0.79, 0.74, 0.70],
+                    itemNames: ["Creative", "Curious", "Imaginative", "Artistic", "Wide interests", "Intellectual", "Insightful"]
+                },
+                extraversion: {
+                    name: "Extraversion",
+                    items: 6,
+                    alpha: 0.84,
+                    testRetest: 0.81,
+                    meanScore: 3.52,
+                    sdScore: 0.89,
+                    itemLoadings: [0.80, 0.82, 0.77, 0.75, 0.79, 0.76],
+                    itemNames: ["Talkative", "Outgoing", "Energetic", "Social", "Enthusiastic", "Assertive"]
+                },
+                agreeableness: {
+                    name: "Agreeableness",
+                    items: 7,
+                    alpha: 0.79,
+                    testRetest: 0.76,
+                    meanScore: 4.15,
+                    sdScore: 0.62,
+                    itemLoadings: [0.71, 0.73, 0.68, 0.75, 0.72, 0.70, 0.69],
+                    itemNames: ["Kind", "Sympathetic", "Warm", "Cooperative", "Considerate", "Trusting", "Helpful"]
+                },
+                neuroticism: {
+                    name: "Neuroticism",
+                    items: 6,
+                    alpha: 0.86,
+                    testRetest: 0.80,
+                    meanScore: 2.94,
+                    sdScore: 0.91,
+                    itemLoadings: [0.79, 0.82, 0.76, 0.81, 0.77, 0.80],
+                    itemNames: ["Anxious", "Worried", "Tense", "Moody", "Nervous", "Stressed"]
+                }
+            },
+            convergentValidity: {
+                "Conscientiousness": { NEO_C: 0.76, HEXACO_C: 0.73, BFI_C: 0.81 },
+                "Openness": { NEO_O: 0.72, HEXACO_O: 0.69, BFI_O: 0.74 },
+                "Extraversion": { NEO_E: 0.78, HEXACO_E: 0.75, BFI_E: 0.79 },
+                "Agreeableness": { NEO_A: 0.68, HEXACO_H: 0.71, BFI_A: 0.73 },
+                "Neuroticism": { NEO_N: 0.80, HEXACO_Em: 0.77, BFI_N: 0.82 }
+            },
+            discriminantValidity: [
+                [1.00, 0.12, -0.08, 0.15, -0.21],
+                [0.12, 1.00, 0.28, 0.22, -0.15],
+                [-0.08, 0.28, 1.00, 0.31, -0.34],
+                [0.15, 0.22, 0.31, 1.00, -0.29],
+                [-0.21, -0.15, -0.34, -0.29, 1.00]
+            ],
+            groupComparisons: {
+                gender: {
+                    male: { C: 4.15, O: 3.82, E: 3.61, A: 3.98, N: 2.72, n: 231 },
+                    female: { C: 4.31, O: 3.92, E: 3.44, A: 4.31, N: 3.15, n: 256 }
+                },
+                age: {
+                    young: { C: 3.96, O: 4.08, E: 3.78, A: 3.89, N: 3.21, n: 162, label: "18-30" },
+                    middle: { C: 4.28, O: 3.82, E: 3.45, A: 4.23, N: 2.91, n: 198, label: "31-50" },
+                    older: { C: 4.51, O: 3.71, E: 3.34, A: 4.38, N: 2.58, n: 127, label: "51+" }
+                }
+            }
+        };
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            renderOverview();
+            renderFactorAnalysis();
+            renderReliability();
+            renderValidity();
+            renderDistributions();
+            renderGroupComparisons();
+        });
+
+        function showTab(index) {
+            const tabs = document.querySelectorAll('.nav-tab');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+            
+            tabs[index].classList.add('active');
+            contents[index].classList.add('active');
+        }
+
+        function renderOverview() {
+            const scales = Object.values(demoData.scales);
+            const avgAlpha = scales.reduce((sum, s) => sum + s.alpha, 0) / scales.length;
+            const avgTestRetest = scales.reduce((sum, s) => sum + s.testRetest, 0) / scales.length;
+            const totalItems = scales.reduce((sum, s) => sum + s.items, 0);
+            
+            let html = `
+                <div class="metric-grid">
+                    <div class="metric-card">
+                        <h3>Sample Size</h3>
+                        <div class="value">${demoData.sampleSize}</div>
+                        <div class="label">Participants</div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Number of Scales</h3>
+                        <div class="value">${scales.length}</div>
+                        <div class="label">Personality Dimensions</div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Total Items</h3>
+                        <div class="value">${totalItems}</div>
+                        <div class="label">Survey Questions</div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Avg. Reliability</h3>
+                        <div class="value">${avgAlpha.toFixed(3)}</div>
+                        <div class="label">Cronbach's α</div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Avg. Test-Retest</h3>
+                        <div class="value">${avgTestRetest.toFixed(3)}</div>
+                        <div class="label">Temporal Stability</div>
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <h4>Big Five Personality Assessment Validation</h4>
+                    <p>N = ${demoData.sampleSize} | 5 Scales | ${totalItems} Items | Test-Retest: 4-week interval</p>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">Scale Reliability Metrics</div>
+                    <div id="overview-reliability"></div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">Scale Score Distributions</div>
+                    <div id="overview-scores"></div>
+                </div>
+
+            `;
+            
+            document.getElementById('tab0').innerHTML = html;
+            
+            // Plot reliability metrics
+            const scaleNames = scales.map(s => s.name);
+            const alphas = scales.map(s => s.alpha);
+            const testRetests = scales.map(s => s.testRetest);
+            
+            Plotly.newPlot('overview-reliability', [
+                { x: scaleNames, y: alphas, type: 'bar', name: "Cronbach's α", marker: {color: '#4a90e2'} },
+                { x: scaleNames, y: testRetests, type: 'bar', name: 'Test-Retest r', marker: {color: '#f39c63'} }
+            ], {
+                barmode: 'group',
+                xaxis: { tickangle: -30 },
+                yaxis: { title: 'Reliability Coefficient', range: [0, 1] },
+                height: 400,
+                showlegend: true
+            }, {responsive: true});
+            
+            // Plot score distributions
+            const means = scales.map(s => s.meanScore);
+            const sds = scales.map(s => s.sdScore);
+            
+            Plotly.newPlot('overview-scores', [{
+                x: scaleNames,
+                y: means,
+                error_y: {
+                    type: 'data',
+                    array: sds,
+                    visible: true,
+                    color: '#f39c63'
+                },
+                type: 'bar',
+                marker: {color: '#4a90e2'}
+            }], {
+                xaxis: { tickangle: -30 },
+                yaxis: { title: 'Mean Score (± SD)', range: [0, 5.5] },
+                height: 400
+            }, {responsive: true});
+        }
+
+        function renderFactorAnalysis() {
+            const scales = Object.values(demoData.scales);
+            
+            let html = `
+                <div class="stat-box">
+                    <h4>Factor Analysis</h4>
+                    <p>Principal Axis Factoring | Promax Rotation | KMO = 0.89 | 62.4% Variance Explained</p>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">Factor Loading Matrix</div>
+                    <div id="factor-loadings"></div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">Scree Plot</div>
+                    <div id="scree-plot"></div>
+                </div>
+
+                <div class="stat-box">
+                    <h4>Item-Level Factor Loadings</h4>
+                    <table>
+                        <tr>
+                            <th>Scale</th>
+                            <th>Item</th>
+                            <th>Factor Loading</th>
+                            <th>Communality</th>
+                        </tr>
+            `;
+            
+            scales.forEach(scale => {
+                scale.itemNames.forEach((item, idx) => {
+                    const loading = scale.itemLoadings[idx];
+                    const communality = loading * loading; // Simplified
+                    const loadingClass = loading >= 0.75 ? 'metric-excellent' : loading >= 0.65 ? 'metric-good' : 'metric-poor';
+                    
+                    html += `
+                        <tr>
+                            <td><strong>${scale.name}</strong></td>
+                            <td>${item}</td>
+                            <td class="${loadingClass}">${loading.toFixed(3)}</td>
+                            <td>${communality.toFixed(3)}</td>
+                        </tr>
+                    `;
+                });
+            });
+            
+            html += `
+                    </table>
+                </div>
+            `;
+            
+            document.getElementById('tab1').innerHTML = html;
+            
+            // Heatmap of factor loadings
+            const allLoadings = [];
+            const allItems = [];
+            const allScales = [];
+            
+            scales.forEach(scale => {
+                scale.itemLoadings.forEach((loading, idx) => {
+                    allItems.push(`${scale.name.substring(0, 4)}_${idx + 1}`);
+                    allScales.push(scale.name);
+                    allLoadings.push(loading);
+                });
+            });
+            
+            // Create matrix for heatmap
+            const matrix = [];
+            const scaleNames = scales.map(s => s.name);
+            
+            scales.forEach((scale, scaleIdx) => {
+                const row = new Array(scales.length).fill(0);
+                scale.itemLoadings.forEach(loading => {
+                    row[scaleIdx] = loading;
+                });
+                matrix.push(row);
+            });
+            
+            // Plot average loadings per scale
+            const avgLoadings = scales.map(s => 
+                s.itemLoadings.reduce((a, b) => a + b, 0) / s.itemLoadings.length
+            );
+            
+            Plotly.newPlot('factor-loadings', [{
+                x: scaleNames,
+                y: avgLoadings,
+                type: 'bar',
+                marker: {
+                    color: '#4a90e2'
+                },
+                text: avgLoadings.map(v => v.toFixed(3)),
+                textposition: 'auto'
+            }], {
+                xaxis: { tickangle: -30 },
+                yaxis: { title: 'Average Factor Loading', range: [0, 1] },
+                height: 400
+            }, {responsive: true});
+            
+            // Scree plot
+            const eigenvalues = [6.82, 3.91, 2.78, 2.15, 1.89, 1.23, 0.98, 0.87, 0.76, 0.65];
+            
+            Plotly.newPlot('scree-plot', [{
+                x: eigenvalues.map((_, i) => i + 1),
+                y: eigenvalues,
+                mode: 'lines+markers',
+                marker: {
+                    size: 10,
+                    color: '#4a90e2'
+                },
+                line: {
+                    color: '#f39c63',
+                    width: 3
+                }
+            }], {
+                xaxis: { title: 'Factor Number', dtick: 1 },
+                yaxis: { title: 'Eigenvalue' },
+                height: 400,
+                shapes: [{
+                    type: 'line',
+                    x0: 0,
+                    x1: 11,
+                    y0: 1,
+                    y1: 1,
+                    line: {
+                        color: 'red',
+                        width: 2,
+                        dash: 'dash'
+                    }
+                }],
+                annotations: [{
+                    x: 9,
+                    y: 1.1,
+                    text: 'Kaiser Criterion (eigenvalue = 1)',
+                    showarrow: false,
+                    font: { color: 'red' }
+                }]
+            }, {responsive: true});
+        }
+
+        function renderReliability() {
+            const scales = Object.values(demoData.scales);
+            
+            let html = `
+                <div class="stat-box">
+                    <h4>Reliability Analysis</h4>
+                    <p>Cronbach's α | Test-Retest (4-week interval, n=143) | Standard Error of Measurement</p>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">Reliability Coefficients by Scale</div>
+                    <div id="reliability-comparison"></div>
+                </div>
+
+                <div class="stat-box">
+                    <h4>Scale Reliability Metrics</h4>
+                    <table>
+                        <tr>
+                            <th>Scale</th>
+                            <th>Items</th>
+                            <th>Cronbach's α</th>
+                            <th>95% CI</th>
+                            <th>Test-Retest r</th>
+                            <th>SEM</th>
+                            <th>Interpretation</th>
+                        </tr>
+            `;
+            
+            scales.forEach(scale => {
+                const alphaLower = (scale.alpha - 0.03).toFixed(3);
+                const alphaUpper = (scale.alpha + 0.03).toFixed(3);
+                const sem = (scale.sdScore * Math.sqrt(1 - scale.alpha)).toFixed(3);
+                
+                let interpretation = '';
+                let interpClass = '';
+                if (scale.alpha >= 0.90) {
+                    interpretation = 'Excellent';
+                    interpClass = 'metric-excellent';
+                } else if (scale.alpha >= 0.80) {
+                    interpretation = 'Good';
+                    interpClass = 'metric-excellent';
+                } else if (scale.alpha >= 0.70) {
+                    interpretation = 'Acceptable';
+                    interpClass = 'metric-good';
+                } else {
+                    interpretation = 'Questionable';
+                    interpClass = 'metric-poor';
+                }
+                
+                html += `
+                    <tr>
+                        <td><strong>${scale.name}</strong></td>
+                        <td>${scale.items}</td>
+                        <td>${scale.alpha.toFixed(3)}</td>
+                        <td>[${alphaLower}, ${alphaUpper}]</td>
+                        <td>${scale.testRetest.toFixed(3)}</td>
+                        <td>${sem}</td>
+                        <td class="${interpClass}">${interpretation}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                    </table>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">Item-Total Correlations</div>
+                    <div id="item-total-corr"></div>
+                </div>
+            `;
+            
+            document.getElementById('tab2').innerHTML = html;
+            
+            // Reliability comparison chart
+            const scaleNames = scales.map(s => s.name);
+            const alphas = scales.map(s => s.alpha);
+            const testRetests = scales.map(s => s.testRetest);
+            
+            Plotly.newPlot('reliability-comparison', [
+                {
+                    x: scaleNames,
+                    y: alphas,
+                    type: 'bar',
+                    name: "Cronbach's α",
+                    marker: { color: '#4a90e2' },
+                    text: alphas.map(v => v.toFixed(3)),
+                    textposition: 'auto'
+                },
+                {
+                    x: scaleNames,
+                    y: testRetests,
+                    type: 'bar',
+                    name: 'Test-Retest r',
+                    marker: { color: '#f39c63' },
+                    text: testRetests.map(v => v.toFixed(3)),
+                    textposition: 'auto'
+                }
+            ], {
+                barmode: 'group',
+                xaxis: { tickangle: -30 },
+                yaxis: { title: 'Reliability Coefficient', range: [0, 1] },
+                height: 400,
+                shapes: [{
+                    type: 'line',
+                    x0: -0.5,
+                    x1: scales.length - 0.5,
+                    y0: 0.70,
+                    y1: 0.70,
+                    line: { color: 'red', width: 2, dash: 'dash' }
+                }],
+                annotations: [{
+                    x: scales.length - 1,
+                    y: 0.72,
+                    text: 'Acceptable threshold (0.70)',
+                    showarrow: false,
+                    font: { color: 'red', size: 11 }
+                }]
+            }, {responsive: true});
+            
+            // Simulated item-total correlations
+            const itemTotalCorrs = [];
+            const itemLabels = [];
+            
+            scales.forEach(scale => {
+                scale.itemLoadings.forEach((loading, idx) => {
+                    itemTotalCorrs.push(loading - 0.05 + Math.random() * 0.05);
+                    itemLabels.push(`${scale.name.substring(0, 4)}_${idx + 1}`);
+                });
+            });
+            
+            Plotly.newPlot('item-total-corr', [{
+                y: itemTotalCorrs,
+                type: 'box',
+                marker: { color: '#4a90e2' },
+                name: 'Item-Total Correlations',
+                boxmean: 'sd'
+            }], {
+                yaxis: { title: 'Corrected Item-Total Correlation', range: [0.4, 1] },
+                height: 300,
+                shapes: [{
+                    type: 'line',
+                    x0: -0.5,
+                    x1: 0.5,
+                    y0: 0.45,
+                    y1: 0.45,
+                    line: { color: 'red', width: 2, dash: 'dash' }
+                }]
+            }, {responsive: true});
+        }
+
+        function renderValidity() {
+            const scales = Object.keys(demoData.scales);
+            
+            let html = `
+                <div class="stat-box">
+                    <h4>Construct Validity</h4>
+                    <p>Convergent: NEO-PI-R, HEXACO, BFI | Discriminant: Inter-scale correlations</p>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">Convergent Validity: Correlations with Established Measures</div>
+                    <div id="convergent-validity"></div>
+                </div>
+
+                <div class="stat-box">
+                    <h4>Convergent Validity Coefficients</h4>
+                    <table>
+                        <tr>
+                            <th>Scale</th>
+                            <th>NEO-PI-R</th>
+                            <th>HEXACO</th>
+                            <th>BFI</th>
+                            <th>Average</th>
+                            <th>Interpretation</th>
+                        </tr>
+            `;
+            
+            Object.entries(demoData.convergentValidity).forEach(([scale, correlations]) => {
+                const values = Object.values(correlations);
+                const avg = values.reduce((a, b) => a + b, 0) / values.length;
+                
+                let interpretation = '';
+                let interpClass = '';
+                if (avg >= 0.75) {
+                    interpretation = 'Excellent';
+                    interpClass = 'metric-excellent';
+                } else if (avg >= 0.65) {
+                    interpretation = 'Good';
+                    interpClass = 'metric-good';
+                } else {
+                    interpretation = 'Moderate';
+                    interpClass = 'metric-poor';
+                }
+                
+                html += `
+                    <tr>
+                        <td><strong>${scale}</strong></td>
+                        <td>${Object.values(correlations)[0].toFixed(3)}</td>
+                        <td>${Object.values(correlations)[1].toFixed(3)}</td>
+                        <td>${Object.values(correlations)[2].toFixed(3)}</td>
+                        <td><strong>${avg.toFixed(3)}</strong></td>
+                        <td class="${interpClass}">${interpretation}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                    </table>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">Discriminant Validity: Inter-Scale Correlation Matrix</div>
+                    <div id="discriminant-validity"></div>
+                </div>
+
+                <div class="stat-box">
+                    <h4>Inter-Scale Correlation Matrix</h4>
+                    <div class="matrix-table">
+                        <table>
+                            <tr>
+                                <th>Scale</th>
+                                ${scales.map(s => `<th>${s.substring(0, 4)}</th>`).join('')}
+                            </tr>
+            `;
+            
+            scales.forEach((scale, i) => {
+                html += `<tr><td><strong>${scale.substring(0, 4)}</strong></td>`;
+                demoData.discriminantValidity[i].forEach((corr, j) => {
+                    if (i === j) {
+                        html += `<td style="background: #4a90e2; color: white; font-weight: bold;">1.00</td>`;
+                    } else {
+                        const absCorr = Math.abs(corr);
+                        const cellClass = absCorr < 0.20 ? 'metric-excellent' : absCorr < 0.35 ? 'metric-good' : 'metric-poor';
+                        html += `<td class="${cellClass}">${corr.toFixed(2)}</td>`;
+                    }
+                });
+                html += '</tr>';
+            });
+            
+            html += `
+                        </table>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('tab3').innerHTML = html;
+            
+            // Convergent validity chart
+            const scaleNames = Object.keys(demoData.convergentValidity);
+            const neoCorrs = scaleNames.map(s => Object.values(demoData.convergentValidity[s])[0]);
+            const hexacoCorrs = scaleNames.map(s => Object.values(demoData.convergentValidity[s])[1]);
+            const bfiCorrs = scaleNames.map(s => Object.values(demoData.convergentValidity[s])[2]);
+            
+            Plotly.newPlot('convergent-validity', [
+                {
+                    x: scaleNames,
+                    y: neoCorrs,
+                    type: 'bar',
+                    name: 'NEO-PI-R',
+                    marker: { color: '#4a90e2' }
+                },
+                {
+                    x: scaleNames,
+                    y: hexacoCorrs,
+                    type: 'bar',
+                    name: 'HEXACO',
+                    marker: { color: '#f39c63' }
+                },
+                {
+                    x: scaleNames,
+                    y: bfiCorrs,
+                    type: 'bar',
+                    name: 'BFI',
+                    marker: { color: '#7fb3d5' }
+                }
+            ], {
+                barmode: 'group',
+                xaxis: { tickangle: -30 },
+                yaxis: { title: 'Correlation Coefficient', range: [0, 1] },
+                height: 400,
+                shapes: [{
+                    type: 'line',
+                    x0: -0.5,
+                    x1: scaleNames.length - 0.5,
+                    y0: 0.60,
+                    y1: 0.60,
+                    line: { color: 'red', width: 2, dash: 'dash' }
+                }],
+                annotations: [{
+                    x: scaleNames.length - 1,
+                    y: 0.62,
+                    text: 'Good validity (0.60)',
+                    showarrow: false,
+                    font: { color: 'red', size: 11 }
+                }]
+            }, {responsive: true});
+            
+            // Discriminant validity heatmap
+            Plotly.newPlot('discriminant-validity', [{
+                z: demoData.discriminantValidity,
+                x: scales.map(s => s.substring(0, 4)),
+                y: scales.map(s => s.substring(0, 4)),
+                type: 'heatmap',
+                colorscale: [
+                    [0, '#4a90e2'],
+                    [0.5, '#ffffff'],
+                    [1, '#f39c63']
+                ],
+                zmid: 0,
+                text: demoData.discriminantValidity.map(row => row.map(v => v.toFixed(2))),
+                texttemplate: '%{text}',
+                textfont: { size: 12 },
+                colorbar: { title: 'Correlation' }
+            }], {
+                height: 500,
+                xaxis: { side: 'bottom' },
+                yaxis: { autorange: 'reversed' }
+            }, {responsive: true});
+        }
+
+        function renderDistributions() {
+            const scales = Object.values(demoData.scales);
+            
+            let html = `
+                <div class="stat-box">
+                    <h4>Score Distributions</h4>
+                    <p>Scale Range: 1-5 | Normality Assessment | Response Patterns</p>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">Scale Score Distributions</div>
+                    <div id="all-distributions"></div>
+                </div>
+
+                <div class="stat-box">
+                    <h4>Descriptive Statistics</h4>
+                    <table>
+                        <tr>
+                            <th>Scale</th>
+                            <th>Mean</th>
+                            <th>SD</th>
+                            <th>Min</th>
+                            <th>Max</th>
+                            <th>Skewness</th>
+                            <th>Kurtosis</th>
+                            <th>Normality</th>
+                        </tr>
+            `;
+            
+            scales.forEach(scale => {
+                // Simulate distribution statistics
+                const skew = (Math.random() - 0.5) * 0.6;
+                const kurt = (Math.random() - 0.5) * 0.8;
+                const min = (scale.meanScore - 2 * scale.sdScore).toFixed(2);
+                const max = (scale.meanScore + 2 * scale.sdScore).toFixed(2);
+                
+                const normality = Math.abs(skew) < 0.5 && Math.abs(kurt) < 1 ? 'Normal' : 'Acceptable';
+                const normClass = normality === 'Normal' ? 'metric-excellent' : 'metric-good';
+                
+                html += `
+                    <tr>
+                        <td><strong>${scale.name}</strong></td>
+                        <td>${scale.meanScore.toFixed(2)}</td>
+                        <td>${scale.sdScore.toFixed(2)}</td>
+                        <td>${min}</td>
+                        <td>${max}</td>
+                        <td>${skew.toFixed(3)}</td>
+                        <td>${kurt.toFixed(3)}</td>
+                        <td class="${normClass}">${normality}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                    </table>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">Q-Q Plots: Normality Assessment</div>
+                    <div id="qq-plots"></div>
+                </div>
+            `;
+            
+            document.getElementById('tab4').innerHTML = html;
+            
+            // Create overlapping distributions
+            const traces = scales.map((scale, idx) => {
+                // Generate simulated normal distribution data
+                const data = [];
+                for (let i = 0; i < 100; i++) {
+                    const z = -3 + (i / 100) * 6;
+                    const x = scale.meanScore + z * scale.sdScore;
+                    const y = (1 / (scale.sdScore * Math.sqrt(2 * Math.PI))) * 
+                             Math.exp(-0.5 * Math.pow(z, 2));
+                    data.push({ x, y });
+                }
+                
+                const colors = ['#4a90e2', '#f39c63', '#7fb3d5', '#ffc68a', '#6ba3d0'];
+                
+                return {
+                    x: data.map(d => d.x),
+                    y: data.map(d => d.y),
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: scale.name,
+                    line: { color: colors[idx], width: 3 },
+                    fill: 'tozeroy',
+                    opacity: 0.6
+                };
+            });
+            
+            Plotly.newPlot('all-distributions', traces, {
+                xaxis: { title: 'Scale Score', range: [1, 5] },
+                yaxis: { title: 'Density' },
+                height: 400,
+                hovermode: 'x unified'
+            }, {responsive: true});
+            
+            // Simulated Q-Q plot
+            const qqData = [];
+            for (let i = 0; i < 30; i++) {
+                qqData.push({
+                    theoretical: -3 + (i / 30) * 6,
+                    sample: -3 + (i / 30) * 6 + (Math.random() - 0.5) * 0.3
+                });
+            }
+            
+            Plotly.newPlot('qq-plots', [
+                {
+                    x: qqData.map(d => d.theoretical),
+                    y: qqData.map(d => d.sample),
+                    mode: 'markers',
+                    type: 'scatter',
+                    name: 'Sample Quantiles',
+                    marker: { size: 8, color: '#4a90e2' }
+                },
+                {
+                    x: [-3, 3],
+                    y: [-3, 3],
+                    mode: 'lines',
+                    type: 'scatter',
+                    name: 'Perfect Normal',
+                    line: { color: 'red', dash: 'dash', width: 2 }
+                }
+            ], {
+                xaxis: { title: 'Theoretical Quantiles' },
+                yaxis: { title: 'Sample Quantiles' },
+                height: 400,
+                showlegend: true
+            }, {responsive: true});
+        }
+
+        function renderGroupComparisons() {
+            const gc = demoData.groupComparisons;
+            
+            let html = `
+                <div class="stat-box">
+                    <h4>Group Comparisons</h4>
+                    <p>Gender: t-tests, Cohen's d | Age: ANOVA, η² | Measurement Invariance Confirmed</p>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">Mean Scores by Gender</div>
+                    <div id="gender-comparison"></div>
+                </div>
+
+                <div class="stat-box">
+                    <h4>Gender Differences</h4>
+                    <table>
+                        <tr>
+                            <th>Scale</th>
+                            <th>Male (n=231)</th>
+                            <th>Female (n=256)</th>
+                            <th>Difference</th>
+                            <th>Cohen's d</th>
+                            <th>t-statistic</th>
+                            <th>p-value</th>
+                            <th>Interpretation</th>
+                        </tr>
+            `;
+            
+            const scaleKeys = ['C', 'O', 'E', 'A', 'N'];
+            const scaleNames = ['Conscientiousness', 'Openness', 'Extraversion', 'Agreeableness', 'Neuroticism'];
+            
+            scaleKeys.forEach((key, idx) => {
+                const male = gc.gender.male[key];
+                const female = gc.gender.female[key];
+                const diff = Math.abs(female - male);
+                const pooledSD = 0.7; // Simplified
+                const cohensD = diff / pooledSD;
+                const tStat = (Math.random() * 3 + 1).toFixed(2);
+                const pVal = diff > 0.2 ? '< .001' : diff > 0.1 ? '.045' : '.312';
+                
+                let interpretation = '';
+                let interpClass = '';
+                if (cohensD >= 0.5) {
+                    interpretation = 'Medium effect';
+                    interpClass = 'metric-good';
+                } else if (cohensD >= 0.2) {
+                    interpretation = 'Small effect';
+                    interpClass = 'metric-good';
+                } else {
+                    interpretation = 'Negligible';
+                    interpClass = 'metric-excellent';
+                }
+                
+                html += `
+                    <tr>
+                        <td><strong>${scaleNames[idx]}</strong></td>
+                        <td>${male.toFixed(2)}</td>
+                        <td>${female.toFixed(2)}</td>
+                        <td>${diff.toFixed(2)}</td>
+                        <td>${cohensD.toFixed(3)}</td>
+                        <td>${tStat}</td>
+                        <td>${pVal}</td>
+                        <td class="${interpClass}">${interpretation}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                    </table>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">Mean Scores by Age Group</div>
+                    <div id="age-comparison"></div>
+                </div>
+
+                <div class="stat-box">
+                    <h4>Age Group Differences (ANOVA)</h4>
+                    <table>
+                        <tr>
+                            <th>Scale</th>
+                            <th>18-30 (n=162)</th>
+                            <th>31-50 (n=198)</th>
+                            <th>51+ (n=127)</th>
+                            <th>F-statistic</th>
+                            <th>p-value</th>
+                            <th>η²</th>
+                            <th>Post-hoc</th>
+                        </tr>
+            `;
+            
+            scaleKeys.forEach((key, idx) => {
+                const young = gc.age.young[key];
+                const middle = gc.age.middle[key];
+                const older = gc.age.older[key];
+                const fStat = (Math.random() * 8 + 2).toFixed(2);
+                const etaSq = (Math.random() * 0.08 + 0.02).toFixed(3);
+                const pVal = idx < 3 ? '< .001' : '.089';
+                const postHoc = idx === 0 ? 'Old > Young***' : idx === 1 ? 'Young > Old*' : 'n.s.';
+                
+                html += `
+                    <tr>
+                        <td><strong>${scaleNames[idx]}</strong></td>
+                        <td>${young.toFixed(2)}</td>
+                        <td>${middle.toFixed(2)}</td>
+                        <td>${older.toFixed(2)}</td>
+                        <td>${fStat}</td>
+                        <td>${pVal}</td>
+                        <td>${etaSq}</td>
+                        <td>${postHoc}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                    </table>
+                </div>
+            `;
+            
+            document.getElementById('tab5').innerHTML = html;
+            
+            // Gender comparison chart
+            const maleScores = scaleKeys.map(k => gc.gender.male[k]);
+            const femaleScores = scaleKeys.map(k => gc.gender.female[k]);
+            
+            Plotly.newPlot('gender-comparison', [
+                {
+                    x: scaleNames,
+                    y: maleScores,
+                    type: 'bar',
+                    name: 'Male',
+                    marker: { color: '#4a90e2' },
+                    error_y: {
+                        type: 'constant',
+                        value: 0.1,
+                        color: '#4a90e2'
+                    }
+                },
+                {
+                    x: scaleNames,
+                    y: femaleScores,
+                    type: 'bar',
+                    name: 'Female',
+                    marker: { color: '#f39c63' },
+                    error_y: {
+                        type: 'constant',
+                        value: 0.1,
+                        color: '#f39c63'
+                    }
+                }
+            ], {
+                barmode: 'group',
+                xaxis: { tickangle: -30 },
+                yaxis: { title: 'Mean Score', range: [0, 5] },
+                height: 400
+            }, {responsive: true});
+            
+            // Age comparison chart
+            const youngScores = scaleKeys.map(k => gc.age.young[k]);
+            const middleScores = scaleKeys.map(k => gc.age.middle[k]);
+            const olderScores = scaleKeys.map(k => gc.age.older[k]);
+            
+            Plotly.newPlot('age-comparison', [
+                {
+                    x: scaleNames,
+                    y: youngScores,
+                    type: 'bar',
+                    name: '18-30',
+                    marker: { color: '#4a90e2' }
+                },
+                {
+                    x: scaleNames,
+                    y: middleScores,
+                    type: 'bar',
+                    name: '31-50',
+                    marker: { color: '#f39c63' }
+                },
+                {
+                    x: scaleNames,
+                    y: olderScores,
+                    type: 'bar',
+                    name: '51+',
+                    marker: { color: '#7fb3d5' }
+                }
+            ], {
+                barmode: 'group',
+                xaxis: { tickangle: -30 },
+                yaxis: { title: 'Mean Score', range: [0, 5] },
+                height: 400
+            }, {responsive: true});
+        }
+    </script>
+</body>
+</html>
