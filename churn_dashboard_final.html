@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Churn Analysis Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e3a5f;
+            --primary-dark: #0f2540;
+            --accent: #2196F3;
+            --accent-light: #64B5F6;
+            --success: #4CAF50;
+            --success-light: #81C784;
+            --danger: #f44336;
+            --warning: #FFC107;
+            --text: #2c3e50;
+            --text-dim: #7f8c8d;
+            --card-bg: #ffffff;
+            --background: #f5f7fa;
+            --border: #e0e0e0;
+            --shadow: rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #1e3a5f 0%, #2196F3 100%);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(30, 58, 95, 0.2);
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: #ffffff;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 500;
+        }
+
+        .dashboard-content {
+            display: block;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 40px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px var(--shadow);
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 14px 28px;
+            background: transparent;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            color: var(--text);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .tab-btn:hover {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f0f4ff 100%);
+            border-color: var(--accent-light);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #2196F3 0%, #1e3a5f 100%);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .metric-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #2196F3, #4CAF50, #FFC107);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .metric-card.healthy::before {
+            background: linear-gradient(135deg, #4CAF50 0%, #81C784 100%);
+        }
+
+        .metric-card.risk::before {
+            background: linear-gradient(135deg, #FFC107 0%, #FFD54F 100%);
+        }
+
+        .metric-card.churned::before {
+            background: linear-gradient(135deg, #f44336 0%, #e57373 100%);
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-value {
+            font-size: 2.75rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .metric-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        .filter-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        .filter-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #1e3a5f 0%, #2196F3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .filter-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .filter-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--background);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: white;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2196F3 0%, #1e3a5f 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--background);
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            background: white;
+        }
+
+        .data-table-wrapper {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            overflow-x: auto;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .table-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            background: linear-gradient(135deg, #1e3a5f 0%, #2196F3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .result-count {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f0f4ff 100%);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            color: var(--primary);
+            border: 2px solid var(--accent-light);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e3f2fd 100%);
+            padding: 16px;
+            text-align: left;
+            font-weight: 700;
+            color: var(--primary);
+            border-bottom: 2px solid var(--accent-light);
+            white-space: nowrap;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            font-weight: 500;
+        }
+
+        tr:hover {
+            background: linear-gradient(135deg, #f5f7fa 0%, #fafbfc 100%);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-healthy {
+            background: linear-gradient(135deg, #4CAF50 0%, #81C784 100%);
+            color: white;
+        }
+
+        .badge-risk {
+            background: linear-gradient(135deg, #FFC107 0%, #FFD54F 100%);
+            color: #5d4037;
+        }
+
+        .badge-full-churn {
+            background: linear-gradient(135deg, #f44336 0%, #e57373 100%);
+            color: white;
+        }
+
+        .map-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        #worldMap {
+            width: 100%;
+            height: 500px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .regions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .region-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            text-align: center;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .region-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #2196F3, #4CAF50, #FFC107);
+        }
+
+        .region-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .region-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        .region-count {
+            font-size: 2.25rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e3a5f 0%, #2196F3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .region-label {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .tenure-chart {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .tenure-bucket {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tenure-bucket::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #FFC107, #4CAF50, #2196F3);
+        }
+
+        .tenure-bucket:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .tenure-bucket-label {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .tenure-bucket-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e3a5f 0%, #2196F3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .tenure-bucket-pct {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+
+        .bar-chart {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        .bar-chart h3 {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2196F3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .bar-item {
+            margin-bottom: 24px;
+        }
+
+        .bar-label {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+
+        .bar-container {
+            background: var(--background);
+            border-radius: 12px;
+            overflow: hidden;
+            height: 48px;
+            border: 1px solid var(--border);
+        }
+
+        .bar-fill {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding-left: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: white;
+            transition: width 0.8s ease;
+            background: linear-gradient(90deg, #2196F3, #4CAF50, #FFC107);
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #1e3a5f 0%, #2196F3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Customer Churn Analysis</h1>
+            <p class="subtitle">Professional Dashboard</p>
+        </header>
+
+        <div class="dashboard-content active" id="dashboardContent">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+                <button class="tab-btn" onclick="switchTab('accountLevel')">Account Level</button>
+                <button class="tab-btn" onclick="switchTab('regional')">Regional Analysis</button>
+                <button class="tab-btn" onclick="switchTab('tenure')">Tenure Analysis</button>
+            </div>
+
+            <div id="overview" class="tab-content active">
+                <div class="metrics-grid">
+                    <div class="metric-card healthy">
+                        <div class="metric-label">Total Accounts</div>
+                        <div class="metric-value" id="totalAccounts">0</div>
+                        <div class="metric-subtitle">Unique customers</div>
+                    </div>
+                    <div class="metric-card healthy">
+                        <div class="metric-label">Active Locations</div>
+                        <div class="metric-value" id="totalLocations">0</div>
+                        <div class="metric-subtitle">Across regions</div>
+                    </div>
+                    <div class="metric-card churned">
+                        <div class="metric-label">Full Churn</div>
+                        <div class="metric-value" id="fullChurn">0</div>
+                        <div class="metric-subtitle" id="fullChurnPct">0%</div>
+                    </div>
+                    <div class="metric-card risk">
+                        <div class="metric-label">At Risk</div>
+                        <div class="metric-value" id="atRisk">0</div>
+                        <div class="metric-subtitle" id="atRiskPct">0%</div>
+                    </div>
+                    <div class="metric-card healthy">
+                        <div class="metric-label">Healthy</div>
+                        <div class="metric-value" id="healthy">0</div>
+                        <div class="metric-subtitle" id="healthyPct">0%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Total Revenue (All Time)</div>
+                        <div class="metric-value" id="totalRevenue">$0</div>
+                        <div class="metric-subtitle">Lifetime value</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="accountLevel" class="tab-content">
+                <div class="filter-section">
+                    <div class="filter-title">Filter Account Data</div>
+                    <div class="filter-grid">
+                        <div class="filter-group">
+                            <label>Account ID</label>
+                            <select id="accountFilterAccount">
+                                <option value="">All Accounts</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Country</label>
+                            <select id="countryFilterAccount">
+                                <option value="">All Countries</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Churn Status</label>
+                            <select id="churnFilterAccount">
+                                <option value="">All Statuses</option>
+                                <option value="FULL">Full Churn</option>
+                                <option value="Risk">At Risk</option>
+                                <option value="Healthy">Healthy</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="filter-buttons">
+                        <button class="btn btn-secondary" onclick="resetAccountFilters()">Reset</button>
+                        <button class="btn btn-primary" onclick="applyAccountFilters()">Apply Filters</button>
+                    </div>
+                </div>
+
+                <div class="data-table-wrapper">
+                    <div class="table-header">
+                        <div class="table-title">Account Level Summary</div>
+                        <div class="result-count"><span id="accountResultCount">0</span> results</div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Account ID</th>
+                                <th>Country</th>
+                                <th>Locations</th>
+                                <th>Product Families</th>
+                                <th>Total Revenue (All Time)</th>
+                                <th>Revenue (12M)</th>
+                                <th>Avg Tenure</th>
+                                <th>Worst Status</th>
+                                <th>Products (Churned/Risk/Healthy)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="accountResultsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="regional" class="tab-content">
+                <h2 class="section-title">Regional Distribution</h2>
+                
+                <div class="map-container">
+                    <div id="worldMap"></div>
+                </div>
+
+                <div class="regions-grid" id="regionsGrid"></div>
+                
+                <div class="data-table-wrapper">
+                    <div class="table-header">
+                        <div class="table-title">Regional Performance</div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Country</th>
+                                <th>Locations</th>
+                                <th>Total Revenue</th>
+                                <th>Churned</th>
+                                <th>Churn Rate</th>
+                            </tr>
+                        </thead>
+                        <tbody id="regionTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="tenure" class="tab-content">
+                <h2 class="section-title">Churn by Customer Tenure</h2>
+                <div class="tenure-chart" id="tenureChart"></div>
+                
+                <div class="bar-chart">
+                    <h3 style="margin-bottom: 24px;">Distribution of Churned Customers</h3>
+                    <div id="tenureBarChart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script>
+        let allData = [];
+        let filteredAccountData = [];
+        let accountLevelData = [];
+
+        const countryMap = {
+            'United States': { lat: 37.0902, lon: -95.7129 },
+            'Canada': { lat: 56.1304, lon: -106.3468 },
+            'United Kingdom': { lat: 55.3781, lon: -3.4360 },
+            'Germany': { lat: 51.1657, lon: 10.4515 },
+            'France': { lat: 46.2276, lon: 2.2137 },
+            'Japan': { lat: 36.2048, lon: 138.2529 },
+            'Australia': { lat: -25.2744, lon: 133.7751 }
+        };
+
+        function generateDemoData() {
+            const countries = ['United States', 'Canada', 'United Kingdom', 'Germany', 'France', 'Japan', 'Australia'];
+            const productFamilies = ['Industrial Sensors', 'Control Systems', 'Automation Tools', 'Safety Equipment', 'Monitoring Devices'];
+            const models = ['X1000', 'X2000', 'X3000', 'Pro-500', 'Elite-700', 'Standard-200'];
+            const locationNames = ['Main Warehouse', 'Distribution Center', 'Manufacturing Plant', 'Regional Office', 'Service Center'];
+            const churnStatuses = ['Healthy', 'Healthy', 'Healthy', 'Moderate Risk', 'High Risk', 'FULL CHURN'];
+            
+            const data = [];
+            const accountIds = Array.from({length: 50}, (_, i) => 1000 + i);
+            
+            for (let i = 0; i < 250; i++) {
+                const accountId = accountIds[Math.floor(Math.random() * accountIds.length)];
+                const country = countries[Math.floor(Math.random() * countries.length)];
+                const productFamily = productFamilies[Math.floor(Math.random() * productFamilies.length)];
+                const model = models[Math.floor(Math.random() * models.length)];
+                const churnStatus = churnStatuses[Math.floor(Math.random() * churnStatuses.length)];
+                const tenure = Math.random() * 15;
+                
+                let revenueMultiplier = 1;
+                if (churnStatus.includes('FULL')) revenueMultiplier = 0.3;
+                else if (churnStatus.includes('Risk')) revenueMultiplier = 0.6;
+                
+                const revenueAllTime = Math.floor(Math.random() * 500000 + 50000);
+                const revenueLast12M = Math.floor(revenueAllTime * 0.3 * revenueMultiplier);
+                const qty12M = Math.floor(revenueLast12M / (Math.random() * 500 + 100));
+                
+                data.push({
+                    Account_ID: accountId,
+                    Location_Code: `LOC${accountId}-${String(Math.floor(Math.random() * 10) + 1).padStart(2, '0')}`,
+                    Location_Name: locationNames[Math.floor(Math.random() * locationNames.length)],
+                    Country: country,
+                    Product_Family_Name: productFamily,
+                    Model: model,
+                    Churn_Status: churnStatus,
+                    Customer_Tenure_Years_Since_First_Invoice: tenure,
+                    Revenue_All_Time: revenueAllTime,
+                    Revenue_Last_12M: revenueLast12M,
+                    Qty_Last_12M: qty12M
+                });
+            }
+            
+            return data;
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            allData = generateDemoData();
+            processData();
+        });
+
+        function processData() {
+            populateFilters();
+            aggregateAccountData();
+            updateOverview();
+            filteredAccountData = [...accountLevelData];
+            updateAccountTable();
+            updateRegionalTab();
+            updateTenureTab();
+        }
+
+        function populateFilters() {
+            const accounts = [...new Set(allData.map(d => d.Account_ID))].sort();
+            const countries = [...new Set(allData.map(d => d.Country))].sort();
+
+            populateSelect('accountFilterAccount', accounts);
+            populateSelect('countryFilterAccount', countries);
+        }
+
+        function populateSelect(id, values) {
+            const select = document.getElementById(id);
+            const currentValue = select.value;
+            const firstOption = select.options[0];
+            select.innerHTML = '';
+            select.appendChild(firstOption);
+            
+            values.forEach(val => {
+                const option = document.createElement('option');
+                option.value = val;
+                option.textContent = val;
+                select.appendChild(option);
+            });
+            
+            select.value = currentValue;
+        }
+
+        function aggregateAccountData() {
+            const accountMap = {};
+            
+            allData.forEach(d => {
+                const accId = d.Account_ID;
+                if (!accountMap[accId]) {
+                    accountMap[accId] = {
+                        Account_ID: accId,
+                        Country: d.Country,
+                        Location_Count: new Set(),
+                        Product_Family_Count: new Set(),
+                        Total_Revenue_All_Time: 0,
+                        Total_Revenue_Last_12M: 0,
+                        Tenures: [],
+                        Statuses: [],
+                        Churned_Products_Count: 0,
+                        Risk_Products_Count: 0,
+                        Healthy_Products_Count: 0
+                    };
+                }
+                
+                const acc = accountMap[accId];
+                acc.Location_Count.add(d.Location_Code);
+                acc.Product_Family_Count.add((d.Product_Family_Name || '').trim());
+                acc.Total_Revenue_All_Time += d.Revenue_All_Time || 0;
+                acc.Total_Revenue_Last_12M += d.Revenue_Last_12M || 0;
+                acc.Tenures.push(d.Customer_Tenure_Years_Since_First_Invoice || 0);
+                acc.Statuses.push(d.Churn_Status || '');
+                
+                const status = d.Churn_Status || '';
+                if (status.includes('FULL')) acc.Churned_Products_Count++;
+                else if (status.includes('Risk')) acc.Risk_Products_Count++;
+                else acc.Healthy_Products_Count++;
+            });
+
+            accountLevelData = Object.values(accountMap).map(acc => {
+                const avgTenure = acc.Tenures.reduce((a, b) => a + b, 0) / acc.Tenures.length;
+                
+                let worstStatus = 'Healthy';
+                if (acc.Statuses.some(s => s.includes('FULL'))) worstStatus = 'FULL CHURN';
+                else if (acc.Statuses.some(s => s.includes('High Risk'))) worstStatus = 'High Risk';
+                else if (acc.Statuses.some(s => s.includes('Moderate Risk'))) worstStatus = 'Moderate Risk';
+                
+                return {
+                    Account_ID: acc.Account_ID,
+                    Country: acc.Country,
+                    Location_Count: acc.Location_Count.size,
+                    Product_Family_Count: acc.Product_Family_Count.size,
+                    Total_Revenue_All_Time: acc.Total_Revenue_All_Time,
+                    Total_Revenue_Last_12M: acc.Total_Revenue_Last_12M,
+                    Avg_Tenure: avgTenure,
+                    Worst_Churn_Status: worstStatus,
+                    Churned_Products_Count: acc.Churned_Products_Count,
+                    Risk_Products_Count: acc.Risk_Products_Count,
+                    Healthy_Products_Count: acc.Healthy_Products_Count
+                };
+            });
+        }
+
+        function updateOverview() {
+            const totalLocations = new Set(allData.map(d => d.Location_Code)).size;
+            const totalAccounts = new Set(allData.map(d => d.Account_ID)).size;
+            
+            const fullChurn = allData.filter(d => (d.Churn_Status || '').includes('FULL')).length;
+            const atRisk = allData.filter(d => {
+                const status = d.Churn_Status || '';
+                return status.includes('Risk') && !status.includes('FULL');
+            }).length;
+            const healthy = allData.filter(d => {
+                const status = d.Churn_Status || '';
+                return !status.includes('FULL') && !status.includes('Risk');
+            }).length;
+            
+            const totalRevenue = allData.reduce((sum, d) => sum + (d.Revenue_All_Time || 0), 0);
+            
+            document.getElementById('totalLocations').textContent = totalLocations.toLocaleString();
+            document.getElementById('totalAccounts').textContent = totalAccounts.toLocaleString();
+            document.getElementById('fullChurn').textContent = fullChurn.toLocaleString();
+            document.getElementById('fullChurnPct').textContent = `${((fullChurn / allData.length) * 100).toFixed(1)}%`;
+            document.getElementById('atRisk').textContent = atRisk.toLocaleString();
+            document.getElementById('atRiskPct').textContent = `${((atRisk / allData.length) * 100).toFixed(1)}%`;
+            document.getElementById('healthy').textContent = healthy.toLocaleString();
+            document.getElementById('healthyPct').textContent = `${((healthy / allData.length) * 100).toFixed(1)}%`;
+            document.getElementById('totalRevenue').textContent = `$${(totalRevenue / 1000000).toFixed(1)}M`;
+        }
+
+        function updateRegionalTab() {
+            const countryData = {};
+            allData.forEach(d => {
+                const country = d.Country || 'Unknown';
+                if (!countryData[country]) {
+                    countryData[country] = { count: 0, revenue: 0, churned: 0 };
+                }
+                countryData[country].count++;
+                countryData[country].revenue += d.Revenue_All_Time || 0;
+                if ((d.Churn_Status || '').includes('FULL')) {
+                    countryData[country].churned++;
+                }
+            });
+
+            // Create map visualization
+            const mapData = [{
+                type: 'scattergeo',
+                mode: 'markers+text',
+                lon: Object.keys(countryData).map(c => countryMap[c]?.lon || 0),
+                lat: Object.keys(countryData).map(c => countryMap[c]?.lat || 0),
+                text: Object.keys(countryData).map(c => c),
+                marker: {
+                    size: Object.values(countryData).map(d => Math.sqrt(d.count) * 8),
+                    color: Object.values(countryData).map(d => {
+                        const churnRate = (d.churned / d.count) * 100;
+                        if (churnRate > 20) return '#f44336';
+                        if (churnRate > 10) return '#FFC107';
+                        return '#4CAF50';
+                    }),
+                    line: {
+                        color: 'white',
+                        width: 2
+                    },
+                    opacity: 0.8
+                },
+                textposition: 'top center',
+                textfont: {
+                    size: 10,
+                    color: '#1e3a5f',
+                    family: 'Inter'
+                },
+                hovertemplate: '<b>%{text}</b><br>' +
+                              'Locations: ' + Object.values(countryData).map(d => d.count) + '<br>' +
+                              'Revenue: $' + Object.values(countryData).map(d => (d.revenue/1000000).toFixed(2)) + 'M<br>' +
+                              'Churned: ' + Object.values(countryData).map(d => d.churned) + '<extra></extra>'
+            }];
+
+            const layout = {
+                geo: {
+                    projection: {
+                        type: 'natural earth'
+                    },
+                    showland: true,
+                    landcolor: '#f5f7fa',
+                    coastlinecolor: '#e0e0e0',
+                    showocean: true,
+                    oceancolor: '#e3f2fd',
+                    showcountries: true,
+                    countrycolor: '#e0e0e0'
+                },
+                margin: { l: 0, r: 0, t: 0, b: 0 },
+                paper_bgcolor: '#ffffff',
+                font: {
+                    family: 'Inter'
+                }
+            };
+
+            Plotly.newPlot('worldMap', mapData, layout, {responsive: true, displayModeBar: false});
+
+            let gridHTML = '';
+            Object.entries(countryData).forEach(([name, data]) => {
+                const churnRate = ((data.churned / data.count) * 100).toFixed(1);
+                gridHTML += `
+                    <div class="region-card">
+                        <div class="region-name">${name}</div>
+                        <div class="region-count">${data.count}</div>
+                        <div class="region-label">${churnRate}% Churn Rate</div>
+                    </div>
+                `;
+            });
+            document.getElementById('regionsGrid').innerHTML = gridHTML;
+
+            let tableHTML = '';
+            Object.entries(countryData).forEach(([name, data]) => {
+                const churnRate = ((data.churned / data.count) * 100).toFixed(1);
+                tableHTML += `
+                    <tr>
+                        <td><strong>${name}</strong></td>
+                        <td>${data.count.toLocaleString()}</td>
+                        <td>$${(data.revenue / 1000000).toFixed(2)}M</td>
+                        <td style="color: var(--danger); font-weight: 600;">${data.churned}</td>
+                        <td style="color: var(--danger); font-weight: 700;">${churnRate}%</td>
+                    </tr>
+                `;
+            });
+            document.getElementById('regionTableBody').innerHTML = tableHTML;
+        }
+
+        function updateTenureTab() {
+            const churned = allData.filter(d => (d.Churn_Status || '').includes('FULL'));
+            
+            const tenureBuckets = {
+                '0-1 years': 0,
+                '1-2 years': 0,
+                '2-3 years': 0,
+                '3-5 years': 0,
+                '5-10 years': 0,
+                '10+ years': 0
+            };
+
+            churned.forEach(d => {
+                const tenure = d.Customer_Tenure_Years_Since_First_Invoice || 0;
+                if (tenure < 1) tenureBuckets['0-1 years']++;
+                else if (tenure < 2) tenureBuckets['1-2 years']++;
+                else if (tenure < 3) tenureBuckets['2-3 years']++;
+                else if (tenure < 5) tenureBuckets['3-5 years']++;
+                else if (tenure < 10) tenureBuckets['5-10 years']++;
+                else tenureBuckets['10+ years']++;
+            });
+
+            let chartHTML = '';
+            Object.entries(tenureBuckets).forEach(([label, count]) => {
+                const pct = churned.length > 0 ? ((count / churned.length) * 100).toFixed(1) : 0;
+                chartHTML += `
+                    <div class="tenure-bucket">
+                        <div class="tenure-bucket-label">${label}</div>
+                        <div class="tenure-bucket-value">${count}</div>
+                        <div class="tenure-bucket-pct">${pct}% of churned</div>
+                    </div>
+                `;
+            });
+            document.getElementById('tenureChart').innerHTML = chartHTML;
+
+            const maxCount = Math.max(...Object.values(tenureBuckets));
+            let barHTML = '';
+            Object.entries(tenureBuckets).forEach(([label, count]) => {
+                const width = maxCount > 0 ? (count / maxCount * 100).toFixed(1) : 0;
+                barHTML += `
+                    <div class="bar-item">
+                        <div class="bar-label">${label}</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: ${width}%;">
+                                ${count} churned
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('tenureBarChart').innerHTML = barHTML;
+        }
+
+        function applyAccountFilters() {
+            const account = document.getElementById('accountFilterAccount').value;
+            const country = document.getElementById('countryFilterAccount').value;
+            const status = document.getElementById('churnFilterAccount').value;
+
+            filteredAccountData = accountLevelData.filter(d => {
+                if (account && d.Account_ID != account) return false;
+                if (country && d.Country !== country) return false;
+                if (status && !d.Worst_Churn_Status.includes(status)) return false;
+                return true;
+            });
+
+            updateAccountTable();
+        }
+
+        function resetAccountFilters() {
+            document.getElementById('accountFilterAccount').value = '';
+            document.getElementById('countryFilterAccount').value = '';
+            document.getElementById('churnFilterAccount').value = '';
+            filteredAccountData = [...accountLevelData];
+            updateAccountTable();
+        }
+
+        function updateAccountTable() {
+            document.getElementById('accountResultCount').textContent = filteredAccountData.length;
+
+            const tbody = document.getElementById('accountResultsBody');
+            const rows = filteredAccountData.slice(0, 100).map(d => {
+                const status = d.Worst_Churn_Status;
+                let badgeClass = 'badge-healthy';
+                if (status.includes('FULL')) badgeClass = 'badge-full-churn';
+                else if (status.includes('Risk')) badgeClass = 'badge-risk';
+
+                return `
+                    <tr>
+                        <td><strong>${d.Account_ID}</strong></td>
+                        <td>${d.Country}</td>
+                        <td>${d.Location_Count}</td>
+                        <td>${d.Product_Family_Count}</td>
+                        <td>$${(d.Total_Revenue_All_Time / 1000).toFixed(1)}K</td>
+                        <td>$${(d.Total_Revenue_Last_12M / 1000).toFixed(1)}K</td>
+                        <td>${d.Avg_Tenure.toFixed(1)}</td>
+                        <td><span class="status-badge ${badgeClass}">${status}</span></td>
+                        <td>
+                            <span style="color: var(--danger); font-weight: 700;">${d.Churned_Products_Count}</span> /
+                            <span style="color: var(--warning); font-weight: 700;">${d.Risk_Products_Count}</span> /
+                            <span style="color: var(--success); font-weight: 700;">${d.Healthy_Products_Count}</span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            tbody.innerHTML = rows || '<tr><td colspan="9" style="text-align: center; padding: 40px;">No results</td></tr>';
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
