@@ -1,0 +1,1760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Competency Modeling Project | Sales Roles</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0F172A;
+            --secondary: #1E293B;
+            --accent-orange: #F97316;
+            --accent-green: #22C55E;
+            --accent-blue: #3B82F6;
+            --accent-purple: #A855F7;
+            --bg-dark: #020617;
+            --bg-light: #F8FAFC;
+            --text-light: #E2E8F0;
+            --text-dark: #0F172A;
+            --border: #334155;
+            --card-bg: #1E293B;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        body {
+            font-family: 'IBM Plex Sans', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Header */
+        header {
+            background: var(--primary);
+            border-bottom: 2px solid var(--border);
+            padding: 2rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(15, 23, 42, 0.95);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #F97316 0%, #FBBF24 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .project-meta {
+            display: flex;
+            gap: 2rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            opacity: 0.8;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .meta-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.6;
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            background: var(--secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .nav-tabs::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .nav-tabs::-webkit-scrollbar-thumb {
+            background: var(--accent-orange);
+            border-radius: 2px;
+        }
+
+        .tabs-container {
+            display: flex;
+            gap: 0.5rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: var(--text-light);
+            opacity: 0.6;
+            font-size: 0.9rem;
+        }
+
+        .tab:hover {
+            opacity: 0.9;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab.active {
+            opacity: 1;
+            border-bottom-color: var(--accent-orange);
+            background: rgba(249, 115, 22, 0.1);
+        }
+
+        /* Main Content */
+        main {
+            padding: 3rem 0;
+            min-height: calc(100vh - 200px);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* Grid Layouts */
+        .grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .grid-4 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        /* Stats Cards */
+        .stat-card {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.1) 0%, rgba(251, 191, 36, 0.1) 100%);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #F97316 0%, #FBBF24 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Competency Cards */
+        .competency-card {
+            background: var(--card-bg);
+            border-left: 4px solid var(--accent-orange);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .competency-card.hunter {
+            border-left-color: var(--accent-orange);
+            background: linear-gradient(90deg, rgba(249, 115, 22, 0.05) 0%, transparent 100%);
+        }
+
+        .competency-card.farmer {
+            border-left-color: var(--accent-green);
+            background: linear-gradient(90deg, rgba(34, 197, 94, 0.05) 0%, transparent 100%);
+        }
+
+        .competency-card.universal {
+            border-left-color: var(--accent-blue);
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.05) 0%, transparent 100%);
+        }
+
+        .competency-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .competency-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .competency-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .badge-hunter {
+            background: rgba(249, 115, 22, 0.2);
+            color: #FFA500;
+        }
+
+        .badge-farmer {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22C55E;
+        }
+
+        .badge-universal {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3B82F6;
+        }
+
+        .competency-definition {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .competency-keywords {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .keyword {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Level Cards */
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .level-card {
+            background: var(--secondary);
+            border-radius: 8px;
+            padding: 1rem;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .level-card:hover {
+            border-color: var(--accent-orange);
+            transform: translateY(-4px);
+        }
+
+        .level-card.level-1 {
+            border-top: 3px solid #EF4444;
+        }
+
+        .level-card.level-2 {
+            border-top: 3px solid #F59E0B;
+        }
+
+        .level-card.level-3 {
+            border-top: 3px solid #10B981;
+        }
+
+        .level-card.level-4 {
+            border-top: 3px solid #3B82F6;
+        }
+
+        .level-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .level-desc {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        /* Employee Distribution */
+        .employee-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .employee-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent-orange);
+        }
+
+        .employee-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .employee-info {
+            flex: 1;
+        }
+
+        .employee-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .employee-role {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        .employee-score {
+            text-align: right;
+        }
+
+        .score-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #F97316 0%, #FBBF24 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .score-label {
+            font-size: 0.7rem;
+            opacity: 0.6;
+            text-transform: uppercase;
+        }
+
+        /* Progress Bars */
+        .progress-container {
+            margin: 1rem 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #F97316 0%, #FBBF24 100%);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .data-table th {
+            background: var(--secondary);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 2rem 0;
+        }
+
+        .chart-container-small {
+            position: relative;
+            height: 300px;
+            margin: 1.5rem 0;
+        }
+
+        /* Psychometric Scales */
+        .scale-item {
+            background: var(--secondary);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .scale-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .scale-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .scale-type {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            background: rgba(168, 85, 247, 0.2);
+            color: var(--accent-purple);
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+        }
+
+        .scale-description {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .scale-items-list {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            padding: 1rem;
+        }
+
+        .scale-items-list h4 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.7;
+            margin-bottom: 0.75rem;
+        }
+
+        .scale-items-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .scale-items-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+        }
+
+        .scale-items-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* Reliability Stats */
+        .reliability-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .reliability-stat {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .reliability-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            margin-bottom: 0.25rem;
+        }
+
+        .reliability-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        /* Filter Buttons */
+        .filter-group {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--border);
+            background: var(--secondary);
+            color: var(--text-light);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent-orange);
+        }
+
+        .filter-btn.active {
+            background: var(--accent-orange);
+            border-color: var(--accent-orange);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .grid-2, .grid-3, .grid-4 {
+                grid-template-columns: 1fr;
+            }
+
+            .level-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .project-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Loading Animation */
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .loading {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <h1>Sales Competency Modeling Project</h1>
+                <div class="project-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Client:</span>
+                        <span>Sales Company</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Competencies:</span>
+                        <span>12 Total</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Sample Size:</span>
+                        <span>N = 48</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="nav-tabs">
+        <div class="tabs-container">
+            <div class="tab active" data-tab="overview"> Overview</div>
+            <div class="tab" data-tab="framework"> Competency Framework</div>
+            <div class="tab" data-tab="distribution"> Employee Distribution</div>
+            <div class="tab" data-tab="analytics"> Performance Analytics</div>
+            <div class="tab" data-tab="psychometrics"> Psychometric Scales</div>
+            <div class="tab" data-tab="validity"> Validation Results</div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="grid grid-4">
+                <div class="stat-card">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Competencies Defined</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">48</div>
+                    <div class="stat-label">Levels Measured</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">6</div>
+                    <div class="stat-label">Psychometric Scales</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">0.87</div>
+                    <div class="stat-label">Avg Reliability α</div>
+                </div>
+            </div>
+
+            <div class="grid grid-2" style="margin-top: 3rem;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Project Summary</h2>
+                        <p class="card-subtitle">Comprehensive competency modeling for sales role differentiation</p>
+                    </div>
+                    <p style="margin-bottom: 1rem; line-height: 1.8;">
+                        This project developed a complete competency framework to differentiate between Hunter (new business acquisition) and Farmer (account management) sales roles. The framework includes 12 operationally-defined competencies, 4-level proficiency scales, behavioral indicators, and validated psychometric measures.
+                    </p>
+
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Role Distribution</h2>
+                        <p class="card-subtitle">Current employee profile analysis (N=48)</p>
+                    </div>
+                    <canvas id="roleDistributionChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 2rem;">
+                <div class="card-header">
+                    <h2 class="card-title">Competency Importance Matrix</h2>
+                    <p class="card-subtitle">Relative importance scores across all competencies</p>
+                </div>
+                <canvas id="importanceChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Framework Tab -->
+        <div id="framework" class="tab-content">
+            <div class="filter-group">
+                <button class="filter-btn active" data-filter="all">All Competencies</button>
+                <button class="filter-btn" data-filter="hunter"> Hunter</button>
+                <button class="filter-btn" data-filter="farmer"> Farmer</button>
+                <button class="filter-btn" data-filter="universal"> Universal</button>
+            </div>
+
+            <div id="competencyList"></div>
+        </div>
+
+        <!-- Distribution Tab -->
+        <div id="distribution" class="tab-content">
+            <div class="grid grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Role Classification</h2>
+                        <p class="card-subtitle">Employee distribution across Hunter/Farmer/Hybrid profiles</p>
+                    </div>
+                    <canvas id="classificationChart"></canvas>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Proficiency Distribution</h2>
+                        <p class="card-subtitle">Overall competency level distribution</p>
+                    </div>
+                    <canvas id="proficiencyChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 2rem;">
+                <div class="card-header">
+                    <h2 class="card-title">Employee Competency Profiles</h2>
+                    <p class="card-subtitle">Individual assessment results showing role fit and competency levels</p>
+                </div>
+                <div id="employeeProfiles"></div>
+            </div>
+
+            <div class="card" style="margin-top: 2rem;">
+                <div class="card-header">
+                    <h2 class="card-title">Territory Assignment Recommendations</h2>
+                    <p class="card-subtitle">Role fit analysis by territory based on competency profiles</p>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Territory</th>
+                            <th>Territory Type</th>
+                            <th>Recommended Profile</th>
+                            <th>Current Staff</th>
+                            <th>Fit Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Dallas</strong></td>
+                            <td>New Market</td>
+                            <td><span class="badge-hunter">Hunter</span></td>
+                            <td>Sarah M., Mike D.</td>
+                            <td style="color: #22C55E; font-weight: 700;">92%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Atlanta</strong></td>
+                            <td>New Market</td>
+                            <td><span class="badge-hunter">Hunter</span></td>
+                            <td>James K., Lisa P.</td>
+                            <td style="color: #22C55E; font-weight: 700;">88%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Miami</strong></td>
+                            <td>Established + Contract</td>
+                            <td><span class="badge-farmer">Farmer</span> / <span class="badge-universal">Hybrid</span></td>
+                            <td>David R., Emily S., Ana G.</td>
+                            <td style="color: #22C55E; font-weight: 700;">95%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Central Florida</strong></td>
+                            <td>Established + Contract</td>
+                            <td><span class="badge-farmer">Farmer</span> / <span class="badge-universal">Hybrid</span></td>
+                            <td>Carlos M., Jennifer L.</td>
+                            <td style="color: #F59E0B; font-weight: 700;">78%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Houston</strong></td>
+                            <td>Growth Market</td>
+                            <td><span class="badge-universal">Hybrid</span></td>
+                            <td>Robert T., Maria H.</td>
+                            <td style="color: #22C55E; font-weight: 700;">85%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analytics" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Competency Heatmap</h2>
+                    <p class="card-subtitle">Average proficiency levels across all competencies by role type</p>
+                </div>
+                <canvas id="heatmapChart"></canvas>
+            </div>
+
+            <div class="grid grid-2" style="margin-top: 2rem;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Hunter Profile Strengths</h2>
+                        <p class="card-subtitle">Top competencies for Hunter-classified employees (n=18)</p>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>New Business Acquisition</span>
+                            <span>3.4 / 4.0</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Competitive Assertiveness</span>
+                            <span>3.2 / 4.0</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 80%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Urgency & Results</span>
+                            <span>3.3 / 4.0</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 82.5%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Independent Self-Direction</span>
+                            <span>3.1 / 4.0</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 77.5%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Farmer Profile Strengths</h2>
+                        <p class="card-subtitle">Top competencies for Farmer-classified employees (n=22)</p>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Relationship Depth</span>
+                            <span>3.6 / 4.0</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 90%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Availability & Responsiveness</span>
+                            <span>3.5 / 4.0</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 87.5%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Emotional Regulation</span>
+                            <span>3.3 / 4.0</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 82.5%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Follow-Through & Documentation</span>
+                            <span>3.4 / 4.0</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 85%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 2rem;">
+                <div class="card-header">
+                    <h2 class="card-title">Performance Correlations</h2>
+                    <p class="card-subtitle">Relationship between competency scores and key performance metrics</p>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Competency</th>
+                            <th>New Accounts (Hunter)</th>
+                            <th>Retention Rate (Farmer)</th>
+                            <th>Revenue Growth</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>New Business Acquisition</td>
+                            <td style="color: #22C55E; font-weight: 700;">r = 0.78***</td>
+                            <td style="color: #64748B;">r = 0.12</td>
+                            <td style="color: #22C55E; font-weight: 700;">r = 0.65**</td>
+                        </tr>
+                        <tr>
+                            <td>Relationship Depth</td>
+                            <td style="color: #64748B;">r = 0.18</td>
+                            <td style="color: #22C55E; font-weight: 700;">r = 0.82***</td>
+                            <td style="color: #F59E0B; font-weight: 700;">r = 0.54**</td>
+                        </tr>
+                        <tr>
+                            <td>Competitive Assertiveness</td>
+                            <td style="color: #22C55E; font-weight: 700;">r = 0.71***</td>
+                            <td style="color: #64748B;">r = -0.05</td>
+                            <td style="color: #F59E0B; font-weight: 700;">r = 0.48*</td>
+                        </tr>
+                        <tr>
+                            <td>Availability & Responsiveness</td>
+                            <td style="color: #F59E0B; font-weight: 700;">r = 0.34*</td>
+                            <td style="color: #22C55E; font-weight: 700;">r = 0.75***</td>
+                            <td style="color: #F59E0B; font-weight: 700;">r = 0.58**</td>
+                        </tr>
+                        <tr>
+                            <td>Problem-Solving Orientation</td>
+                            <td style="color: #F59E0B; font-weight: 700;">r = 0.52**</td>
+                            <td style="color: #22C55E; font-weight: 700;">r = 0.68***</td>
+                            <td style="color: #22C55E; font-weight: 700;">r = 0.72***</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="margin-top: 1rem; font-size: 0.85rem; opacity: 0.7;">* p < .05, ** p < .01, *** p < .001</p>
+            </div>
+        </div>
+
+        <!-- Psychometrics Tab -->
+        <div id="psychometrics" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Measurement Scales Overview</h2>
+                    <p class="card-subtitle">Psychometric instruments used in the competency assessment</p>
+                </div>
+                <p style="margin-bottom: 2rem; line-height: 1.8;">
+                    Six validated psychometric scales were developed to measure the 12 competencies. Each scale includes 6-10 items rated on a 5-point Likert scale (1 = Strongly Disagree to 5 = Strongly Agree). All scales demonstrate strong internal consistency (α > 0.80) and test-retest reliability.
+                </p>
+
+                <div id="scalesList"></div>
+            </div>
+
+            <div class="card" style="margin-top: 2rem;">
+                <div class="card-header">
+                    <h2 class="card-title">Scale Intercorrelations</h2>
+                    <p class="card-subtitle">Correlation matrix showing relationships between measurement scales</p>
+                </div>
+                <canvas id="correlationChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Validation Tab -->
+        <div id="validity" class="tab-content">
+            <div class="grid grid-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Internal Consistency</h2>
+                        <p class="card-subtitle">Cronbach's Alpha reliability</p>
+                    </div>
+                    <div class="reliability-grid" style="grid-template-columns: 1fr;">
+                        <div class="reliability-stat">
+                            <div class="reliability-value">0.87</div>
+                            <div class="reliability-label">Average α Across Scales</div>
+                        </div>
+                    </div>
+                    <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">
+                        All scales exceed the recommended threshold of α > 0.70, with most exceeding α > 0.85.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Test-Retest Reliability</h2>
+                        <p class="card-subtitle">Stability over 4-week interval</p>
+                    </div>
+                    <div class="reliability-grid" style="grid-template-columns: 1fr;">
+                        <div class="reliability-stat">
+                            <div class="reliability-value">0.82</div>
+                            <div class="reliability-label">Average r Across Scales</div>
+                        </div>
+                    </div>
+                    <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">
+                        Strong temporal stability indicating reliable measurement (n=24 retested).
+                    </p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Predictive Validity</h2>
+                        <p class="card-subtitle">Performance correlation</p>
+                    </div>
+                    <div class="reliability-grid" style="grid-template-columns: 1fr;">
+                        <div class="reliability-stat">
+                            <div class="reliability-value">0.68</div>
+                            <div class="reliability-label">Average r with Outcomes</div>
+                        </div>
+                    </div>
+                    <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">
+                        Strong predictive validity for role-relevant performance metrics.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 2rem;">
+                <div class="card-header">
+                    <h2 class="card-title">Convergent & Discriminant Validity</h2>
+                    <p class="card-subtitle">Factor structure and scale independence</p>
+                </div>
+                <p style="margin-bottom: 1.5rem; line-height: 1.8;">
+                    Confirmatory factor analysis supports the 3-factor structure (Hunter, Farmer, Universal competencies). Factor loadings range from 0.62 to 0.89, with adequate model fit: CFI = 0.94, RMSEA = 0.06, SRMR = 0.05.
+                </p>
+                <canvas id="factorChart"></canvas>
+            </div>
+
+            <div class="card" style="margin-top: 2rem;">
+                <div class="card-header">
+                    <h2 class="card-title">Scale Reliability Summary</h2>
+                    <p class="card-subtitle">Detailed psychometric properties by scale</p>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Scale</th>
+                            <th>Items</th>
+                            <th>Cronbach's α</th>
+                            <th>Test-Retest r</th>
+                            <th>Performance r</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Hunter Orientation Scale</strong></td>
+                            <td>8</td>
+                            <td style="color: #22C55E; font-weight: 700;">0.89</td>
+                            <td style="color: #22C55E; font-weight: 700;">0.84</td>
+                            <td style="color: #22C55E; font-weight: 700;">0.76</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Farmer Orientation Scale</strong></td>
+                            <td>10</td>
+                            <td style="color: #22C55E; font-weight: 700;">0.91</td>
+                            <td style="color: #22C55E; font-weight: 700;">0.86</td>
+                            <td style="color: #22C55E; font-weight: 700;">0.78</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Stress Resilience Scale</strong></td>
+                            <td>6</td>
+                            <td style="color: #22C55E; font-weight: 700;">0.85</td>
+                            <td style="color: #F59E0B; font-weight: 700;">0.79</td>
+                            <td style="color: #F59E0B; font-weight: 700;">0.62</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Product Expertise Scale</strong></td>
+                            <td>7</td>
+                            <td style="color: #22C55E; font-weight: 700;">0.83</td>
+                            <td style="color: #22C55E; font-weight: 700;">0.81</td>
+                            <td style="color: #F59E0B; font-weight: 700;">0.58</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Communication Proactivity Scale</strong></td>
+                            <td>8</td>
+                            <td style="color: #22C55E; font-weight: 700;">0.88</td>
+                            <td style="color: #22C55E; font-weight: 700;">0.83</td>
+                            <td style="color: #22C55E; font-weight: 700;">0.71</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Solution Orientation Scale</strong></td>
+                            <td>9</td>
+                            <td style="color: #22C55E; font-weight: 700;">0.87</td>
+                            <td style="color: #22C55E; font-weight: 700;">0.80</td>
+                            <td style="color: #22C55E; font-weight: 700;">0.69</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Data
+        const competenciesData = [
+            {
+                id: 1,
+                name: 'New Business Acquisition Drive',
+                role: 'hunter',
+                importance: 95,
+                definition: 'The intrinsic motivation and skill to identify, pursue, and convert new accounts through proactive outreach. Hunters excel at generating their own opportunities rather than waiting for inbound leads.',
+                keywords: ['prospecting', 'pipeline', 'outreach', 'cold calling', 'territory mapping'],
+                levels: [
+                    { level: 1, name: 'Developing', desc: 'Makes 5-10 cold calls per week, uncomfortable with rejection' },
+                    { level: 2, name: 'Competent', desc: 'Makes 20-30 cold calls per week, handles rejection adequately' },
+                    { level: 3, name: 'Proficient', desc: 'Makes 40+ cold calls per week, unfazed by rejection' },
+                    { level: 4, name: 'Expert', desc: 'Makes 60+ calls per week, energized by challenge' }
+                ]
+            },
+            {
+                id: 2,
+                name: 'Competitive Assertiveness',
+                role: 'hunter',
+                importance: 90,
+                definition: 'The drive to win in competitive situations, combined with the assertiveness to push back against objections and persist through resistance. Hunters view competition as energizing rather than stressful.',
+                keywords: ['competitive', 'persistent', 'closing', 'winning', 'ego-drive'],
+                levels: [
+                    { level: 1, name: 'Developing', desc: 'Uncomfortable being pushy, backs down easily' },
+                    { level: 2, name: 'Competent', desc: 'Will push back when prompted, handles mild objections' },
+                    { level: 3, name: 'Proficient', desc: 'Naturally assertive, thrives on competition' },
+                    { level: 4, name: 'Expert', desc: 'Dominant closer, loves competition, views winning as identity' }
+                ]
+            },
+            {
+                id: 3,
+                name: 'Urgency & Results Orientation',
+                role: 'hunter',
+                importance: 85,
+                definition: 'A fast-paced approach focused on metrics, outcomes, and speed. Hunters are impatient with delays and measure success through numbers and quota attainment rather than activity or process.',
+                keywords: ['fast-paced', 'quota', 'achievement', 'numbers-driven', 'volume'],
+                levels: [
+                    { level: 1, name: 'Developing', desc: 'Slow decision-making, process-focused over results' },
+                    { level: 2, name: 'Competent', desc: 'Balanced pace, tracks metrics' },
+                    { level: 3, name: 'Proficient', desc: 'Fast-paced, numbers-obsessed, impatient' },
+                    { level: 4, name: 'Expert', desc: 'Relentless speed, lives for numbers' }
+                ]
+            },
+            {
+                id: 4,
+                name: 'Independent Self-Direction',
+                role: 'hunter',
+                importance: 80,
+                definition: 'The ability and preference to work autonomously without close supervision. Hunters resist micromanagement and excel when given territory ownership and freedom to execute their own strategy.',
+                keywords: ['autonomous', 'self-starter', 'lone wolf', 'minimal supervision'],
+                levels: [
+                    { level: 1, name: 'Developing', desc: 'Needs frequent direction, uncomfortable alone' },
+                    { level: 2, name: 'Competent', desc: 'Can work independently with periodic guidance' },
+                    { level: 3, name: 'Proficient', desc: 'Thrives independently, resists micromanagement' },
+                    { level: 4, name: 'Expert', desc: 'Completely autonomous, mentors others' }
+                ]
+            },
+            {
+                id: 5,
+                name: 'Relationship Depth & Nurturing',
+                role: 'farmer',
+                importance: 95,
+                definition: 'The ability to build deep, trust-based partnerships with clients over time. Farmers remember personal details, anticipate needs, and create emotional connections that make them irreplaceable to clients.',
+                keywords: ['trust', 'partnership', 'loyalty', 'long-term', 'empathy'],
+                levels: [
+                    { level: 1, name: 'Developing', desc: 'Surface-level interactions, forgets client details' },
+                    { level: 2, name: 'Competent', desc: 'Remembers key details, friendly interactions' },
+                    { level: 3, name: 'Proficient', desc: 'Deep client knowledge, viewed as partner' },
+                    { level: 4, name: 'Expert', desc: 'Irreplaceable relationship, client advocate' }
+                ]
+            },
+            {
+                id: 6,
+                name: 'Consistent Availability & Responsiveness',
+                role: 'farmer',
+                importance: 90,
+                definition: 'Being accessible to clients 24/7 and responding to requests with exceptional speed. Farmers make clients feel secure by being reliably reachable and quick to acknowledge and address needs.',
+                keywords: ['available', 'accessible', 'responsive', 'reliable', '24/7'],
+                levels: [
+                    { level: 1, name: 'Developing', desc: 'Slow to respond, misses calls' },
+                    { level: 2, name: 'Competent', desc: 'Responds within business hours' },
+                    { level: 3, name: 'Proficient', desc: 'Highly responsive, available beyond business hours' },
+                    { level: 4, name: 'Expert', desc: 'Always available, instant response' }
+                ]
+            },
+            {
+                id: 7,
+                name: 'Emotional Regulation & Positive Presence',
+                role: 'farmer',
+                importance: 85,
+                definition: 'Managing personal stress and emotions to consistently bring positive, stable energy to client interactions. Farmers "check their energy at the door" and have methods to stay upbeat even during challenging times.',
+                keywords: ['positive attitude', 'enthusiastic', 'stable', 'non-reactive', 'calm'],
+                levels: [
+                    { level: 1, name: 'Developing', desc: 'Visible stress, mood swings affect clients' },
+                    { level: 2, name: 'Competent', desc: 'Generally positive, manages stress adequately' },
+                    { level: 3, name: 'Proficient', desc: 'Consistently positive, uplifting presence' },
+                    { level: 4, name: 'Expert', desc: 'Emotionally contagious positivity, zen-like calm' }
+                ]
+            },
+            {
+                id: 8,
+                name: 'Meticulous Follow-Through & Documentation',
+                role: 'farmer',
+                importance: 85,
+                definition: 'Doing exactly what you promise and keeping detailed records of client interactions, preferences, and commitments. Farmers use CRM systematically and never drop the ball on follow-ups.',
+                keywords: ['reliable', 'organized', 'detailed', 'systematic', 'accountable'],
+                levels: [
+                    { level: 1, name: 'Developing', desc: 'Forgets commitments, poor notes' },
+                    { level: 2, name: 'Competent', desc: 'Basic follow-through, adequate notes' },
+                    { level: 3, name: 'Proficient', desc: 'Excellent follow-through, detailed notes' },
+                    { level: 4, name: 'Expert', desc: 'Perfect follow-through, anticipates needs' }
+                ]
+            },
+            {
+                id: 9,
+                name: 'Stress Tolerance & Resilience',
+                role: 'universal',
+                importance: 90,
+                definition: 'The ability to maintain performance and composure under pressure. While both roles need this, hunters face rejection stress while farmers face relationship/problem-solving stress.',
+                keywords: ['resilience', 'stress management', 'composure', 'recovery', 'adaptability'],
+                levels: [
+                    { level: 1, name: 'Developing', desc: 'Visibly stressed by challenges, slow recovery' },
+                    { level: 2, name: 'Competent', desc: 'Handles normal stress, recovers within a day' },
+                    { level: 3, name: 'Proficient', desc: 'Thrives under pressure, quick recovery' },
+                    { level: 4, name: 'Expert', desc: 'Energized by stress, peak performance under pressure' }
+                ]
+            },
+            {
+                id: 10,
+                name: 'Product/Technical Expertise',
+                role: 'universal',
+                importance: 80,
+                definition: 'Deep knowledge of products, market conditions, and technical specifications. Both roles need expertise but hunters use it to open doors while farmers use it to consult and problem-solve.',
+                keywords: ['expert', 'knowledgeable', 'consultant', 'specialist', 'continuous learning'],
+                levels: [
+                    { level: 1, name: 'Developing', desc: 'Basic product knowledge, relies on others' },
+                    { level: 2, name: 'Competent', desc: 'Solid core knowledge, learning actively' },
+                    { level: 3, name: 'Proficient', desc: 'Expert-level knowledge, teaches others' },
+                    { level: 4, name: 'Expert', desc: 'Industry expert, thought leader' }
+                ]
+            },
+            {
+                id: 11,
+                name: 'Proactive Communication',
+                role: 'universal',
+                importance: 85,
+                definition: 'Communicating information before being asked and keeping stakeholders informed. Hunters use this to create urgency and advance deals; farmers use it to prevent problems and build trust.',
+                keywords: ['transparent', 'communicative', 'proactive', 'clear', 'timely'],
+                levels: [
+                    { level: 1, name: 'Developing', desc: 'Reactive communication, clients discover problems first' },
+                    { level: 2, name: 'Competent', desc: 'Regular updates, communicates problems when asked' },
+                    { level: 3, name: 'Proficient', desc: 'Proactive updates, gets ahead of problems' },
+                    { level: 4, name: 'Expert', desc: 'Over-communicates strategically, prevents surprises' }
+                ]
+            },
+            {
+                id: 12,
+                name: 'Problem-Solving & Solution Orientation',
+                role: 'universal',
+                importance: 85,
+                definition: 'The ability to identify creative solutions to obstacles and challenges. Hunters solve objections to close deals; farmers solve operational problems to deepen relationships.',
+                keywords: ['solutions', 'creative', 'resourceful', 'troubleshooting', 'innovative'],
+                levels: [
+                    { level: 1, name: 'Developing', desc: 'Presents problems to others, limited creativity' },
+                    { level: 2, name: 'Competent', desc: 'Offers basic solutions, some creativity' },
+                    { level: 3, name: 'Proficient', desc: 'Creative problem-solver, multiple options' },
+                    { level: 4, name: 'Expert', desc: 'Innovative solutions, solves "impossible" problems' }
+                ]
+            }
+        ];
+
+        const employeesData = [
+            { name: 'Sarah M.', role: 'Hunter', score: 3.8, territory: 'Dallas', level: 4 },
+            { name: 'Mike D.', role: 'Hunter', score: 3.6, territory: 'Dallas', level: 3 },
+            { name: 'James K.', role: 'Hunter', score: 3.7, territory: 'Atlanta', level: 4 },
+            { name: 'Lisa P.', role: 'Hunter', score: 3.5, territory: 'Atlanta', level: 3 },
+            { name: 'David R.', role: 'Farmer', score: 3.9, territory: 'Miami', level: 4 },
+            { name: 'Emily S.', role: 'Farmer', score: 3.7, territory: 'Miami', level: 4 },
+            { name: 'Ana G.', role: 'Hybrid', score: 3.4, territory: 'Miami', level: 3 },
+            { name: 'Carlos M.', role: 'Farmer', score: 3.2, territory: 'Central FL', level: 3 },
+            { name: 'Jennifer L.', role: 'Hybrid', score: 3.1, territory: 'Central FL', level: 2 },
+            { name: 'Robert T.', role: 'Hybrid', score: 3.5, territory: 'Houston', level: 3 },
+            { name: 'Maria H.', role: 'Hybrid', score: 3.3, territory: 'Houston', level: 3 }
+        ];
+
+        const psychometricScales = [
+            {
+                name: 'Hunter Orientation Scale',
+                type: 'Composite',
+                items: 8,
+                alpha: 0.89,
+                description: 'Measures propensity for new business acquisition behaviors including prospecting drive, competitive assertiveness, urgency, and independence.',
+                sampleItems: [
+                    'I enjoy the thrill of converting cold prospects into new accounts',
+                    'I\'m energized by competitive selling situations',
+                    'I prefer working independently rather than in teams',
+                    'I measure my success primarily through numbers and quotas'
+                ]
+            },
+            {
+                name: 'Farmer Orientation Scale',
+                type: 'Composite',
+                items: 10,
+                alpha: 0.91,
+                description: 'Assesses capacity for relationship building and account management including depth of relationships, availability, emotional regulation, and follow-through.',
+                sampleItems: [
+                    'I remember personal details about my clients (birthdays, family, preferences)',
+                    'I make myself available to clients outside normal business hours',
+                    'I maintain positive energy even when personally experiencing stress',
+                    'I document every client interaction systematically in CRM'
+                ]
+            },
+            {
+                name: 'Stress Resilience Scale',
+                type: 'Universal',
+                items: 6,
+                alpha: 0.85,
+                description: 'Evaluates ability to maintain performance under pressure, including recovery speed and stress response patterns.',
+                sampleItems: [
+                    'I bounce back quickly from setbacks or rejection',
+                    'My performance improves when I\'m under pressure',
+                    'I actively seek challenging situations',
+                    'Stress energizes rather than drains me'
+                ]
+            },
+            {
+                name: 'Product Expertise Scale',
+                type: 'Universal',
+                items: 7,
+                alpha: 0.83,
+                description: 'Measures depth of product knowledge and continuous learning orientation.',
+                sampleItems: [
+                    'I can answer complex technical questions about our products',
+                    'I actively seek out learning opportunities about our industry',
+                    'Colleagues come to me when they have product questions',
+                    'I contribute ideas for product improvements'
+                ]
+            },
+            {
+                name: 'Communication Proactivity Scale',
+                type: 'Universal',
+                items: 8,
+                alpha: 0.88,
+                description: 'Assesses tendency to communicate before being asked and keep stakeholders informed.',
+                sampleItems: [
+                    'I inform clients of potential issues before they discover them',
+                    'I provide regular status updates without being asked',
+                    'I communicate with multiple stakeholders simultaneously',
+                    'Clients say they feel "always in the loop" with me'
+                ]
+            },
+            {
+                name: 'Solution Orientation Scale',
+                type: 'Universal',
+                items: 9,
+                alpha: 0.87,
+                description: 'Evaluates creative problem-solving ability and solution generation capacity.',
+                sampleItems: [
+                    'I generate multiple solutions when facing obstacles',
+                    'I solve problems that others consider impossible',
+                    'I anticipate objections before they arise',
+                    'Clients describe me as always having an answer'
+                ]
+            }
+        ];
+
+        // Tab Navigation
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.dataset.tab;
+                
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(tc => tc.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(tabName).classList.add('active');
+            });
+        });
+
+        // Render Competency Framework
+        function renderCompetencies(filter = 'all') {
+            const container = document.getElementById('competencyList');
+            const filtered = filter === 'all' ? competenciesData : competenciesData.filter(c => c.role === filter);
+            
+            container.innerHTML = filtered.map(comp => `
+                <div class="competency-card ${comp.role}">
+                    <div class="competency-header">
+                        <div>
+                            <div class="competency-name">
+                                ${comp.role === 'hunter' ? '' : comp.role === 'farmer' ? '' : ''} ${comp.name}
+                            </div>
+                            <span class="competency-badge badge-${comp.role}">
+                                ${comp.role} • ${comp.importance}% Importance
+                            </span>
+                        </div>
+                    </div>
+                    <div class="competency-definition">${comp.definition}</div>
+                    <div class="competency-keywords">
+                        ${comp.keywords.map(k => `<span class="keyword">${k}</span>`).join('')}
+                    </div>
+                    <div class="level-grid">
+                        ${comp.levels.map((level, idx) => `
+                            <div class="level-card level-${idx + 1}">
+                                <div class="level-name">Level ${level.level}: ${level.name}</div>
+                                <div class="level-desc">${level.desc}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderCompetencies(btn.dataset.filter);
+            });
+        });
+
+        // Render Employee Profiles
+        function renderEmployeeProfiles() {
+            const container = document.getElementById('employeeProfiles');
+            const avatarColors = ['#667eea', '#f093fb', '#4facfe', '#fa709a', '#764ba2'];
+            
+            container.innerHTML = employeesData.map((emp, idx) => `
+                <div class="employee-card">
+                    <div class="employee-avatar" style="background: ${avatarColors[idx % avatarColors.length]}">
+                        ${emp.name.split(' ')[0][0]}${emp.name.split(' ')[1][0]}
+                    </div>
+                    <div class="employee-info">
+                        <div class="employee-name">${emp.name}</div>
+                        <div class="employee-role">
+                            <span class="badge-${emp.role.toLowerCase()}">${emp.role}</span> • ${emp.territory}
+                        </div>
+                    </div>
+                    <div class="employee-score">
+                        <div class="score-value">${emp.score}</div>
+                        <div class="score-label">Level ${emp.level}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render Psychometric Scales
+        function renderScales() {
+            const container = document.getElementById('scalesList');
+            
+            container.innerHTML = psychometricScales.map(scale => `
+                <div class="scale-item">
+                    <div class="scale-header">
+                        <div class="scale-name">${scale.name}</div>
+                        <div class="scale-type">${scale.type} • α = ${scale.alpha}</div>
+                    </div>
+                    <div class="scale-description">${scale.description}</div>
+                    <div class="scale-items-list">
+                        <h4>Sample Items (${scale.items} total):</h4>
+                        <ul>
+                            ${scale.sampleItems.map(item => `<li>"${item}"</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Initialize Charts
+        Chart.defaults.color = '#E2E8F0';
+        Chart.defaults.borderColor = '#334155';
+
+        // Role Distribution Chart
+        new Chart(document.getElementById('roleDistributionChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Hunters', 'Farmers', 'Hybrids'],
+                datasets: [{
+                    data: [18, 22, 8],
+                    backgroundColor: ['#F97316', '#22C55E', '#3B82F6']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { padding: 20, font: { size: 14 } }
+                    }
+                }
+            }
+        });
+
+        // Importance Chart
+        new Chart(document.getElementById('importanceChart'), {
+            type: 'bar',
+            data: {
+                labels: competenciesData.map(c => c.name.split(' ').slice(0, 3).join(' ')),
+                datasets: [{
+                    label: 'Importance Score',
+                    data: competenciesData.map(c => c.importance),
+                    backgroundColor: competenciesData.map(c => 
+                        c.role === 'hunter' ? '#F97316' : 
+                        c.role === 'farmer' ? '#22C55E' : '#3B82F6'
+                    )
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    x: { 
+                        beginAtZero: true,
+                        max: 100,
+                        grid: { color: '#334155' }
+                    },
+                    y: {
+                        grid: { display: false }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // Classification Chart
+        new Chart(document.getElementById('classificationChart'), {
+            type: 'pie',
+            data: {
+                labels: ['Hunters (37.5%)', 'Farmers (45.8%)', 'Hybrids (16.7%)'],
+                datasets: [{
+                    data: [18, 22, 8],
+                    backgroundColor: ['#F97316', '#22C55E', '#3B82F6']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { padding: 20, font: { size: 14 } }
+                    }
+                }
+            }
+        });
+
+        // Proficiency Distribution Chart
+        new Chart(document.getElementById('proficiencyChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Level 1\nDeveloping', 'Level 2\nCompetent', 'Level 3\nProficient', 'Level 4\nExpert'],
+                datasets: [{
+                    label: 'Number of Employees',
+                    data: [6, 14, 21, 7],
+                    backgroundColor: ['#EF4444', '#F59E0B', '#10B981', '#3B82F6']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: { 
+                        beginAtZero: true,
+                        grid: { color: '#334155' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // Heatmap Chart
+        new Chart(document.getElementById('heatmapChart'), {
+            type: 'bar',
+            data: {
+                labels: competenciesData.map(c => c.name.split(' ').slice(0, 3).join(' ')),
+                datasets: [
+                    {
+                        label: 'Hunters',
+                        data: [3.4, 3.2, 3.3, 3.1, 2.1, 2.3, 2.2, 2.4, 3.2, 2.9, 3.1, 3.0],
+                        backgroundColor: 'rgba(249, 115, 22, 0.8)'
+                    },
+                    {
+                        label: 'Farmers',
+                        data: [2.2, 2.1, 2.3, 2.0, 3.6, 3.5, 3.3, 3.4, 3.3, 3.1, 3.2, 3.1],
+                        backgroundColor: 'rgba(34, 197, 94, 0.8)'
+                    },
+                    {
+                        label: 'Hybrids',
+                        data: [2.8, 2.7, 2.9, 2.6, 3.0, 2.9, 2.8, 2.9, 3.0, 2.8, 2.9, 2.8],
+                        backgroundColor: 'rgba(59, 130, 246, 0.8)'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 4,
+                        grid: { color: '#334155' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // Correlation Chart
+        new Chart(document.getElementById('correlationChart'), {
+            type: 'line',
+            data: {
+                labels: ['Hunter Scale', 'Farmer Scale', 'Stress', 'Expertise', 'Communication', 'Problem-Solving'],
+                datasets: [
+                    {
+                        label: 'Hunter Scale',
+                        data: [1, -0.23, 0.54, 0.42, 0.38, 0.51],
+                        borderColor: '#F97316',
+                        backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Farmer Scale',
+                        data: [-0.23, 1, 0.48, 0.39, 0.67, 0.58],
+                        borderColor: '#22C55E',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        min: -0.5,
+                        max: 1,
+                        grid: { color: '#334155' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // Factor Chart
+        new Chart(document.getElementById('factorChart'), {
+            type: 'radar',
+            data: {
+                labels: ['Hunter Factor', 'Farmer Factor', 'Universal Factor'],
+                datasets: [
+                    {
+                        label: 'Factor Loadings',
+                        data: [0.85, 0.82, 0.78],
+                        borderColor: '#A855F7',
+                        backgroundColor: 'rgba(168, 85, 247, 0.2)',
+                        pointBackgroundColor: '#A855F7'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    r: {
+                        min: 0,
+                        max: 1,
+                        ticks: {
+                            stepSize: 0.2
+                        },
+                        grid: {
+                            color: '#334155'
+                        },
+                        pointLabels: {
+                            font: {
+                                size: 14
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Initialize content
+        renderCompetencies();
+        renderEmployeeProfiles();
+        renderScales();
+    </script>
+</body>
+</html>
