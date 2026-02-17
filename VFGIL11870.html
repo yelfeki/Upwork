@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Summary</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f7f4ef;
+  --surface: #ffffff;
+  --border: #ddd8cf;
+  --ink: #1c1a18;
+  --muted: #706a61;
+  --accent: #1d4e6b;
+  --accent-hover: #153a52;
+  --locked-circle: #b0a99f;
+  --correct-bg: #eef6f1;
+  --correct-border: #2d7d52;
+  --correct-text: #1e5c3a;
+  --wrong-bg: #fdf0ee;
+  --wrong-border: #c0442a;
+  --wrong-text: #9a3420;
+  --pill-bg: #e8e2d9;
+  --done-green: #2d7d52;
+  --step-active: #1d4e6b;
+  --step-done: #2d7d52;
+}
+
+html { font-size: 16px; }
+
+body {
+  background: var(--bg);
+  font-family: 'DM Sans', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 40px 16px 80px;
+}
+
+.page { width: 100%; max-width: 700px; }
+
+/* ── Header ── */
+.case-header { margin-bottom: 28px; }
+
+.case-tag {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 2px;
+  margin-bottom: 12px;
+}
+
+.case-name {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 21px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.3;
+  margin-bottom: 6px;
+}
+
+.case-sub { font-size: 13px; color: var(--muted); }
+
+/* ── Progress dots ── */
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--border);
+  flex-shrink: 0;
+  transition: background 0.3s;
+}
+.dot.active { background: var(--accent); }
+.dot.done   { background: var(--done-green); }
+
+.dot-line { flex: 1; height: 1px; background: var(--border); }
+
+.progress-label {
+  font-size: 12px;
+  color: var(--muted);
+  margin-left: 4px;
+  white-space: nowrap;
+}
+
+/* ── Chunk card ── */
+.chunk {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.chunk.locked {
+  opacity: 0.42;
+  pointer-events: none;
+}
+
+.chunk-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chunk-num {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.3s;
+}
+.chunk.locked .chunk-num { background: var(--locked-circle); }
+.chunk.done   .chunk-num { background: var(--done-green); }
+
+.chunk-title {
+  font-family: 'Lora', serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  flex: 1;
+}
+
+.lock-icon { font-size: 14px; color: var(--locked-circle); }
+
+.chunk-body { padding: 24px 24px 0; display: none; }
+.chunk:not(.locked) .chunk-body {
+  display: block;
+  animation: fadeUp 0.3s ease;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Text block ── */
+.text-block p {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--ink);
+  margin-bottom: 16px;
+}
+.text-block p:last-child { margin-bottom: 0; }
+strong { font-weight: 600; }
+
+/* ══════════════════════════════════════════
+   FLOWCHART TIMELINE
+══════════════════════════════════════════ */
+.flowchart {
+  padding: 4px 0 8px;
+}
+
+/* The single visible card */
+.flow-card-wrap {
+  position: relative;
+}
+
+/* Step number badge */
+.flow-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.flow-badge-num {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.flow-badge-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* The card itself */
+.flow-card {
+  background: #f0f5f8;
+  border: 1px solid #b8cfd9;
+  border-left: 4px solid var(--accent);
+  border-radius: 5px;
+  padding: 16px 18px;
+  animation: cardSlide 0.35s ease;
+}
+
+@keyframes cardSlide {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.flow-time {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.flow-text {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 14.5px;
+  line-height: 1.78;
+  color: var(--ink);
+}
+
+/* Progress pip track */
+.flow-pips {
+  display: flex;
+  gap: 5px;
+  margin: 14px 0 16px;
+  flex-wrap: wrap;
+}
+
+.pip {
+  width: 18px; height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+  transition: background 0.3s;
+}
+.pip.done   { background: var(--done-green); }
+.pip.active { background: var(--accent); }
+
+/* Nav row */
+.flow-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0 8px;
+  border-top: 1px solid var(--border);
+}
+
+.flow-counter {
+  font-size: 12px;
+  color: var(--muted);
+}
+.flow-counter span { font-weight: 600; color: var(--ink); }
+
+.flow-arrow-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 9px 18px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: background 0.18s;
+}
+.flow-arrow-btn:hover { background: var(--accent-hover); }
+
+.flow-complete-msg {
+  display: none;
+  font-size: 13px;
+  color: var(--correct-text);
+  font-style: italic;
+}
+.flow-complete-msg.show { display: block; }
+
+/* ── Two-col theory boxes ── */
+.theory-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 0;
+}
+@media (max-width: 540px) { .theory-grid { grid-template-columns: 1fr; } }
+
+.theory-box { border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+
+.theory-box-header {
+  padding: 9px 14px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.theory-box.plaintiff .theory-box-header {
+  background: #e8f0f5;
+  color: var(--accent);
+  border-bottom: 1px solid #c5d8e4;
+}
+.theory-box.defendant .theory-box-header {
+  background: #f3f0ec;
+  color: #6b5c42;
+  border-bottom: 1px solid var(--border);
+}
+
+.theory-box-body {
+  padding: 14px;
+  font-family: 'Lora', serif;
+  font-size: 14.5px;
+  line-height: 1.8;
+  color: var(--ink);
+}
+
+/* ── Question area ── */
+.question-area {
+  padding: 20px 24px 24px;
+  border-top: 1px solid var(--border);
+  margin-top: 24px;
+  background: #faf9f7;
+}
+
+.q-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+.q-text {
+  font-family: 'Lora', serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.55;
+  margin-bottom: 16px;
+}
+
+.options { display: flex; flex-direction: column; gap: 8px; }
+
+.opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px 14px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--ink);
+  text-align: left;
+  line-height: 1.5;
+  width: 100%;
+  transition: border-color 0.15s, background 0.15s;
+}
+.opt:hover:not(:disabled) { border-color: var(--accent); background: #f0f5f8; }
+.opt:disabled { cursor: default; }
+
+.opt-letter {
+  flex-shrink: 0;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--pill-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-top: 1px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.opt.correct-flash { background: var(--correct-bg); border-color: var(--correct-border); }
+.opt.correct-flash .opt-letter { background: var(--correct-border); color: #fff; }
+
+.opt.wrong-flash {
+  background: var(--wrong-bg);
+  border-color: var(--wrong-border);
+  animation: shake 0.35s ease;
+}
+.opt.wrong-flash .opt-letter { background: var(--wrong-border); color: #fff; }
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%      { transform: translateX(-5px); }
+  40%      { transform: translateX(5px); }
+  60%      { transform: translateX(-4px); }
+  80%      { transform: translateX(4px); }
+}
+
+.feedback {
+  display: none;
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 4px;
+  font-size: 13.5px;
+  font-family: 'DM Sans', sans-serif;
+  line-height: 1.6;
+}
+.feedback.show-correct {
+  display: block;
+  background: var(--correct-bg);
+  border: 1px solid #a8d5bb;
+  color: var(--correct-text);
+}
+.feedback.show-wrong {
+  display: block;
+  background: var(--wrong-bg);
+  border: 1px solid #e0a99e;
+  color: var(--wrong-text);
+}
+
+.continue-btn {
+  display: none;
+  margin-top: 16px;
+  width: 100%;
+  padding: 13px 20px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: background 0.18s;
+}
+.continue-btn:hover { background: var(--accent-hover); }
+.continue-btn.show  { display: block; }
+
+.btn-back {
+  padding: 13px 20px;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: background 0.18s, border-color 0.18s;
+  white-space: nowrap;
+}
+.btn-back:hover {
+  background: var(--bg);
+  border-color: var(--muted);
+}
+
+/* ── Completion ── */
+.completion {
+  display: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 40px 32px;
+  text-align: center;
+  animation: fadeUp 0.4s ease;
+}
+.completion.show { display: block; }
+.completion-icon { font-size: 36px; margin-bottom: 14px; }
+.completion h2 {
+  font-family: 'Lora', serif;
+  font-size: 21px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+.completion p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.75;
+  max-width: 420px;
+  margin: 0 auto;
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="case-header">
+    <div class="case-tag">Case Summary · Participant Materials</div>
+    <div class="case-name">Hays v. Advocate Illinois Masonic Medical Center</div>
+    <div class="case-sub">Read each section carefully. You must answer the question correctly before moving on.</div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-row">
+    <div class="dot active" id="dot-0"></div>
+    <div class="dot-line"></div>
+    <div class="dot" id="dot-1"></div>
+    <div class="dot-line"></div>
+    <div class="dot" id="dot-2"></div>
+    <div class="progress-label" id="prog-label">Part 1 of 3</div>
+  </div>
+
+
+  <!-- ══════════════════════════════
+       CHUNK 1 — Case Overview
+  ══════════════════════════════ -->
+  <div class="chunk" id="chunk-0">
+    <div class="chunk-header">
+      <div class="chunk-num">1</div>
+      <div class="chunk-title">Case Overview</div>
+    </div>
+    <div class="chunk-body">
+      <div class="text-block">
+        <p>This medical negligence case involves events on <strong>June 20, 2022</strong>, when <strong>Jacob Hays</strong>, a 28-year-old male with <strong>Type 1 diabetes</strong>, was taken via ambulance to the emergency department at <strong>Advocate Illinois Masonic Medical Center</strong> with suspected <strong>diabetic ketoacidosis (DKA)</strong> — a serious condition related to high blood sugar.</p>
+        <p>After arriving at the hospital, Mr. Hays stopped breathing and then went into <strong>cardiac arrest</strong> (his heart stopped beating). He was resuscitated and later diagnosed with <strong>permanent neurological injuries</strong>.</p>
+        <p>The main question in this case is whether the hospital appropriately prepared for his arrival after being notified by the ambulance, and appropriately assessed and provided care after Mr. Hays arrived — and whether any failures in care caused his injuries.</p>
+      </div>
+
+      <div class="question-area">
+        <div class="q-label">✦ Check Your Understanding</div>
+        <div class="q-text">What is the central question this case asks the jury to decide?</div>
+        <div class="options" id="opts-0">
+          <button class="opt" onclick="tryAnswer(0,this,false)"><span class="opt-letter">A</span>Whether Jacob Hays had properly managed his diabetes in the years before the incident</button>
+          <button class="opt" onclick="tryAnswer(0,this,false)"><span class="opt-letter">B</span>Whether the ambulance crew responded quickly enough to Jacob's home</button>
+          <button class="opt" onclick="tryAnswer(0,this,true)"><span class="opt-letter">C</span>Whether the hospital properly prepared for and cared for Jacob, and whether any failures caused his injuries</button>
+          <button class="opt" onclick="tryAnswer(0,this,false)"><span class="opt-letter">D</span>Whether DKA is a life-threatening condition</button>
+        </div>
+        <div class="feedback" id="fb-0"></div>
+        <div style="display:flex; gap:10px; margin-top:16px;">
+          <button class="continue-btn" id="cont-0" onclick="unlock(1)" style="flex:1; margin:0;">Continue to Part 2 →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════
+       CHUNK 2 — Timeline Flowchart
+  ══════════════════════════════ -->
+  <div class="chunk locked" id="chunk-1">
+    <div class="chunk-header">
+      <div class="chunk-num">2</div>
+      <div class="chunk-title">Undisputed Facts &amp; Timeline</div>
+      <span class="lock-icon">🔒</span>
+    </div>
+    <div class="chunk-body">
+
+      <div class="flowchart">
+
+        <!-- Single card display area -->
+        <div class="flow-badge">
+          <div class="flow-badge-num" id="flow-num">1</div>
+          <div class="flow-badge-label" id="flow-stage-label">Background</div>
+        </div>
+
+        <div id="flow-card-area">
+          <!-- Card injected by JS -->
+        </div>
+
+        <!-- Pip progress track -->
+        <div class="flow-pips" id="flow-pips"></div>
+
+      </div><!-- /flowchart -->
+
+      <!-- Navigation bar -->
+      <div class="flow-nav">
+        <div class="flow-counter">Event <span id="flow-current">1</span> of <span>9</span></div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="flow-complete-msg" id="flow-done-msg">✓ All events reviewed</div>
+          <button class="flow-arrow-btn" id="flow-back-btn" onclick="prevFlowStep()" style="display:none; background:var(--muted);">
+            ← Back
+          </button>
+          <button class="flow-arrow-btn" id="flow-next-btn" onclick="nextFlowStep()">
+            Next →
+          </button>
+        </div>
+      </div>
+
+      <!-- Q2 — hidden until all steps viewed -->
+      <div id="q2-wrapper" style="display:none;">
+        <div class="question-area">
+          <div class="q-label">✦ Check Your Understanding</div>
+          <div class="q-text">According to the timeline, how much time passed between Jacob's arrival at the hospital and when he stopped breathing?</div>
+          <div class="options" id="opts-1">
+            <button class="opt" onclick="tryAnswer(1,this,false)"><span class="opt-letter">A</span>About 30–40 minutes</button>
+            <button class="opt" onclick="tryAnswer(1,this,true)"><span class="opt-letter">B</span>Approximately 10–12 minutes</button>
+            <button class="opt" onclick="tryAnswer(1,this,false)"><span class="opt-letter">C</span>About 2–3 minutes</button>
+            <button class="opt" onclick="tryAnswer(1,this,false)"><span class="opt-letter">D</span>About 1 hour</button>
+          </div>
+          <div class="feedback" id="fb-1"></div>
+          <div style="display:flex; gap:10px; margin-top:16px;">
+            <button class="btn-back" onclick="backToChunk(0)">← Back to Part 1</button>
+            <button class="continue-btn" id="cont-1" onclick="unlock(2)" style="flex:1; margin:0;">Continue to Part 3 →</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════
+       CHUNK 3 — Theories
+  ══════════════════════════════ -->
+  <div class="chunk locked" id="chunk-2">
+    <div class="chunk-header">
+      <div class="chunk-num">3</div>
+      <div class="chunk-title">Each Side's Theory of the Case</div>
+      <span class="lock-icon">🔒</span>
+    </div>
+    <div class="chunk-body">
+      <div class="theory-grid">
+        <div class="theory-box plaintiff">
+          <div class="theory-box-header">Plaintiff's Theory</div>
+          <div class="theory-box-body">
+            The hospital's failure to <strong>prepare for Jacob's arrival</strong>, promptly assess him, <strong>turn Jacob on his side</strong>, assign him a treatment area with proper equipment, and monitor him appropriately directly caused the aspiration, respiratory arrest, cardiac arrest, and resulting catastrophic brain injury. Proper monitoring and immediate aspiration prevention — turning Jacob on his side — would have prevented this outcome.
+          </div>
+        </div>
+        <div class="theory-box defendant">
+          <div class="theory-box-header">Defendant's Theory</div>
+          <div class="theory-box-body">
+            Jacob's underlying <strong>severe metabolic condition from DKA</strong>, worsened by his <strong>3-day delay in seeking care</strong> and history of poor diabetes management, caused his sudden deterioration. The hospital followed all policies and procedures, and while the outcome is tragic, it was <strong>not the result of any breach</strong> of the standard of care.
+          </div>
+        </div>
+      </div>
+
+      <div class="question-area">
+        <div class="q-label">✦ Check Your Understanding</div>
+        <div class="q-text">The two sides in this case disagree about the cause of Jacob's deterioration. What is the core dispute?</div>
+        <div class="options" id="opts-2">
+          <button class="opt" onclick="tryAnswer(2,this,false)"><span class="opt-letter">A</span>Whether Jacob actually had DKA at the time of the incident</button>
+          <button class="opt" onclick="tryAnswer(2,this,false)"><span class="opt-letter">B</span>Whether the paramedics notified the hospital before arriving</button>
+          <button class="opt" onclick="tryAnswer(2,this,true)"><span class="opt-letter">C</span>Whether Jacob's injuries resulted from failures in the hospital's care, or from the severity of his underlying medical condition</button>
+          <button class="opt" onclick="tryAnswer(2,this,false)"><span class="opt-letter">D</span>Whether Jacob had ever been treated for diabetes before this incident</button>
+        </div>
+        <div class="feedback" id="fb-2"></div>
+        <div style="display:flex; gap:10px; margin-top:16px;">
+          <button class="btn-back" onclick="backToChunk(1)">← Back to Part 2</button>
+          <button class="continue-btn" id="cont-2" onclick="showCompletion()" style="flex:1; margin:0;">I have finished reading ✓</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Completion -->
+  <div class="completion" id="completion">
+    <div class="completion-icon">✓</div>
+    <h2>You've reviewed the full case summary.</h2>
+    <p>You may now proceed to the survey questions.</p>
+  </div>
+
+</div>
+
+<script>
+  /* ── Timeline data ── */
+  const steps = [
+    { label: 'Background',              time: 'Background',                    text: 'Jacob has had <strong>Type 1 diabetes since age 15 months</strong>. Type 1 diabetes is a disease where the body cannot produce insulin, requiring daily insulin shots to control blood sugar. Jacob had <strong>never been hospitalized for his diabetes</strong> before this incident.' },
+    { label: 'Days Before',             time: 'June 17–19 — Days Before',      text: 'Jacob experienced illness, nausea, and vomiting for approximately <strong>2–3 days</strong>, which the family attributed to food poisoning.' },
+    { label: '911 Called',              time: '7:31 PM — 911 Called',          text: 'After hours of vomiting, Jacob\'s mother performed a blood glucose test, <strong>suspected signs of DKA</strong>, and called 911.' },
+    { label: 'Paramedics Arrive',       time: '7:39 PM — Paramedics Arrive',   text: 'Paramedics found Jacob <strong>alert and fully oriented</strong> (Glasgow Coma Scale 15/15). Vital signs: abnormal heart rhythm (sinus tachycardia), blood pressure 110/85 (normal), oxygen saturation <strong>100%</strong> (perfect), blood glucose <strong>over 500 mg/dL</strong> (normal is 70–100).' },
+    { label: 'Hospital Notified',       time: '7:48 PM — Hospital Notified',   text: 'Paramedics called the <strong>emergency communications nurse (ECRN)</strong> at Illinois Masonic Medical Center and reported Jacob\'s illness history, diabetic condition, and vital signs.' },
+    { label: 'Arrival at Hospital',     time: '7:54 PM — Arrival at Hospital', text: 'Ambulance arrives at Illinois Masonic. Care is transferred to hospital staff at approximately <strong>8:00 PM</strong>. Jacob\'s mother tells staff she suspects <strong>DKA</strong> and that he has been vomiting.' },
+    { label: 'Placed in Hallway',       time: '~8:00 PM — Placed in Hallway',  text: 'Jacob is placed in the <strong>emergency department hallway</strong> while awaiting room availability. He waits without being placed in a treatment bed or receiving an initial triage assessment.' },
+    { label: 'Deterioration',           time: '~8:08–8:10 PM — Deterioration', text: 'While in the hallway, Jacob becomes <strong>agitated and confused</strong>, then begins vomiting uncontrollably — dark-colored vomit from his mouth and nose. Lying on his back, he <strong>aspirates</strong> (vomit enters his airway). Suction equipment is not immediately available.' },
+    { label: 'Cardiac Arrest',          time: '~8:10–8:21 PM — Cardiac Arrest & Outcome', text: 'Approximately <strong>10–12 minutes after arrival</strong>, Jacob stops breathing and his heart stops. Emergency resuscitation efforts continue until <strong>8:21 PM</strong>. Jacob survives but suffers <strong>permanent brain injury</strong> affecting speech, movement, and swallowing.' },
+  ];
+
+  const TOTAL_STEPS = steps.length;
+  let currentStep = 0;
+
+  function initFlow() {
+    // Build pip track
+    const pips = document.getElementById('flow-pips');
+    pips.innerHTML = '';
+    for (let i = 0; i < TOTAL_STEPS; i++) {
+      const p = document.createElement('div');
+      p.className = 'pip' + (i === 0 ? ' active' : '');
+      p.id = 'pip-' + i;
+      pips.appendChild(p);
+    }
+    renderCard(0);
+  }
+
+  function renderCard(idx) {
+    const s = steps[idx];
+    document.getElementById('flow-num').textContent = idx + 1;
+    document.getElementById('flow-stage-label').textContent = s.label;
+    document.getElementById('flow-current').textContent = idx + 1;
+
+    const area = document.getElementById('flow-card-area');
+    area.innerHTML = `
+      <div class="flow-card">
+        <div class="flow-time">${s.time}</div>
+        <div class="flow-text">${s.text}</div>
+      </div>`;
+  }
+
+  function nextFlowStep() {
+    // Mark current pip done
+    document.getElementById('pip-' + currentStep).className = 'pip done';
+    currentStep++;
+
+    if (currentStep < TOTAL_STEPS) {
+      document.getElementById('pip-' + currentStep).className = 'pip active';
+      renderCard(currentStep);
+
+      // Show back button once we're past step 0
+      if (currentStep > 0) {
+        document.getElementById('flow-back-btn').style.display = 'block';
+      }
+
+      // On last step, change button label
+      if (currentStep === TOTAL_STEPS - 1) {
+        const btn = document.getElementById('flow-next-btn');
+        btn.textContent = 'Done ✓';
+        btn.style.background = 'var(--done-green)';
+      }
+    } else {
+      // All done — hide both nav buttons, show message, reveal question
+      document.getElementById('flow-next-btn').style.display = 'none';
+      document.getElementById('flow-back-btn').style.display = 'none';
+      document.getElementById('flow-done-msg').classList.add('show');
+
+      const qw = document.getElementById('q2-wrapper');
+      qw.style.display = 'block';
+      setTimeout(() => qw.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
+    }
+  }
+
+  function prevFlowStep() {
+    if (currentStep === 0) return;
+
+    // Mark current pip back to neutral
+    document.getElementById('pip-' + currentStep).className = 'pip';
+    currentStep--;
+
+    document.getElementById('pip-' + currentStep).className = 'pip active';
+    renderCard(currentStep);
+
+    // Hide back button if we're back at step 0
+    if (currentStep === 0) {
+      document.getElementById('flow-back-btn').style.display = 'none';
+    }
+
+    // Reset next button to normal if we moved back from last step
+    const btn = document.getElementById('flow-next-btn');
+    btn.textContent = 'Next →';
+    btn.style.background = 'var(--accent)';
+  }
+
+  function backToChunk(chunkIdx) {
+    // Scroll to specified chunk
+    const target = document.getElementById('chunk-' + chunkIdx);
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /* ── Quiz logic ── */
+  const qState = [false, false, false];
+
+  const wrongMsg = [
+    "That\'s not quite right — re-read the overview above and try again.",
+    "Not quite. Look back at the timeline carefully and try again.",
+    "Not quite. Re-read both theories above and try again."
+  ];
+
+  function tryAnswer(idx, btn, isCorrect) {
+    if (qState[idx]) return;
+
+    if (isCorrect) {
+      qState[idx] = true;
+      btn.classList.add('correct-flash');
+      document.querySelectorAll(`#opts-${idx} .opt`).forEach(o => o.disabled = true);
+      const fb = document.getElementById('fb-' + idx);
+      fb.textContent = '✓ Correct! You can continue to the next section.';
+      fb.className = 'feedback show-correct';
+      document.getElementById('cont-' + idx).classList.add('show');
+    } else {
+      btn.classList.add('wrong-flash');
+      setTimeout(() => btn.classList.remove('wrong-flash'), 400);
+      const fb = document.getElementById('fb-' + idx);
+      fb.textContent = '✗ ' + wrongMsg[idx];
+      fb.className = 'feedback show-wrong';
+    }
+  }
+
+  /* ── Chunk unlock ── */
+  function unlock(idx) {
+    document.getElementById('chunk-' + (idx - 1)).classList.add('done');
+
+    const next = document.getElementById('chunk-' + idx);
+    next.classList.remove('locked');
+    const li = next.querySelector('.lock-icon');
+    if (li) li.remove();
+
+    document.getElementById('dot-' + (idx - 1)).classList.remove('active');
+    document.getElementById('dot-' + (idx - 1)).classList.add('done');
+    document.getElementById('dot-' + idx).classList.add('active');
+    document.getElementById('prog-label').textContent = 'Part ' + (idx + 1) + ' of 3';
+
+    if (idx === 1) setTimeout(initFlow, 50);
+
+    setTimeout(() => next.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+  }
+
+  function showCompletion() {
+    document.getElementById('chunk-2').classList.add('done');
+    document.getElementById('dot-2').classList.remove('active');
+    document.getElementById('dot-2').classList.add('done');
+    document.getElementById('prog-label').textContent = 'Complete';
+    const comp = document.getElementById('completion');
+    comp.classList.add('show');
+    setTimeout(() => comp.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+    try { window.parent.postMessage({ type: 'caseSummaryComplete' }, '*'); } catch(e) {}
+  }
+</script>
+</body>
+</html>
