@@ -280,11 +280,12 @@
     stroke-opacity: 0.5;
   }
 
-  .link.highlighted {
+  .link-group.highlighted .link {
     stroke: var(--accent);
     stroke-opacity: 1;
     stroke-width: 2;
   }
+  .link-hit { cursor: pointer; }
 
   .node.dimmed circle { opacity: 0.15; }
   .node.dimmed text { opacity: 0.1; }
@@ -307,6 +308,8 @@
   }
   #tooltip .tt-title { font-weight: 600; margin-bottom: 4px; }
   #tooltip .tt-meta { color: var(--text-dim); font-size: 11px; }
+  #tooltip .tt-link-reason { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-size: 11px; color: var(--accent); }
+  #tooltip .tt-sim { font-weight: 600; color: var(--text); }
 
   /* Filters bar */
   .filters-bar {
@@ -402,7 +405,7 @@
   <div id="graph-wrap">
     <svg id="graph"></svg>
     <div id="tooltip"></div>
-    <div class="graph-hint">Scroll to zoom · Drag to pan · Click node to inspect</div>
+    <div class="graph-hint">Scroll to zoom · Drag to pan · Click node to inspect · Hover link for connection info</div>
   </div>
 </div>
 
@@ -1263,18 +1266,27 @@ function updateGraph() {
 
   // Build simulation
   simulation = d3.forceSimulation(filtered)
-    .force("link", d3.forceLink(links).id(d => d.id).distance(40).strength(0.2))
-    .force("charge", d3.forceManyBody().strength(-60))
+    .force("link", d3.forceLink(links).id(d => d.id).distance(95).strength(0.12))
+    .force("charge", d3.forceManyBody().strength(-140))
     .force("center", d3.forceCenter(wrap.clientWidth / 2, wrap.clientHeight / 2))
-    .force("collision", d3.forceCollide(9))
+    .force("collision", d3.forceCollide(14))
     .force("cluster", clusterForce(filtered));
 
-  linkSel = linkGroup.selectAll("line")
+  linkSel = linkGroup.selectAll("g.link-group")
     .data(links)
-    .join("line")
+    .join("g")
+    .attr("class", "link-group")
+    .on("mouseover", (e, d) => showLinkTooltip(e, d))
+    .on("mousemove", (e) => moveTooltip(e))
+    .on("mouseout", hideTooltip);
+  linkSel.selectAll("line").data(d => [d]).join("line")
     .attr("class", "link")
     .attr("stroke-width", 0.6)
     .attr("stroke-opacity", searchActive ? 0.08 : 0.25);
+  linkSel.append("line")
+    .attr("class", "link-hit")
+    .attr("stroke", "transparent")
+    .attr("stroke-width", 12);
 
   nodeSel = nodeGroup.selectAll("g.node")
     .data(filtered, d => d.id)
@@ -1300,11 +1312,11 @@ function updateGraph() {
     .attr("stroke-opacity", d => searchActive && !matchedIds.has(d.id) ? 0.1 : 0.9);
 
   simulation.on("tick", () => {
-    linkSel
-      .attr("x1", d => d.source.x)
-      .attr("y1", d => d.source.y)
-      .attr("x2", d => d.target.x)
-      .attr("y2", d => d.target.y);
+    linkSel.selectAll("line")
+      .attr("x1", function() { const l = d3.select(this.parentNode).datum(); const s = l.source; return (s.x != null ? s.x : 0); })
+      .attr("y1", function() { const l = d3.select(this.parentNode).datum(); const s = l.source; return (s.y != null ? s.y : 0); })
+      .attr("x2", function() { const l = d3.select(this.parentNode).datum(); const t = l.target; return (t.x != null ? t.x : 0); })
+      .attr("y2", function() { const l = d3.select(this.parentNode).datum(); const t = l.target; return (t.y != null ? t.y : 0); });
 
     nodeSel.attr("transform", d => `translate(${d.x},${d.y})`);
   });
@@ -1320,15 +1332,15 @@ function clusterForce(nodes) {
 
   const cx = wrap.clientWidth / 2;
   const cy = wrap.clientHeight / 2;
-  const r = Math.min(cx, cy) * 0.45;
+  const r = Math.min(cx, cy) * 0.55;
 
   return function(alpha) {
     nodes.forEach(n => {
       const angle = topicAngles[n.topic] || 0;
       const tx = cx + r * Math.cos(angle);
       const ty = cy + r * Math.sin(angle);
-      n.vx += (tx - n.x) * alpha * 0.12;
-      n.vy += (ty - n.y) * alpha * 0.12;
+      n.vx += (tx - n.x) * alpha * 0.08;
+      n.vy += (ty - n.y) * alpha * 0.08;
     });
   };
 }
@@ -1345,6 +1357,20 @@ function dragEnd(e, d) {
 
 function showTooltip(e, d) {
   tooltip.innerHTML = `<div class="tt-title">${d.title}</div><div class="tt-meta">${d.topic} · ${d.day === "Thu" ? "Apr 30" : d.day === "Fri" ? "May 1" : "May 2"} · ${d.time}</div>`;
+  tooltip.style.opacity = 1;
+  moveTooltip(e);
+}
+function showLinkTooltip(e, d) {
+  const src = typeof d.source === "object" ? d.source : { title: "Session " + d.source };
+  const tgt = typeof d.target === "object" ? d.target : { title: "Session " + d.target };
+  const sim = (d.sim != null ? (d.sim * 100).toFixed(0) : "—") + "%";
+  const short = (t, max) => (t.length <= max ? t : t.slice(0, max) + "…");
+  tooltip.innerHTML = `
+    <div class="tt-title">${short(src.title, 50)}</div>
+    <div class="tt-meta">↔</div>
+    <div class="tt-title">${short(tgt.title, 50)}</div>
+    <div class="tt-link-reason"><span class="tt-sim">Text similarity: ${sim}</span><br>Connected by similar titles/descriptions (TF-IDF)</div>
+  `;
   tooltip.style.opacity = 1;
   moveTooltip(e);
 }
