@@ -1,0 +1,2091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sales Competency Assessment</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --white: #ffffff;
+    --off-white: #f7f9f5;
+    --green-900: #1a3a1f;
+    --green-800: #1f4a26;
+    --green-700: #2d6a35;
+    --green-600: #3a8a45;
+    --green-500: #4aab57;
+    --green-400: #6bc478;
+    --green-300: #96d9a0;
+    --green-200: #c4ecca;
+    --green-100: #e8f7eb;
+    --green-50: #f3fbf4;
+    --amber: #d97706;
+    --amber-light: #fef3c7;
+    --blue: #1d6fa4;
+    --blue-light: #dbeafe;
+    --red: #b91c1c;
+    --red-light: #fee2e2;
+    --gray-900: #111827;
+    --gray-700: #374151;
+    --gray-500: #6b7280;
+    --gray-300: #d1d5db;
+    --gray-100: #f3f4f6;
+    --border: #e2e8dc;
+    --shadow-sm: 0 1px 3px rgba(26,58,31,0.08);
+    --shadow-md: 0 4px 16px rgba(26,58,31,0.10);
+    --shadow-lg: 0 8px 32px rgba(26,58,31,0.13);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--white);
+    color: var(--gray-900);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── HEADER ── */
+  .app-header {
+    background: var(--green-900);
+    color: #fff;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  }
+  .app-header .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.25rem;
+    letter-spacing: 0.01em;
+    color: var(--green-300);
+  }
+  .app-header .logo span { color: #fff; }
+  .header-badge {
+    background: var(--green-700);
+    color: var(--green-200);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+
+  /* ── SCREEN MANAGEMENT ── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── WELCOME SCREEN ── */
+  .welcome-wrap {
+    max-width: 680px;
+    margin: 64px auto;
+    padding: 0 24px;
+  }
+  .welcome-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--green-600);
+    margin-bottom: 12px;
+  }
+  .welcome-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.6rem;
+    line-height: 1.15;
+    color: var(--green-900);
+    margin-bottom: 20px;
+  }
+  .welcome-desc {
+    color: var(--gray-700);
+    font-size: 1rem;
+    margin-bottom: 36px;
+    line-height: 1.7;
+  }
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .info-card {
+    background: var(--green-50);
+    border: 1px solid var(--green-200);
+    border-radius: 12px;
+    padding: 20px 16px;
+    text-align: center;
+  }
+  .info-card .num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    color: var(--green-700);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .info-card .lbl {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .instructions-box {
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 36px;
+  }
+  .instructions-box h3 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--green-700);
+    margin-bottom: 14px;
+  }
+  .instructions-box ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .instructions-box li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 0.92rem;
+    color: var(--gray-700);
+  }
+  .instructions-box li::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--green-500);
+    border-radius: 50%;
+    margin-top: 8px;
+    flex-shrink: 0;
+  }
+  .btn-primary {
+    background: var(--green-700);
+    color: #fff;
+    border: none;
+    padding: 14px 36px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.18s, transform 0.12s, box-shadow 0.18s;
+    box-shadow: var(--shadow-md);
+    letter-spacing: 0.01em;
+  }
+  .btn-primary:hover { background: var(--green-800); transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-secondary {
+    background: var(--white);
+    color: var(--green-800);
+    border: 1.5px solid var(--green-400);
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .btn-secondary:hover { background: var(--green-50); }
+
+  /* ── BACKGROUND FORM ── */
+  .bg-form-wrap {
+    max-width: 600px;
+    margin: 56px auto;
+    padding: 0 24px;
+  }
+  .section-header {
+    margin-bottom: 32px;
+  }
+  .section-header .eyebrow {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--green-500);
+    margin-bottom: 8px;
+  }
+  .section-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.9rem;
+    color: var(--green-900);
+  }
+  .form-group { margin-bottom: 28px; }
+  .form-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--gray-700);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .radio-option {
+    position: relative;
+  }
+  .radio-option input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .radio-option label {
+    display: block;
+    padding: 9px 18px;
+    border: 1.5px solid var(--gray-300);
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--gray-700);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .radio-option input:checked + label {
+    background: var(--green-700);
+    border-color: var(--green-700);
+    color: #fff;
+  }
+  .radio-option label:hover { border-color: var(--green-400); }
+  .text-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--gray-300);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    color: var(--gray-900);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .text-input:focus { border-color: var(--green-500); }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar-wrap {
+    position: sticky;
+    top: 64px;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 40px;
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .progress-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--gray-500);
+    white-space: nowrap;
+    min-width: 90px;
+  }
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    background: var(--green-100);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green-500), var(--green-700));
+    border-radius: 99px;
+    transition: width 0.3s ease;
+  }
+  .progress-pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--green-700);
+    font-weight: 500;
+    min-width: 36px;
+    text-align: right;
+  }
+
+  /* ── ASSESSMENT LAYOUT ── */
+  .assessment-wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 40px 0 32px;
+  }
+  .section-divider .divider-label {
+    background: var(--green-900);
+    color: var(--green-200);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .section-divider::before, .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── FC QUESTION CARD ── */
+  .q-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.18s;
+  }
+  .q-card:hover { box-shadow: var(--shadow-md); }
+  .q-card.error { border-color: var(--red); background: #fff8f8; }
+  .q-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--green-500);
+    margin-bottom: 16px;
+    letter-spacing: 0.08em;
+  }
+  .fc-pair {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .fc-statement {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: var(--off-white);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    transition: all 0.15s;
+  }
+  .fc-statement.selected-most {
+    background: var(--green-50);
+    border-color: var(--green-400);
+  }
+  .fc-statement.selected-least {
+    background: #fefce8;
+    border-color: #fbbf24;
+  }
+  .fc-letter {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--gray-500);
+    width: 18px;
+    flex-shrink: 0;
+    padding-top: 1px;
+  }
+  .fc-text {
+    font-size: 0.92rem;
+    color: var(--gray-700);
+    line-height: 1.55;
+    flex: 1;
+  }
+  .fc-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .fc-btn {
+    padding: 5px 11px;
+    border-radius: 6px;
+    border: 1.5px solid var(--gray-300);
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: var(--white);
+    transition: all 0.14s;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+  .fc-btn.most { color: var(--green-700); }
+  .fc-btn.most.active {
+    background: var(--green-700);
+    border-color: var(--green-700);
+    color: #fff;
+  }
+  .fc-btn.least { color: #92400e; }
+  .fc-btn.least.active {
+    background: #f59e0b;
+    border-color: #f59e0b;
+    color: #fff;
+  }
+  .fc-btn:hover:not(.active) { border-color: var(--green-400); background: var(--green-50); }
+
+  /* ── SJT CARD ── */
+  .sjt-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .sjt-card.error { border-color: var(--red); }
+  .sjt-scenario-num {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--green-600);
+    margin-bottom: 10px;
+  }
+  .sjt-context {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--gray-900);
+    margin-bottom: 6px;
+    line-height: 1.5;
+  }
+  .sjt-prompt {
+    font-size: 0.9rem;
+    color: var(--gray-500);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+  .sjt-options {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .sjt-option {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .sjt-option-text {
+    font-size: 0.88rem;
+    color: var(--gray-700);
+    line-height: 1.5;
+  }
+  .sjt-option-text strong {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--gray-500);
+    margin-right: 6px;
+  }
+  .rating-scale {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .rating-label {
+    font-size: 0.7rem;
+    color: var(--gray-400);
+    min-width: 80px;
+    font-weight: 500;
+  }
+  .rating-label.right { text-align: right; }
+  .rating-btns {
+    display: flex;
+    gap: 6px;
+  }
+  .rating-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1.5px solid var(--gray-300);
+    background: var(--white);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.13s;
+    color: var(--gray-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .rating-btn:hover { border-color: var(--green-400); background: var(--green-50); color: var(--green-800); }
+  .rating-btn.active {
+    background: var(--green-700);
+    border-color: var(--green-700);
+    color: #fff;
+  }
+
+  /* ── SUBMIT AREA ── */
+  .submit-area {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 28px 0;
+    border-top: 1px solid var(--border);
+    margin-top: 32px;
+  }
+  .error-msg {
+    color: var(--red);
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: none;
+  }
+
+  /* ── RESULTS SCREENS ── */
+  .results-nav {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 0;
+    padding: 0 40px;
+    background: var(--white);
+    position: sticky;
+    top: 64px;
+    z-index: 89;
+  }
+  .results-tab {
+    padding: 14px 24px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--gray-500);
+    cursor: pointer;
+    border-bottom: 2.5px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .results-tab:hover { color: var(--green-700); }
+  .results-tab.active {
+    color: var(--green-800);
+    border-bottom-color: var(--green-600);
+  }
+  .results-panel { display: none; }
+  .results-panel.active { display: block; }
+  .results-body {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* ── SUMMARY VIEW ── */
+  .summary-hero {
+    background: linear-gradient(135deg, var(--green-900) 0%, var(--green-700) 100%);
+    border-radius: 16px;
+    padding: 40px 44px;
+    color: #fff;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  .profile-badge {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    border: 3px solid rgba(255,255,255,0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .profile-badge .ptype {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+    line-height: 1;
+    color: var(--green-200);
+  }
+  .profile-badge .plabel {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.6);
+    margin-top: 3px;
+  }
+  .summary-hero-text h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    margin-bottom: 8px;
+    color: #fff;
+  }
+  .summary-hero-text p {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.6;
+    max-width: 480px;
+  }
+  .score-pair {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+  .score-chip {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 10px;
+    padding: 12px 20px;
+    text-align: center;
+    min-width: 120px;
+  }
+  .score-chip .sc-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--green-200);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .score-chip .sc-lbl {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.6);
+  }
+
+  .strengths-section {
+    background: var(--green-50);
+    border: 1px solid var(--green-200);
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+  }
+  .strengths-section h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem;
+    color: var(--green-900);
+    margin-bottom: 16px;
+  }
+  .competency-pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .competency-pill {
+    padding: 7px 16px;
+    border-radius: 99px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .competency-pill.hunter { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+  .competency-pill.farmer { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+  .competency-pill.universal { background: #fef9c3; color: #854d0e; border: 1px solid #fef08a; }
+  .competency-pill.dev { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+
+  /* ── ADMIN VIEW ── */
+  .admin-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+  .admin-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .admin-card h3 {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    margin-bottom: 16px;
+  }
+  .admin-card.full { grid-column: 1 / -1; }
+
+  /* Composite bars */
+  .composite-row {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .comp-bar-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .comp-bar-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .comp-bar-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--gray-800);
+  }
+  .comp-bar-score {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--gray-500);
+  }
+  .comp-bar-track {
+    height: 8px;
+    background: var(--gray-100);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .comp-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Individual competency table */
+  .comp-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .comp-table thead th {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray-400);
+    padding: 0 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .comp-table thead th:last-child { text-align: right; }
+  .comp-table tbody tr { border-bottom: 1px solid var(--gray-100); }
+  .comp-table tbody tr:last-child { border-bottom: none; }
+  .comp-table tbody td {
+    padding: 10px 8px;
+    font-size: 0.86rem;
+    color: var(--gray-700);
+  }
+  .comp-table tbody td:last-child { text-align: right; }
+  .role-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .role-tag.H { background: #dcfce7; color: #15803d; }
+  .role-tag.F { background: #dbeafe; color: #1d4ed8; }
+  .role-tag.U { background: #fef9c3; color: #854d0e; }
+  .level-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .level-badge.L1 { background: #fee2e2; color: #991b1b; }
+  .level-badge.L2 { background: #fef3c7; color: #92400e; }
+  .level-badge.L3 { background: #dcfce7; color: #166534; }
+  .level-badge.L4 { background: #14532d; color: #bbf7d0; }
+
+  /* SJT breakdown */
+  .sjt-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+    align-items: center;
+  }
+  .sjt-scenario-label {
+    font-size: 0.8rem;
+    color: var(--gray-500);
+    min-width: 80px;
+  }
+  .sjt-mini-bars {
+    flex: 1;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .sjt-mini-bar-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .sjt-mini-bar-lbl { font-size: 0.64rem; color: var(--gray-400); font-weight: 600; }
+  .sjt-mini-track {
+    height: 6px;
+    background: var(--gray-100);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .sjt-mini-fill { height: 100%; border-radius: 99px; }
+
+  /* Flag row */
+  .flag-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+  }
+  .flag-row.warning { background: var(--amber-light); color: #92400e; border: 1px solid #fcd34d; }
+  .flag-row.clear { background: var(--green-50); color: var(--green-900); border: 1px solid var(--green-200); }
+  .flag-row.danger { background: var(--red-light); color: var(--red); border: 1px solid #fca5a5; }
+  .flag-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .flag-dot.warning { background: var(--amber); }
+  .flag-dot.clear { background: var(--green-500); }
+  .flag-dot.danger { background: var(--red); }
+
+  /* Archetype match bar */
+  .archetype-match {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .archetype-card {
+    flex: 1;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+  .archetype-card.hunter { background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 1.5px solid #86efac; }
+  .archetype-card.farmer { background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 1.5px solid #93c5fd; }
+  .archetype-card .arc-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .archetype-card.hunter .arc-title { color: #166534; }
+  .archetype-card.farmer .arc-title { color: #1e40af; }
+  .archetype-card .arc-score {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.2rem;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .archetype-card.hunter .arc-score { color: #15803d; }
+  .archetype-card.farmer .arc-score { color: #1d4ed8; }
+  .archetype-card .arc-label {
+    font-size: 0.72rem;
+    color: var(--gray-500);
+    font-weight: 500;
+  }
+  .arc-match-bar {
+    position: relative;
+    height: 10px;
+    background: #dbeafe;
+    border-radius: 99px;
+    margin: 12px 0;
+    overflow: visible;
+  }
+  .arc-match-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #15803d, #84cc16);
+    border-radius: 99px;
+    transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+  }
+  .arc-match-pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--gray-500);
+    text-align: right;
+    margin-top: 2px;
+  }
+
+  .section-sub-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.15rem;
+    color: var(--green-900);
+    margin-bottom: 16px;
+  }
+
+  .info-note {
+    background: var(--off-white);
+    border-left: 3px solid var(--green-400);
+    padding: 10px 16px;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.82rem;
+    color: var(--gray-600);
+    margin-bottom: 20px;
+  }
+
+  .nav-buttons { display: flex; gap: 12px; align-items: center; }
+
+  canvas { display: block; }
+
+  @media (max-width: 640px) {
+    .admin-grid { grid-template-columns: 1fr; }
+    .archetype-match { flex-direction: column; }
+    .info-grid { grid-template-columns: 1fr 1fr; }
+    .welcome-title { font-size: 2rem; }
+    .summary-hero { flex-direction: column; gap: 24px; }
+    .progress-bar-wrap { padding: 12px 20px; }
+    .results-body { padding: 28px 16px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="logo"><span>Sales</span> Competency Assessment</div>
+  <div class="header-badge">Mr. Greens</div>
+</header>
+
+<!-- ═══════════════════════════════ SCREEN: WELCOME ═══════════════════════════════ -->
+<div id="screen-welcome" class="screen active">
+  <div class="welcome-wrap">
+    <div class="welcome-eyebrow">Psychometric Assessment Tool</div>
+    <h1 class="welcome-title">Sales Role Competency Assessment</h1>
+    <p class="welcome-desc">
+      This assessment measures your natural behavioral tendencies across key sales competencies to help identify the role context where you are most likely to thrive. There are no right or wrong answers.
+    </p>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="num">25–30</div>
+        <div class="lbl">Minutes</div>
+      </div>
+      <div class="info-card">
+        <div class="num">70</div>
+        <div class="lbl">Questions</div>
+      </div>
+      <div class="info-card">
+        <div class="num">3</div>
+        <div class="lbl">Sections</div>
+      </div>
+    </div>
+
+    <div class="instructions-box">
+      <h3>Before You Begin</h3>
+      <ul>
+        <li>Each behavioral item has two statements. Mark the one that is MOST like you and the one that is LEAST like you.</li>
+        <li>You must choose both Most and Least for every item — you cannot skip either, and cannot mark the same statement for both.</li>
+        <li>Go with your first instinct. Base answers on how you actually behave, not how you think you should.</li>
+        <li>The situational section asks you to independently rate how likely you are to respond each way — rate all options in each scenario.</li>
+        <li>Complete the assessment in a single sitting for best results.</li>
+      </ul>
+    </div>
+
+    <button class="btn-primary" onclick="startAssessment()">Begin Assessment</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SCREEN: BACKGROUND ═══════════════════════════════ -->
+<div id="screen-background" class="screen">
+  <div class="bg-form-wrap">
+    <div class="section-header">
+      <div class="eyebrow">Section 1 of 3</div>
+      <h2>Background Information</h2>
+    </div>
+
+    <div class="form-group">
+      <label>Current Role</label>
+      <div class="radio-group">
+        <div class="radio-option"><input type="radio" name="bg_role" id="role1" value="Sales Representative"><label for="role1">Sales Representative</label></div>
+        <div class="radio-option"><input type="radio" name="bg_role" id="role2" value="Account Manager"><label for="role2">Account Manager</label></div>
+        <div class="radio-option"><input type="radio" name="bg_role" id="role3" value="Territory Manager"><label for="role3">Territory Manager</label></div>
+        <div class="radio-option"><input type="radio" name="bg_role" id="role4" value="Other"><label for="role4">Other</label></div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Current Territory / Location</label>
+      <input type="text" class="text-input" id="bg_territory" placeholder="e.g. Miami, Central Florida">
+    </div>
+
+    <div class="form-group">
+      <label>Years with Mr. Greens</label>
+      <div class="radio-group">
+        <div class="radio-option"><input type="radio" name="bg_tenure" id="t1" value="<1 year"><label for="t1">Less than 1 year</label></div>
+        <div class="radio-option"><input type="radio" name="bg_tenure" id="t2" value="1-2 years"><label for="t2">1–2 years</label></div>
+        <div class="radio-option"><input type="radio" name="bg_tenure" id="t3" value="3-5 years"><label for="t3">3–5 years</label></div>
+        <div class="radio-option"><input type="radio" name="bg_tenure" id="t4" value="5+ years"><label for="t4">5+ years</label></div>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn-primary" onclick="startFC()">Continue to Behavioral Section</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SCREEN: FC ASSESSMENT ═══════════════════════════════ -->
+<div id="screen-fc" class="screen">
+  <div class="progress-bar-wrap">
+    <div class="progress-label" id="progress-label">Question 1/40</div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="progress-pct" id="progress-pct">0%</div>
+  </div>
+  <div class="assessment-wrap">
+    <div class="section-header" style="margin-bottom:8px">
+      <div class="eyebrow">Section 2 of 3</div>
+      <h2 style="font-family:'DM Serif Display',serif;font-size:1.7rem;color:var(--green-900)">Behavioral Assessment</h2>
+    </div>
+    <p style="color:var(--gray-500);font-size:0.88rem;margin-bottom:28px">For each item below, mark the statement that is MOST like you and the statement that is LEAST like you. Both must be marked before proceeding.</p>
+    <div id="fc-questions-container"></div>
+    <div class="submit-area">
+      <button class="btn-primary" onclick="submitFC()">Continue to Situational Section</button>
+      <span class="error-msg" id="fc-error">Please complete all items before continuing.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SCREEN: SJT ═══════════════════════════════ -->
+<div id="screen-sjt" class="screen">
+  <div class="progress-bar-wrap">
+    <div class="progress-label">Section 3/3</div>
+    <div class="progress-track"><div class="progress-fill" style="width:75%"></div></div>
+    <div class="progress-pct">75%</div>
+  </div>
+  <div class="assessment-wrap">
+    <div class="section-header" style="margin-bottom:8px">
+      <div class="eyebrow">Section 3 of 3</div>
+      <h2 style="font-family:'DM Serif Display',serif;font-size:1.7rem;color:var(--green-900)">Situational Judgment</h2>
+    </div>
+    <p style="color:var(--gray-500);font-size:0.88rem;margin-bottom:28px">Rate each response option independently on a scale of 1 (Very Unlikely) to 5 (Very Likely). You must rate all options in every scenario.</p>
+    <div id="sjt-container"></div>
+    <div class="submit-area">
+      <button class="btn-primary" onclick="submitSJT()">View My Results</button>
+      <span class="error-msg" id="sjt-error">Please rate all options in every scenario before submitting.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SCREEN: RESULTS ═══════════════════════════════ -->
+<div id="screen-results" class="screen">
+  <div class="results-nav">
+    <div class="results-tab active" onclick="switchTab('summary')">Your Results</div>
+    <div class="results-tab" onclick="switchTab('admin')">Admin View</div>
+  </div>
+
+  <div id="panel-summary" class="results-panel active">
+    <div class="results-body">
+      <div id="summary-content"></div>
+    </div>
+  </div>
+
+  <div id="panel-admin" class="results-panel">
+    <div class="results-body">
+      <div id="admin-content"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// DATA: FC QUESTIONS
+// ══════════════════════════════════════════════
+const FC_QUESTIONS = [
+  { id:1,  a:{text:"I actively seek out people or organizations who have never worked with me before.",comp:"NBAD",role:"H"}, b:{text:"I invest time getting to know the personal and professional goals of the people I work with regularly.",comp:"RDN",role:"F"} },
+  { id:2,  a:{text:"I pursue new accounts even when my existing business keeps me fully occupied.",comp:"NBAD",role:"H"}, b:{text:"I proactively reach out to existing clients to share relevant information before they have to ask.",comp:"AR",role:"F"} },
+  { id:3,  a:{text:"Starting something from scratch energizes me more than maintaining something already in place.",comp:"NBAD",role:"H"}, b:{text:"I remember details about the people I work with — milestones, preferences, past conversations — and reference them.",comp:"RDN",role:"F"} },
+  { id:4,  a:{text:"When someone pushes back on my position, I hold my ground and make my case rather than backing down.",comp:"CA",role:"H"}, b:{text:"I keep my tone steady and constructive even when a conversation becomes tense or frustrating.",comp:"ERPP",role:"F"} },
+  { id:5,  a:{text:"I target accounts that are currently served by someone else and work to displace them.",comp:"CA",role:"H"}, b:{text:"I maintain a calm, professional presence with clients even when they raise complaints or put me under pressure.",comp:"ERPP",role:"F"} },
+  { id:6,  a:{text:"Competing directly against others pushes me to perform at a higher level.",comp:"CA",role:"H"}, b:{text:"I am conscious of how my emotional state affects those around me and actively adjust it in professional settings.",comp:"ERPP",role:"F"} },
+  { id:7,  a:{text:"I move quickly and decisively rather than deliberating longer than the situation requires.",comp:"URO",role:"H"}, b:{text:"I follow through on every commitment I make, even the small ones that no one is tracking.",comp:"MFT",role:"F"} },
+  { id:8,  a:{text:"I create a sense of urgency in prospect conversations to accelerate their decision timeline.",comp:"URO",role:"H"}, b:{text:"I log every client interaction and agreed next step before moving on to my next task.",comp:"MFT",role:"F"} },
+  { id:9,  a:{text:"I measure my own success primarily by hitting specific, numeric targets within a set timeframe.",comp:"URO",role:"H"}, b:{text:"I would rather do fewer things with complete reliability than take on more and risk dropping something.",comp:"MFT",role:"F"} },
+  { id:10, a:{text:"I work best when I set my own priorities and execute on them without frequent direction from others.",comp:"ISD",role:"H"}, b:{text:"The people who depend on me know they can reach me when something urgent comes up.",comp:"AR",role:"F"} },
+  { id:11, a:{text:"I develop my own account or territory strategy rather than waiting for my manager to define it.",comp:"ISD",role:"H"}, b:{text:"I respond to messages from clients or colleagues as quickly as possible, even during busy periods.",comp:"AR",role:"F"} },
+  { id:12, a:{text:"I am comfortable navigating ambiguity and creating my own structure when none is provided.",comp:"ISD",role:"H"}, b:{text:"I check in with the people who rely on me regularly, even when nothing urgent is happening.",comp:"AR",role:"F"} },
+  { id:13, a:{text:"I establish rapport and credibility with someone I have never met within the first conversation.",comp:"RBH",role:"U"}, b:{text:"I invest in relationships deliberately so that when a difficult moment arrives, the trust is already there.",comp:"RDN",role:"F"} },
+  { id:14, a:{text:"I regularly expand my network by reaching out to people I have not previously connected with.",comp:"RBH",role:"U"}, b:{text:"I anticipate what the people I work with will need before they express it.",comp:"RDN",role:"F"} },
+  { id:15, a:{text:"I am comfortable making first contact with prospective clients and opening conversations from scratch.",comp:"RBH",role:"U"}, b:{text:"I maintain detailed records of commitments, conversations, and open tasks so nothing slips through.",comp:"MFT",role:"F"} },
+  { id:16, a:{text:"Meeting new people and expanding who I know energizes me more than deepening a small number of relationships.",comp:"RBH",role:"U"}, b:{text:"I follow up on every promise I make to a client, whether or not anyone is monitoring it.",comp:"MFT",role:"F"} },
+  { id:17, a:{text:"I initiate contact with organizations that have no existing relationship with our company.",comp:"NBAD",role:"H"}, b:{text:"I treat every unreturned message or missed check-in as an opportunity to rebuild availability with a client.",comp:"AR",role:"F"} },
+  { id:18, a:{text:"Identifying and converting a new opportunity gives me more satisfaction than growing an existing one.",comp:"NBAD",role:"H"}, b:{text:"Being consistently accessible is one of the most important things I can offer to the people who depend on me.",comp:"AR",role:"F"} },
+  { id:19, a:{text:"I persist in pushing for a decision or commitment even after the other person has resisted more than once.",comp:"CA",role:"H"}, b:{text:"I keep track of personal and professional details about my long-term clients and use them to strengthen our relationship.",comp:"RDN",role:"F"} },
+  { id:20, a:{text:"When I negotiate, I advocate strongly for the outcome I want rather than defaulting to compromise.",comp:"CA",role:"H"}, b:{text:"I reach out to people I work with on a consistent basis, not just when I have something specific to ask.",comp:"RDN",role:"F"} },
+  { id:21, a:{text:"I track my progress against goals at least weekly and adjust my pace when I am behind.",comp:"URO",role:"H"}, b:{text:"I make myself available to clients outside standard hours when the situation genuinely calls for it.",comp:"AR",role:"F"} },
+  { id:22, a:{text:"I prefer a fast-paced environment where success is measured in concrete, numeric outcomes.",comp:"URO",role:"H"}, b:{text:"I respond to client and colleague messages within a short, predictable window so they know what to expect.",comp:"AR",role:"F"} },
+  { id:23, a:{text:"I perform at my best when given a goal and the full autonomy to determine how to reach it.",comp:"ISD",role:"H"}, b:{text:"I consciously work to be a stabilizing, calming presence — especially when situations become stressful.",comp:"ERPP",role:"F"} },
+  { id:24, a:{text:"I generate my own opportunities and do not rely on a structured process to tell me where to focus.",comp:"ISD",role:"H"}, b:{text:"After a difficult interaction, I reset quickly and maintain a professional, positive presence for what comes next.",comp:"ERPP",role:"F"} },
+  { id:25, a:{text:"I am motivated by displacing competitors and convincing clients to switch.",comp:"CA",role:"H"}, b:{text:"I document the outcome and agreed next steps from every client meeting before it fades from memory.",comp:"MFT",role:"F"} },
+  { id:26, a:{text:"I find that healthy competition sharpens my focus and raises the quality of my work.",comp:"CA",role:"H"}, b:{text:"I prioritize completing commitments fully and on time over taking on new ones prematurely.",comp:"MFT",role:"F"} },
+  { id:27, a:{text:"Rejection or a lost deal motivates me to pursue the next opportunity rather than dwell on the setback.",comp:"NBAD",role:"H"}, b:{text:"I stay visibly upbeat and professional even during a difficult patch — my team or clients would not know I am under pressure.",comp:"ERPP",role:"F"} },
+  { id:28, a:{text:"I am drawn to building new pipelines and territories more than optimizing established ones.",comp:"NBAD",role:"H"}, b:{text:"I adjust my communication style during tense situations to reduce friction rather than escalate it.",comp:"ERPP",role:"F"} },
+  { id:29, a:{text:"I am comfortable trading some precision for speed when momentum matters more than perfection.",comp:"URO",role:"H"}, b:{text:"I build relationships with a long-term view — I invest more than the immediate situation requires.",comp:"RDN",role:"F"} },
+  { id:30, a:{text:"I use deadlines and time pressure as tools to keep myself and others moving forward.",comp:"URO",role:"H"}, b:{text:"Clients I have worked with for a long time would describe me as someone who genuinely knows them.",comp:"RDN",role:"F"} },
+  { id:31, a:{text:"I trust my own instincts and judgment more than formal systems or prescribed procedures.",comp:"ISD",role:"H"}, b:{text:"I keep a running list of open commitments and review it regularly to make sure nothing is overdue.",comp:"MFT",role:"F"} },
+  { id:32, a:{text:"I am energized by working independently and find heavy oversight or rigid structure limiting.",comp:"ISD",role:"H"}, b:{text:"I treat the accuracy and completeness of my records as a professional standard, not an administrative burden.",comp:"MFT",role:"F"} },
+  { id:33, a:{text:"I break the ice easily with new contacts and make them comfortable within the first few minutes.",comp:"RBH",role:"U"}, b:{text:"I manage my emotional reactions deliberately so they do not affect the quality of my work or interactions.",comp:"ERPP",role:"F"} },
+  { id:34, a:{text:"I am willing to approach someone I have never met and open a business conversation without a warm introduction.",comp:"RBH",role:"U"}, b:{text:"I maintain a reliable, positive presence with colleagues and clients regardless of how my day is going.",comp:"ERPP",role:"F"} },
+  { id:35, a:{text:"I recover quickly after a setback and return to full performance without a prolonged adjustment period.",comp:"STR",role:"U"}, b:{text:"I follow up with new contacts within 24 hours of meeting them to keep the conversation alive.",comp:"RBH",role:"U"} },
+  { id:36, a:{text:"I invest time deepening my knowledge of what I represent so I can answer technical questions confidently.",comp:"PTE",role:"U"}, b:{text:"I am available and responsive to the people who depend on me, even outside of standard working hours.",comp:"AR",role:"F"} },
+  { id:37, a:{text:"I share updates with stakeholders proactively — before they have to ask — even when nothing is urgent.",comp:"PC",role:"U"}, b:{text:"I prioritize speed and momentum in my work over waiting until every detail is finalized.",comp:"URO",role:"H"} },
+  { id:38, a:{text:"When I encounter an obstacle, I work through it independently before asking for help.",comp:"PSSO",role:"U"}, b:{text:"I complete tasks and close open loops before taking on new ones.",comp:"MFT",role:"F"} },
+  { id:39, a:{text:"I stay organized and effective even when my workload spikes or becomes unpredictable.",comp:"STR",role:"U"}, b:{text:"I bring a calm and steady energy to my team or clients, particularly when pressure is high.",comp:"ERPP",role:"F"} },
+  { id:40, a:{text:"I notify the people affected by a problem or change before they discover it on their own.",comp:"PC",role:"U"}, b:{text:"I maintain ongoing contact with the people I work with so the relationship does not only activate around transactions.",comp:"RDN",role:"F"} },
+];
+
+// ══════════════════════════════════════════════
+// DATA: SJT SCENARIOS
+// ══════════════════════════════════════════════
+const SJT_SCENARIOS = [
+  {
+    id:1, competencies:"New Business Acquisition Drive / Relationship Depth & Nurturing",
+    context:"You have just been assigned a new region with 40 contacts — some with prior history, some entirely new. Your calendar for the next two weeks is open.",
+    prompt:"Rate how likely you would be to respond each way:",
+    options:[
+      {key:"A", text:"I focus first on contacts with no prior history — those represent the biggest growth opportunities.", style:"H", eff:2},
+      {key:"B", text:"I start with contacts who already have a relationship with us — rebuilding those connections creates a foundation before approaching anyone new.", style:"F", eff:2},
+      {key:"C", text:"I review the full list, segment by potential value, and build a balanced plan covering both new and warm contacts.", style:"X", eff:2},
+      {key:"D", text:"I wait until I have more context about the region before reaching out to anyone.", style:"AV", eff:0},
+    ]
+  },
+  {
+    id:2, competencies:"Competitive Assertiveness / Emotional Regulation & Positive Presence",
+    context:"You are in a meeting where a stakeholder pushes back hard on your recommendation. They are visibly frustrated and begin challenging your credibility in front of others.",
+    prompt:"Rate how likely you would be to respond each way:",
+    options:[
+      {key:"A", text:"I hold my position and continue making my case — I do not concede just because someone challenges me publicly.", style:"H", eff:1},
+      {key:"B", text:"I acknowledge their concern, validate what is reasonable in their pushback, and redirect toward a shared outcome.", style:"F", eff:2},
+      {key:"C", text:"I suggest taking a brief break and continuing one-on-one to lower the temperature first.", style:"X", eff:2},
+      {key:"D", text:"I soften my position to reduce tension and plan to revisit it later.", style:"AV", eff:0},
+    ]
+  },
+  {
+    id:3, competencies:"Urgency & Results Orientation / Meticulous Follow-Through",
+    context:"Nearing the end of a high-pressure deadline period. Critical deliverables are done but several smaller commitments remain open. You are out of time.",
+    prompt:"Rate how likely you would be to respond each way:",
+    options:[
+      {key:"A", text:"I prioritize what moves the most important outcomes forward and accept that smaller items will have to wait or be dropped.", style:"H", eff:1},
+      {key:"B", text:"I restructure my schedule to make sure every commitment I made gets fulfilled, regardless of size.", style:"F", eff:1},
+      {key:"C", text:"I contact the people expecting smaller deliverables, acknowledge the delay, give a realistic new timeline, and honor it.", style:"X", eff:2},
+      {key:"D", text:"I complete what feels manageable and hope the rest goes unnoticed.", style:"AV", eff:0},
+    ]
+  },
+  {
+    id:4, competencies:"Independent Self-Direction / Availability & Responsiveness",
+    context:"Your manager is unreachable for two weeks. A situation arises that normally requires their sign-off — not urgent enough to interrupt their leave, but waiting will cause meaningful delays.",
+    prompt:"Rate how likely you would be to respond each way:",
+    options:[
+      {key:"A", text:"I make the call myself — I have enough context to move this forward without approval.", style:"H", eff:1},
+      {key:"B", text:"I reach out to colleagues or adjacent stakeholders and work with them collectively to find a path forward.", style:"F", eff:2},
+      {key:"C", text:"I document my recommended course of action, send a brief note to my manager flagging it, and proceed unless they push back.", style:"X", eff:2},
+      {key:"D", text:"I wait for my manager to return rather than risk acting outside my authority.", style:"AV", eff:0},
+    ]
+  },
+  {
+    id:5, competencies:"Urgency & Results Orientation / Relationship Depth & Nurturing",
+    context:"A colleague you have worked with closely for two years is going through a difficult personal situation. Their work quality has slipped and a shared project is at risk of missing its deadline.",
+    prompt:"Rate how likely you would be to respond each way:",
+    options:[
+      {key:"A", text:"I address the project risk directly — I have a deadline to protect and need an honest conversation about getting back on track.", style:"H", eff:1},
+      {key:"B", text:"I check in on them personally first — I want to understand what they need before I say anything about the project.", style:"F", eff:2},
+      {key:"C", text:"I offer to absorb more of the project temporarily to relieve their load while making clear we need a sustainable plan soon.", style:"X", eff:2},
+      {key:"D", text:"I absorb all the extra work myself and say nothing to avoid an uncomfortable conversation.", style:"AV", eff:0},
+    ]
+  },
+  {
+    id:6, competencies:"Relationship Building / Meticulous Follow-Through",
+    context:"You meet six new people at a professional event who express genuine interest in what you do. You have their contact details. The following week you are extremely busy.",
+    prompt:"Rate how likely you would be to respond each way:",
+    options:[
+      {key:"A", text:"I send brief, personalized follow-up messages to all six within the week — I do not let warm contacts go cold.", style:"H", eff:2},
+      {key:"B", text:"I prioritize two or three who seemed most promising and send them thoughtful follow-ups — I do not over-promise what I can maintain.", style:"F", eff:2},
+      {key:"C", text:"I set a reminder and follow up when my schedule opens — better late than not at all.", style:"X", eff:1},
+      {key:"D", text:"I intend to follow up but the week overtakes me and I do not get to it.", style:"AV", eff:0},
+    ]
+  },
+  {
+    id:7, competencies:"Proactive Communication / Independent Self-Direction",
+    context:"Early in a project you discover a key assumption the team made at the start is incorrect. Fixing it now means rework and delay. Staying quiet might work — or might create a larger problem later.",
+    prompt:"Rate how likely you would be to respond each way:",
+    options:[
+      {key:"A", text:"I flag it immediately to the relevant people — even though it means owning a difficult conversation about the delay.", style:"F", eff:2},
+      {key:"B", text:"I assess the risk myself and make a judgment call on whether it is worth raising based on likely severity.", style:"H", eff:1},
+      {key:"C", text:"I document the issue, propose a solution, and present both together — here is the problem, here is what I recommend.", style:"X", eff:2},
+      {key:"D", text:"I continue as planned and raise it only if the problem materializes.", style:"AV", eff:0},
+    ]
+  },
+  {
+    id:8, competencies:"Competitive Assertiveness / Emotional Regulation",
+    context:"A colleague consistently takes credit for joint work in front of leadership. You have noticed it several times.",
+    prompt:"Rate how likely you would be to respond each way:",
+    options:[
+      {key:"A", text:"I address it directly with the colleague — privately and professionally — and make clear I expect the pattern to stop.", style:"H", eff:2},
+      {key:"B", text:"I ensure my contributions are visible without direct confrontation — I make sure the right people have context.", style:"F", eff:1},
+      {key:"C", text:"I raise it with my manager as a team dynamic issue, not a personal complaint.", style:"X", eff:2},
+      {key:"D", text:"I let it go to avoid conflict, even though it frustrates me.", style:"AV", eff:0},
+    ]
+  },
+  {
+    id:9, competencies:"Stress Tolerance & Resilience / Availability & Responsiveness",
+    context:"End of an exhausting week — two crises handled, no lunch three days running, unread messages still waiting. A colleague sends a non-urgent but genuine request for your input.",
+    prompt:"Rate how likely you would be to respond each way:",
+    options:[
+      {key:"A", text:"I respond briefly now — even a short reply keeps things moving and the person does not feel ignored.", style:"F", eff:1},
+      {key:"B", text:"I send a quick note letting them know I will get to it early next week — and actually do it.", style:"H", eff:2},
+      {key:"C", text:"If it takes under five minutes I respond now; if not, I defer with a specific date and honor it.", style:"X", eff:2},
+      {key:"D", text:"I see it, feel guilty, and neither respond nor formally defer.", style:"AV", eff:0},
+    ]
+  },
+  {
+    id:10, competencies:"Problem-Solving & Solution Orientation / Relationship Depth",
+    context:"A person you work with regularly comes to you visibly stressed about a problem outside your direct area. They are not formally asking for help — they seem to need to talk. You have a meeting in 20 minutes.",
+    prompt:"Rate how likely you would be to respond each way:",
+    options:[
+      {key:"A", text:"I listen briefly, ask what would be most helpful, and either help practically or connect them with someone who can.", style:"F", eff:2},
+      {key:"B", text:"I acknowledge what they are going through but gently redirect — I have limited time and limited scope on this problem.", style:"H", eff:1},
+      {key:"C", text:"I sit with them for the full 20 minutes, let them talk, and reschedule my meeting.", style:"X", eff:1},
+      {key:"D", text:"I tell them I cannot help right now and go to my meeting.", style:"AV", eff:0},
+    ]
+  },
+];
+
+// ══════════════════════════════════════════════
+// IMPORTANCE WEIGHTS (from framework)
+// ══════════════════════════════════════════════
+const IMPORTANCE = {
+  // Hunter-specific
+  NBAD: 0.95, CA: 0.90, URO: 0.85, ISD: 0.80,
+  // Farmer-specific
+  RDN: 0.95, AR: 0.90, ERPP: 0.85, MFT: 0.85,
+  // Universal — Hunter importance
+  STR_H: 0.90, PTE_H: 0.80, PC_H: 0.85, PSSO_H: 0.85, RBH_H: 0.85,
+  // Universal — Farmer importance
+  STR_F: 0.90, PTE_F: 0.80, PC_F: 0.85, PSSO_F: 0.85, RBH_F: 0.85,
+};
+
+const COMP_META = {
+  NBAD: {name:"New Business Acquisition Drive", role:"H"},
+  CA:   {name:"Competitive Assertiveness", role:"H"},
+  URO:  {name:"Urgency & Results Orientation", role:"H"},
+  ISD:  {name:"Independent Self-Direction", role:"H"},
+  RDN:  {name:"Relationship Depth & Nurturing", role:"F"},
+  AR:   {name:"Availability & Responsiveness", role:"F"},
+  ERPP: {name:"Emotional Regulation & Positive Presence", role:"F"},
+  MFT:  {name:"Meticulous Follow-Through", role:"F"},
+  STR:  {name:"Stress Tolerance & Resilience", role:"U"},
+  PTE:  {name:"Product & Technical Expertise", role:"U"},
+  PC:   {name:"Proactive Communication", role:"U"},
+  PSSO: {name:"Problem-Solving & Solution Orientation", role:"U"},
+  RBH:  {name:"Relationship Building", role:"U"},
+};
+
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+let fcAnswers = {}; // {qid: {most: 'A'|'B', least: 'A'|'B'}}
+let sjtAnswers = {}; // {scenId: {A:n, B:n, C:n, D:n}}
+let bgData = {};
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function startAssessment() { showScreen('screen-background'); }
+
+function startFC() {
+  bgData = {
+    role: (document.querySelector('input[name="bg_role"]:checked') || {}).value || 'Not specified',
+    territory: document.getElementById('bg_territory').value || 'Not specified',
+    tenure: (document.querySelector('input[name="bg_tenure"]:checked') || {}).value || 'Not specified',
+  };
+  renderFC();
+  showScreen('screen-fc');
+  updateProgress();
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.results-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.results-panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`.results-tab[onclick="switchTab('${tab}')"]`).classList.add('active');
+  document.getElementById(`panel-${tab}`).classList.add('active');
+  if (tab === 'admin') renderAdminCharts();
+}
+
+// ══════════════════════════════════════════════
+// RENDER FC QUESTIONS
+// ══════════════════════════════════════════════
+function renderFC() {
+  const container = document.getElementById('fc-questions-container');
+  container.innerHTML = '';
+
+  FC_QUESTIONS.forEach((q, idx) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.id = `qcard-${q.id}`;
+    card.innerHTML = `
+      <div class="q-num">QUESTION ${q.id} / 40</div>
+      <div class="fc-pair">
+        <div class="fc-statement" id="stmt-${q.id}-A">
+          <div class="fc-letter">A</div>
+          <div class="fc-text">${q.a.text}</div>
+          <div class="fc-buttons">
+            <button class="fc-btn most" onclick="selectFC(${q.id},'A','most')">Most</button>
+            <button class="fc-btn least" onclick="selectFC(${q.id},'A','least')">Least</button>
+          </div>
+        </div>
+        <div class="fc-statement" id="stmt-${q.id}-B">
+          <div class="fc-letter">B</div>
+          <div class="fc-text">${q.b.text}</div>
+          <div class="fc-buttons">
+            <button class="fc-btn most" onclick="selectFC(${q.id},'B','most')">Most</button>
+            <button class="fc-btn least" onclick="selectFC(${q.id},'B','least')">Least</button>
+          </div>
+        </div>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+function selectFC(qid, stmt, type) {
+  if (!fcAnswers[qid]) fcAnswers[qid] = {};
+  const other = stmt === 'A' ? 'B' : 'A';
+  const otherType = type === 'most' ? 'least' : 'most';
+
+  // Can't mark same statement for both
+  if (fcAnswers[qid][otherType] === stmt) {
+    fcAnswers[qid][otherType] = other;
+  }
+  fcAnswers[qid][type] = stmt;
+
+  updateFCCard(qid);
+  updateProgress();
+}
+
+function updateFCCard(qid) {
+  const ans = fcAnswers[qid] || {};
+  const card = document.getElementById(`qcard-${qid}`);
+  if (!card) return;
+
+  ['A','B'].forEach(s => {
+    const stmt = document.getElementById(`stmt-${qid}-${s}`);
+    stmt.classList.remove('selected-most','selected-least');
+    if (ans.most === s) stmt.classList.add('selected-most');
+    if (ans.least === s) stmt.classList.add('selected-least');
+  });
+
+  // Update buttons
+  const q = FC_QUESTIONS.find(q => q.id === qid);
+  ['A','B'].forEach(s => {
+    const stmt = document.getElementById(`stmt-${qid}-${s}`);
+    const btns = stmt.querySelectorAll('.fc-btn');
+    btns[0].classList.toggle('active', ans.most === s);
+    btns[1].classList.toggle('active', ans.least === s);
+  });
+
+  card.classList.remove('error');
+}
+
+function updateProgress() {
+  const answered = Object.values(fcAnswers).filter(a => a.most && a.least).length;
+  const total = FC_QUESTIONS.length;
+  const pct = Math.round((answered / total) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-label').textContent = `${answered} / ${total} answered`;
+}
+
+function submitFC() {
+  const incomplete = FC_QUESTIONS.filter(q => {
+    const a = fcAnswers[q.id];
+    return !a || !a.most || !a.least;
+  });
+
+  if (incomplete.length > 0) {
+    incomplete.forEach(q => {
+      const card = document.getElementById(`qcard-${q.id}`);
+      if (card) card.classList.add('error');
+    });
+    document.getElementById('fc-error').style.display = 'block';
+    const first = document.getElementById(`qcard-${incomplete[0].id}`);
+    if (first) first.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+
+  document.getElementById('fc-error').style.display = 'none';
+  renderSJT();
+  showScreen('screen-sjt');
+}
+
+// ══════════════════════════════════════════════
+// RENDER SJT
+// ══════════════════════════════════════════════
+function renderSJT() {
+  const container = document.getElementById('sjt-container');
+  container.innerHTML = '';
+
+  SJT_SCENARIOS.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'sjt-card';
+    card.id = `sjt-card-${s.id}`;
+
+    let optionsHTML = s.options.map(opt => `
+      <div class="sjt-option">
+        <div class="sjt-option-text"><strong>${opt.key}.</strong>${opt.text}</div>
+        <div class="rating-scale">
+          <div class="rating-label">Very Unlikely</div>
+          <div class="rating-btns">
+            ${[1,2,3,4,5].map(n => `<button class="rating-btn" id="sjt-${s.id}-${opt.key}-${n}" onclick="rateSJT(${s.id},'${opt.key}',${n})">${n}</button>`).join('')}
+          </div>
+          <div class="rating-label right">Very Likely</div>
+        </div>
+      </div>`).join('');
+
+    card.innerHTML = `
+      <div class="sjt-scenario-num">SCENARIO ${s.id} / 10</div>
+      <div class="sjt-context">${s.context}</div>
+      <div class="sjt-prompt">${s.prompt}</div>
+      <div class="sjt-options">${optionsHTML}</div>`;
+    container.appendChild(card);
+  });
+}
+
+function rateSJT(scenId, optKey, rating) {
+  if (!sjtAnswers[scenId]) sjtAnswers[scenId] = {};
+  sjtAnswers[scenId][optKey] = rating;
+
+  // Update button states
+  for (let r = 1; r <= 5; r++) {
+    const btn = document.getElementById(`sjt-${scenId}-${optKey}-${r}`);
+    if (btn) btn.classList.toggle('active', r === rating);
+  }
+  document.getElementById(`sjt-card-${scenId}`) && document.getElementById(`sjt-card-${scenId}`).classList.remove('error');
+}
+
+function submitSJT() {
+  const incomplete = SJT_SCENARIOS.filter(s => {
+    const a = sjtAnswers[s.id] || {};
+    return s.options.some(opt => !a[opt.key]);
+  });
+
+  if (incomplete.length > 0) {
+    incomplete.forEach(s => {
+      const card = document.getElementById(`sjt-card-${s.id}`);
+      if (card) card.classList.add('error');
+    });
+    document.getElementById('sjt-error').style.display = 'block';
+    const first = document.getElementById(`sjt-card-${incomplete[0].id}`);
+    if (first) first.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+
+  document.getElementById('sjt-error').style.display = 'none';
+  const scores = computeScores();
+  renderResults(scores);
+  showScreen('screen-results');
+}
+
+// ══════════════════════════════════════════════
+// SCORING ENGINE
+// ══════════════════════════════════════════════
+function computeScores() {
+  // ── Step 1: FC raw scores per statement
+  const compRaw = {}; // {COMP: [scores]}
+  FC_QUESTIONS.forEach(q => {
+    const ans = fcAnswers[q.id] || {};
+    const scoreA = ans.most === 'A' ? 2 : (ans.least === 'A' ? 0 : 1);
+    const scoreB = ans.most === 'B' ? 2 : (ans.least === 'B' ? 0 : 1);
+
+    if (!compRaw[q.a.comp]) compRaw[q.a.comp] = [];
+    if (!compRaw[q.b.comp]) compRaw[q.b.comp] = [];
+    compRaw[q.a.comp].push(scoreA);
+    compRaw[q.b.comp].push(scoreB);
+  });
+
+  // ── Step 2: Mean score per competency (0.0 – 2.0)
+  const compMean = {};
+  Object.keys(compRaw).forEach(c => {
+    const arr = compRaw[c];
+    compMean[c] = arr.reduce((a,b) => a+b, 0) / arr.length;
+  });
+
+  // ── Step 3: SJT scores
+  let hStyleRaw = 0, fStyleRaw = 0, avTotal = 0, avCount = 0;
+  let effNumerator = 0, effDenominator = 0;
+
+  SJT_SCENARIOS.forEach(s => {
+    const a = sjtAnswers[s.id] || {};
+    s.options.forEach(opt => {
+      const rating = a[opt.key] || 0;
+      if (opt.style === 'H') hStyleRaw += rating;
+      if (opt.style === 'F') fStyleRaw += rating;
+      if (opt.style === 'AV') { avTotal += rating; avCount++; }
+      effNumerator += rating * opt.eff;
+      effDenominator += 5 * 2; // max rating × max eff
+    });
+  });
+
+  const hStyleNorm = (hStyleRaw / 50) * 10;   // 0–10
+  const fStyleNorm = (fStyleRaw / 50) * 10;   // 0–10
+  const effIndex = effNumerator / effDenominator; // 0–1
+  const avMean = avCount > 0 ? avTotal / avCount : 0;
+
+  // ── Step 4: SJT contribution to composites
+  // Map SJT style to a 0-2 equivalent contribution (normalized)
+  const sjtHContrib = (hStyleNorm / 10) * 2;   // 0–2
+  const sjtFContrib = (fStyleNorm / 10) * 2;   // 0–2
+
+  // ── Step 5: Weighted composites including Universal
+  // Hunter composite: Hunter comps + Universal (Hunter weights)
+  const hunterTerms = [
+    { score: compMean['NBAD'] || 0, w: IMPORTANCE.NBAD },
+    { score: compMean['CA']   || 0, w: IMPORTANCE.CA },
+    { score: compMean['URO']  || 0, w: IMPORTANCE.URO },
+    { score: compMean['ISD']  || 0, w: IMPORTANCE.ISD },
+    // Universal (Hunter weights)
+    { score: compMean['STR']  || 0, w: IMPORTANCE.STR_H },
+    { score: compMean['PTE']  || 0, w: IMPORTANCE.PTE_H },
+    { score: compMean['PC']   || 0, w: IMPORTANCE.PC_H },
+    { score: compMean['PSSO'] || 0, w: IMPORTANCE.PSSO_H },
+    { score: compMean['RBH']  || 0, w: IMPORTANCE.RBH_H },
+    // SJT Hunter contribution (weighted moderate)
+    { score: sjtHContrib, w: 0.80 },
+  ];
+
+  const farmerTerms = [
+    { score: compMean['RDN']  || 0, w: IMPORTANCE.RDN },
+    { score: compMean['AR']   || 0, w: IMPORTANCE.AR },
+    { score: compMean['ERPP'] || 0, w: IMPORTANCE.ERPP },
+    { score: compMean['MFT']  || 0, w: IMPORTANCE.MFT },
+    // Universal (Farmer weights)
+    { score: compMean['STR']  || 0, w: IMPORTANCE.STR_F },
+    { score: compMean['PTE']  || 0, w: IMPORTANCE.PTE_F },
+    { score: compMean['PC']   || 0, w: IMPORTANCE.PC_F },
+    { score: compMean['PSSO'] || 0, w: IMPORTANCE.PSSO_F },
+    { score: compMean['RBH']  || 0, w: IMPORTANCE.RBH_F },
+    // SJT Farmer contribution
+    { score: sjtFContrib, w: 0.80 },
+  ];
+
+  function weightedMean(terms) {
+    const num = terms.reduce((s, t) => s + t.score * t.w, 0);
+    const den = terms.reduce((s, t) => s + t.w, 0);
+    return num / den;
+  }
+
+  const hunterComposite = weightedMean(hunterTerms);
+  const farmerComposite = weightedMean(farmerTerms);
+
+  // ── Step 6: Profile classification
+  const diff = Math.abs(hunterComposite - farmerComposite);
+  let profile;
+  if (hunterComposite < 0.85 || farmerComposite < 0.85) {
+    profile = 'DEVELOPING';
+  } else if (hunterComposite >= 1.45 && farmerComposite < 1.20) {
+    profile = 'HUNTER';
+  } else if (farmerComposite >= 1.45 && hunterComposite < 1.20) {
+    profile = 'FARMER';
+  } else if (diff <= 0.30 && hunterComposite >= 1.20 && farmerComposite >= 1.20) {
+    profile = 'HYBRID';
+  } else if (hunterComposite > farmerComposite) {
+    profile = 'HUNTER-LEANING';
+  } else {
+    profile = 'FARMER-LEANING';
+  }
+
+  // ── Step 7: SJT cross-validation flags
+  const flags = [];
+  if (profile === 'HUNTER' || profile === 'HUNTER-LEANING') {
+    if (hStyleNorm < 6.5) flags.push({type:'warning', msg:'FC profile is Hunter-oriented but SJT Hunter style index is below threshold ('+hStyleNorm.toFixed(1)+'/10). Behavioral pattern may not be confirmed by judgment style.'});
+    if (fStyleNorm >= 6.5) flags.push({type:'warning', msg:'SJT Farmer style score ('+fStyleNorm.toFixed(1)+'/10) is high despite Hunter FC profile. May perform well in account management contexts.'});
+  }
+  if (profile === 'FARMER' || profile === 'FARMER-LEANING') {
+    if (fStyleNorm < 6.5) flags.push({type:'warning', msg:'FC profile is Farmer-oriented but SJT Farmer style index is below threshold ('+fStyleNorm.toFixed(1)+'/10).'});
+    if (hStyleNorm >= 6.5) flags.push({type:'warning', msg:'SJT Hunter style score ('+hStyleNorm.toFixed(1)+'/10) is elevated despite Farmer FC profile.'});
+  }
+  if (profile === 'HYBRID') {
+    if (Math.abs(hStyleNorm - fStyleNorm) > 1.5) flags.push({type:'warning', msg:'Hybrid FC profile but SJT shows style asymmetry (H:'+hStyleNorm.toFixed(1)+' vs F:'+fStyleNorm.toFixed(1)+'). Candidate may favor one mode in practice.'});
+  }
+  if (avMean >= 3.5) flags.push({type:'danger', msg:'Avoidance mean rating is '+avMean.toFixed(1)+'/5.0 — systematic avoidance pattern detected. Review developmental readiness.'});
+  if (flags.length === 0) flags.push({type:'clear', msg:'No cross-validation flags. FC profile is consistent with SJT response style and effectiveness.'});
+
+  // ── Step 8: Proficiency levels per competency
+  function profLevel(score) {
+    if (score < 0.80) return {level:1, label:'Developing', cls:'L1'};
+    if (score < 1.25) return {level:2, label:'Competent', cls:'L2'};
+    if (score < 1.70) return {level:3, label:'Proficient', cls:'L3'};
+    return {level:4, label:'Expert', cls:'L4'};
+  }
+
+  const compDetails = {};
+  Object.keys(COMP_META).forEach(c => {
+    const mean = compMean[c] || 0;
+    compDetails[c] = {
+      ...COMP_META[c],
+      mean,
+      proficiency: profLevel(mean),
+      pct: (mean / 2) * 100,
+    };
+  });
+
+  return {
+    compMean, compDetails, profile,
+    hunterComposite, farmerComposite,
+    hStyleNorm, fStyleNorm, effIndex, avMean,
+    sjtHContrib, sjtFContrib,
+    flags, bgData,
+  };
+}
+
+// ══════════════════════════════════════════════
+// RENDER RESULTS
+// ══════════════════════════════════════════════
+const PROFILE_COPY = {
+  HUNTER: {
+    icon: 'H',
+    title: 'Hunter Profile',
+    desc: 'You are strongly oriented toward new business acquisition. Your natural drive is to identify, pursue, and convert new accounts. You thrive in autonomous, competitive environments where success is measured in numbers and momentum.',
+  },
+  FARMER: {
+    icon: 'F',
+    title: 'Farmer Profile',
+    desc: 'You are strongly oriented toward account management and relationship deepening. You build lasting partnerships through consistency, reliability, and emotional attunement. Clients you work with long-term feel genuinely known and supported.',
+  },
+  HYBRID: {
+    icon: 'HF',
+    title: 'Hybrid Profile',
+    desc: 'You demonstrate strong capabilities in both new business acquisition and account management. You can flexibly shift between prospecting mode and relationship-building mode, making you well-suited for transitional markets or blended roles.',
+  },
+  'HUNTER-LEANING': {
+    icon: 'H+',
+    title: 'Hunter-Leaning Profile',
+    desc: 'Your orientation leans toward new business development with meaningful account management capability. You can perform well in either context but are most energized and effective in acquisition-driven roles.',
+  },
+  'FARMER-LEANING': {
+    icon: 'F+',
+    title: 'Farmer-Leaning Profile',
+    desc: 'Your orientation leans toward account management with meaningful new business capability. You are most effective in sustained relationship contexts while retaining the ability to acquire new accounts when required.',
+  },
+  DEVELOPING: {
+    icon: 'D',
+    title: 'Developing Profile',
+    desc: 'Your profile indicates meaningful development areas across key competencies. Targeted coaching, role clarity, and structured learning will accelerate your readiness for full independent deployment in either sales context.',
+  },
+};
+
+let adminChartsRendered = false;
+let scores = null;
+
+function renderResults(s) {
+  scores = s;
+  renderSummaryView(s);
+  adminChartsRendered = false;
+}
+
+function renderSummaryView(s) {
+  const pc = PROFILE_COPY[s.profile] || PROFILE_COPY['HYBRID'];
+  const hunterPct = Math.round((s.hunterComposite / 2) * 100);
+  const farmerPct = Math.round((s.farmerComposite / 2) * 100);
+
+  const sortedComps = Object.entries(s.compDetails).sort((a,b) => b[1].mean - a[1].mean);
+  const top3 = sortedComps.slice(0, 3);
+  const dev3 = sortedComps.slice(-3);
+  const roleClass = { H:'hunter', F:'farmer', U:'universal' };
+
+  const top3HTML = top3.map(([c,d]) =>
+    `<span class="competency-pill ${roleClass[d.role] || 'universal'}">${d.name}</span>`).join('');
+
+  const dev3HTML = dev3.filter(([c,d]) => d.proficiency.level <= 2).map(([c,d]) =>
+    `<span class="competency-pill dev">${d.name}</span>`).join('');
+
+  document.getElementById('summary-content').innerHTML = `
+    <div class="summary-hero">
+      <div class="profile-badge">
+        <div class="ptype">${pc.icon}</div>
+        <div class="plabel">Profile</div>
+      </div>
+      <div class="summary-hero-text">
+        <h2>${pc.title}</h2>
+        <p>${pc.desc}</p>
+        <div class="score-pair">
+          <div class="score-chip">
+            <div class="sc-val">${hunterPct}%</div>
+            <div class="sc-lbl">Hunter Match</div>
+          </div>
+          <div class="score-chip">
+            <div class="sc-val">${farmerPct}%</div>
+            <div class="sc-lbl">Farmer Match</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="strengths-section">
+      <h3>Your Top Strengths</h3>
+      <div class="competency-pill-row">${top3HTML}</div>
+    </div>
+
+    ${dev3HTML ? `<div class="strengths-section" style="background:#fff8f8;border-color:#fecaca">
+      <h3 style="color:#991b1b">Development Areas</h3>
+      <div class="competency-pill-row">${dev3HTML}</div>
+    </div>` : ''}
+
+    <div class="admin-card" style="margin-top:24px">
+      <h3>Situational Style</h3>
+      <div style="display:flex;gap:24px;margin-top:4px;flex-wrap:wrap">
+        <div>
+          <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);margin-bottom:4px">Hunter Style</div>
+          <div style="font-family:'DM Mono',monospace;font-size:1.4rem;color:#15803d">${s.hStyleNorm.toFixed(1)}<span style="font-size:0.8rem;color:var(--gray-400)">/10</span></div>
+        </div>
+        <div>
+          <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);margin-bottom:4px">Farmer Style</div>
+          <div style="font-family:'DM Mono',monospace;font-size:1.4rem;color:#1d4ed8">${s.fStyleNorm.toFixed(1)}<span style="font-size:0.8rem;color:var(--gray-400)">/10</span></div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderAdminCharts() {
+  if (adminChartsRendered) return;
+  adminChartsRendered = true;
+
+  const s = scores;
+  const hunterPct = Math.round((s.hunterComposite / 2) * 100);
+  const farmerPct = Math.round((s.farmerComposite / 2) * 100);
+
+  const flagsHTML = s.flags.map(f =>
+    `<div class="flag-row ${f.type}"><div class="flag-dot ${f.type}"></div>${f.msg}</div>`
+  ).join('');
+
+  const roleClass = { H:'hunter', F:'farmer', U:'universal' };
+
+  const compTableRows = Object.entries(s.compDetails).map(([c,d]) => {
+    const barColor = d.role === 'H' ? '#4aab57' : d.role === 'F' ? '#3b82f6' : '#f59e0b';
+    return `<tr>
+      <td><strong>${d.name}</strong></td>
+      <td><span class="role-tag ${d.role}">${d.role === 'H' ? 'Hunter' : d.role === 'F' ? 'Farmer' : 'Universal'}</span></td>
+      <td>
+        <div class="comp-bar-track" style="width:120px">
+          <div class="comp-bar-fill" style="width:${d.pct}%;background:${barColor}"></div>
+        </div>
+      </td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.8rem">${d.mean.toFixed(2)}</td>
+      <td><span class="level-badge ${d.proficiency.cls}">${d.proficiency.label}</span></td>
+    </tr>`;
+  }).join('');
+
+  // SJT per-scenario summary
+  const sjtRowsHTML = SJT_SCENARIOS.map(s_item => {
+    const a = sjtAnswers[s_item.id] || {};
+    const hOpt = s_item.options.find(o => o.style === 'H');
+    const fOpt = s_item.options.find(o => o.style === 'F');
+    const avOpt = s_item.options.find(o => o.style === 'AV');
+    const hRating = hOpt ? (a[hOpt.key] || 0) : 0;
+    const fRating = fOpt ? (a[fOpt.key] || 0) : 0;
+    const avRating = avOpt ? (a[avOpt.key] || 0) : 0;
+    return `<div class="sjt-row">
+      <div class="sjt-scenario-label">Scenario ${s_item.id}</div>
+      <div class="sjt-mini-bars">
+        <div class="sjt-mini-bar-wrap">
+          <div class="sjt-mini-bar-lbl">Hunter (${hRating}/5)</div>
+          <div class="sjt-mini-track"><div class="sjt-mini-fill" style="width:${(hRating/5)*100}%;background:#4aab57"></div></div>
+        </div>
+        <div class="sjt-mini-bar-wrap">
+          <div class="sjt-mini-bar-lbl">Farmer (${fRating}/5)</div>
+          <div class="sjt-mini-track"><div class="sjt-mini-fill" style="width:${(fRating/5)*100}%;background:#3b82f6"></div></div>
+        </div>
+        <div class="sjt-mini-bar-wrap">
+          <div class="sjt-mini-bar-lbl">Avoidance (${avRating}/5)</div>
+          <div class="sjt-mini-track"><div class="sjt-mini-fill" style="width:${(avRating/5)*100}%;background:#ef4444"></div></div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('admin-content').innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:28px">
+      <div>
+        <div style="font-size:0.72rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--green-600);margin-bottom:4px">Administrator Report</div>
+        <h2 style="font-family:'DM Serif Display',serif;font-size:1.6rem;color:var(--green-900)">Full Psychometric Profile</h2>
+      </div>
+      <div style="font-size:0.8rem;color:var(--gray-500)">
+        Role: <strong>${s.bgData.role}</strong> &nbsp;|&nbsp;
+        Territory: <strong>${s.bgData.territory}</strong> &nbsp;|&nbsp;
+        Tenure: <strong>${s.bgData.tenure}</strong>
+      </div>
+    </div>
+
+    <!-- Flags -->
+    <div class="admin-card full" style="margin-bottom:24px">
+      <h3>Cross-Validation Flags</h3>
+      ${flagsHTML}
+    </div>
+
+    <!-- Archetype match -->
+    <div class="admin-card full" style="margin-bottom:24px">
+      <h3>Role Archetype Fit</h3>
+      <div class="archetype-match">
+        <div class="archetype-card hunter">
+          <div class="arc-title">Hunter Fit</div>
+          <div class="arc-score">${hunterPct}%</div>
+          <div class="arc-label">Weighted composite score</div>
+          <div class="arc-match-bar"><div class="arc-match-fill" style="width:${hunterPct}%"></div></div>
+          <div class="arc-match-pct">${s.hunterComposite.toFixed(3)} / 2.000</div>
+        </div>
+        <div class="archetype-card farmer">
+          <div class="arc-title">Farmer Fit</div>
+          <div class="arc-score">${farmerPct}%</div>
+          <div class="arc-label">Weighted composite score</div>
+          <div class="arc-match-bar" style="background:#dcfce7"><div class="arc-match-fill" style="width:${farmerPct}%;background:linear-gradient(90deg,#1d4ed8,#60a5fa)"></div></div>
+          <div class="arc-match-pct">${s.farmerComposite.toFixed(3)} / 2.000</div>
+        </div>
+      </div>
+      <div class="info-note">
+        Composites are weighted means of all competency scores (FC items + SJT contributions) using role-specific importance weights from the competency framework. Universal competencies contribute to both composites with their respective role-weighted importance.
+      </div>
+    </div>
+
+    <!-- Radar + Composite bars -->
+    <div class="admin-grid">
+      <div class="admin-card" style="overflow:visible">
+        <h3>Competency Radar</h3>
+        <div id="radarWrap" style="position:relative;width:100%;"></div>
+      </div>
+      <div class="admin-card">
+        <h3>Individual Competency Scores</h3>
+        <div class="composite-row">
+          ${Object.entries(s.compDetails).map(([c,d]) => {
+            const col = d.role === 'H' ? '#4aab57' : d.role === 'F' ? '#3b82f6' : '#f59e0b';
+            return `<div class="comp-bar-row">
+              <div class="comp-bar-label">
+                <span class="comp-bar-name" style="font-size:0.78rem">${d.name}</span>
+                <span class="comp-bar-score">${d.mean.toFixed(2)}</span>
+              </div>
+              <div class="comp-bar-track">
+                <div class="comp-bar-fill" style="width:${d.pct}%;background:${col}"></div>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- Full competency table -->
+    <div class="admin-card full" style="margin-bottom:24px;overflow-x:auto">
+      <h3>Detailed Competency Breakdown</h3>
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Competency</th>
+            <th>Category</th>
+            <th>Score Distribution</th>
+            <th>Mean (0-2)</th>
+            <th>Level</th>
+          </tr>
+        </thead>
+        <tbody>${compTableRows}</tbody>
+      </table>
+    </div>
+
+    <!-- SJT Section -->
+    <div class="admin-card full" style="margin-bottom:24px">
+      <h3>Situational Judgment Breakdown</h3>
+      <div style="display:flex;gap:28px;margin-bottom:20px;flex-wrap:wrap">
+        <div>
+          <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);margin-bottom:3px">Hunter Style Index</div>
+          <div style="font-family:'DM Mono',monospace;font-size:1.5rem;color:#15803d;font-weight:600">${s.hStyleNorm.toFixed(1)}<span style="font-size:0.8rem;color:var(--gray-400)">/10</span></div>
+        </div>
+        <div>
+          <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);margin-bottom:3px">Farmer Style Index</div>
+          <div style="font-family:'DM Mono',monospace;font-size:1.5rem;color:#1d4ed8;font-weight:600">${s.fStyleNorm.toFixed(1)}<span style="font-size:0.8rem;color:var(--gray-400)">/10</span></div>
+        </div>
+        <div>
+          <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);margin-bottom:3px">Avoidance Mean</div>
+          <div style="font-family:'DM Mono',monospace;font-size:1.5rem;color:${s.avMean >= 3.5 ? '#b91c1c' : '#6b7280'};font-weight:600">${s.avMean.toFixed(1)}<span style="font-size:0.8rem;color:var(--gray-400)">/5</span></div>
+        </div>
+      </div>
+      ${sjtRowsHTML}
+    </div>
+
+    <div style="text-align:center;margin-top:24px">
+      <button class="btn-secondary" onclick="window.print()">Print / Export Report</button>
+    </div>
+  `;
+
+  // Render radar after DOM is ready
+  setTimeout(() => drawRadar(s), 120);
+}
+
+// ══════════════════════════════════════════════
+// RADAR CHART — SVG with HTML labels
+// ══════════════════════════════════════════════
+function drawRadar(s) {
+  const wrap = document.getElementById('radarWrap');
+  if (!wrap) return;
+
+  const comps = Object.entries(s.compDetails);
+  const n = comps.length;
+  const values = comps.map(([,d]) => d.mean / 2);
+  const roles  = comps.map(([,d]) => d.role);
+  const names  = comps.map(([,d]) => d.name);
+
+  // SVG viewport — generous padding so spokes have room
+  const VW = 420, VH = 420;
+  const cx = VW / 2, cy = VH / 2;
+  const R  = 130; // spoke radius
+  const LABEL_R = R + 44; // label anchor distance
+
+  const roleColor = { H:'#4aab57', F:'#3b82f6', U:'#f59e0b' };
+  const roleDark  = { H:'#166534', F:'#1e40af', U:'#92400e' };
+  const roleBg    = { H:'rgba(74,171,87,0.07)', F:'rgba(59,130,246,0.07)', U:'rgba(245,158,11,0.07)' };
+
+  const ang  = i => (2 * Math.PI * i / n) - Math.PI / 2;
+  const ptXY = (i, r) => [cx + r * Math.cos(ang(i)), cy + r * Math.sin(ang(i))];
+
+  // ── Grid rings ──
+  let gridSVG = '';
+  const rings = [0.25, 0.5, 0.75, 1.0];
+  rings.forEach((frac, ri) => {
+    const pts = Array.from({length:n}, (_,i) => ptXY(i, R * frac).join(',')).join(' ');
+    gridSVG += `<polygon points="${pts}" fill="${ri < 3 ? roleBg.H : 'none'}" stroke="rgba(0,0,0,0.07)" stroke-width="1"/>`;
+  });
+  // ring value labels
+  rings.forEach(frac => {
+    const [rx, ry] = ptXY(0, R * frac);
+    gridSVG += `<text x="${rx + 4}" y="${ry - 3}" font-size="8" fill="#aaa" font-family="DM Mono, monospace">${(frac * 2).toFixed(1)}</text>`;
+  });
+
+  // ── Spokes ──
+  let spokesSVG = '';
+  for (let i = 0; i < n; i++) {
+    const [px, py] = ptXY(i, R);
+    spokesSVG += `<line x1="${cx}" y1="${cy}" x2="${px}" y2="${py}" stroke="rgba(0,0,0,0.09)" stroke-width="1"/>`;
+  }
+
+  // ── Data polygon ──
+  const dataPoints = Array.from({length:n}, (_,i) => ptXY(i, R * Math.max(0.02, values[i])).join(',')).join(' ');
+  const dataSVG = `
+    <polygon points="${dataPoints}" fill="rgba(45,106,53,0.13)" stroke="#2d6a35" stroke-width="2" stroke-linejoin="round"/>
+  `;
+
+  // ── Dots ──
+  let dotsSVG = '';
+  for (let i = 0; i < n; i++) {
+    const [px, py] = ptXY(i, R * Math.max(0.02, values[i]));
+    const col = roleColor[roles[i]];
+    dotsSVG += `
+      <circle cx="${px}" cy="${py}" r="6" fill="${col}" stroke="white" stroke-width="2"/>
+      <circle cx="${px}" cy="${py}" r="3" fill="white"/>
+    `;
+  }
+
+  // ── Legend ──
+  const legendSVG = `
+    <g transform="translate(${cx - 84}, ${VH - 18})">
+      <circle cx="0"  cy="0" r="5" fill="#4aab57"/>
+      <text x="8"  y="4" font-size="10" fill="#555" font-family="DM Sans, sans-serif" font-weight="600">Hunter</text>
+      <circle cx="60" cy="0" r="5" fill="#3b82f6"/>
+      <text x="68" y="4" font-size="10" fill="#555" font-family="DM Sans, sans-serif" font-weight="600">Farmer</text>
+      <circle cx="122" cy="0" r="5" fill="#f59e0b"/>
+      <text x="130" y="4" font-size="10" fill="#555" font-family="DM Sans, sans-serif" font-weight="600">Universal</text>
+    </g>`;
+
+  const svgInner = `${gridSVG}${spokesSVG}${dataSVG}${dotsSVG}${legendSVG}`;
+
+  // ── Build HTML label overlays ──
+  // We position absolutely over the SVG using percentage coords
+  let labelsHTML = '';
+  for (let i = 0; i < n; i++) {
+    const [lx, ly] = ptXY(i, LABEL_R);
+    // Convert SVG coords to percentage of VW/VH
+    const pctX = (lx / VW) * 100;
+    const pctY = (ly / VH) * 100;
+
+    // Determine text-align and translate based on position relative to center
+    const dx = lx - cx;
+    const dy = ly - cy;
+    const isLeft   = dx < -12;
+    const isRight  = dx > 12;
+    const isTop    = dy < -12;
+    const isBottom = dy > 12;
+
+    let txX = '-50%';
+    let textAlign = 'center';
+    if (isLeft)  { txX = '-100%'; textAlign = 'right'; }
+    if (isRight) { txX = '0%';    textAlign = 'left'; }
+
+    let txY = '-50%';
+    if (isTop)    txY = '-100%';
+    if (isBottom) txY = '0%';
+
+    const col = roleDark[roles[i]];
+    const bgCol = roles[i] === 'H' ? '#f0fdf4' : roles[i] === 'F' ? '#eff6ff' : '#fffbeb';
+    const bdCol = roles[i] === 'H' ? '#bbf7d0' : roles[i] === 'F' ? '#bfdbfe' : '#fef08a';
+
+    // Wrap long names
+    const words = names[i].split(' ');
+    const lines = [];
+    let line = '';
+    words.forEach(w => {
+      if ((line + ' ' + w).trim().length > 16 && line) { lines.push(line.trim()); line = w; }
+      else line = (line + ' ' + w).trim();
+    });
+    if (line) lines.push(line);
+
+    const labelText = lines.map(l => `<div style="line-height:1.25">${l}</div>`).join('');
+
+    labelsHTML += `
+      <div style="
+        position:absolute;
+        left:${pctX}%;
+        top:${pctY}%;
+        transform: translate(${txX}, ${txY});
+        font-family:'DM Sans',sans-serif;
+        font-size:10px;
+        font-weight:600;
+        color:${col};
+        text-align:${textAlign};
+        background:${bgCol};
+        border:1px solid ${bdCol};
+        border-radius:5px;
+        padding:3px 6px;
+        pointer-events:none;
+        white-space:nowrap;
+        max-width:110px;
+        white-space:normal;
+        z-index:10;
+      ">${labelText}</div>`;
+  }
+
+  wrap.style.position = 'relative';
+  wrap.innerHTML = `
+    <svg viewBox="0 0 ${VW} ${VH}" width="100%" style="display:block;overflow:visible">
+      ${svgInner}
+    </svg>
+    ${labelsHTML}
+  `;
+}
+</script>
+</body>
+</html>
