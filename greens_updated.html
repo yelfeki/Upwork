@@ -156,14 +156,23 @@
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
   }
   .instructions-box li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
     font-size: 0.92rem;
     color: var(--gray-700);
-    line-height: 1.6;
-    padding-left: 14px;
-    border-left: 2px solid var(--green-300);
+  }
+  .instructions-box li::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--green-500);
+    border-radius: 50%;
+    margin-top: 8px;
+    flex-shrink: 0;
   }
   .btn-primary {
     background: var(--green-700);
@@ -361,91 +370,116 @@
     font-size: 0.72rem;
     font-weight: 500;
     color: var(--green-500);
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     letter-spacing: 0.08em;
   }
-
-  /* One-click FC: instruction row */
-  .fc-instructions {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 10px;
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--gray-400);
-  }
-  .fc-instructions .fi-spacer { flex: 1; }
-  .fc-instructions .fi-label { min-width: 68px; text-align: center; }
-
   .fc-pair {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
   }
-
-  /* One-click row: statement text + two toggle badges on right */
   .fc-statement {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 14px;
     background: var(--off-white);
     border: 1.5px solid var(--border);
     border-radius: 10px;
-    padding: 13px 16px;
+    padding: 14px 16px;
     transition: all 0.15s;
-    cursor: default;
   }
-  .fc-statement.is-most {
+  .fc-statement.selected-most {
     background: var(--green-50);
     border-color: var(--green-400);
   }
-  .fc-statement.is-least {
+  .fc-statement.selected-least {
     background: #fefce8;
     border-color: #fbbf24;
+  }
+  .fc-letter {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--gray-500);
+    width: 18px;
+    flex-shrink: 0;
+    padding-top: 1px;
   }
   .fc-text {
     font-size: 0.92rem;
     color: var(--gray-700);
-    line-height: 1.5;
+    line-height: 1.55;
     flex: 1;
   }
-  /* The two badge buttons */
-  .fc-badge-wrap {
+
+  /* ── REVISED FC BUTTONS: single click Most or Least per statement ── */
+  .fc-choice-row {
     display: flex;
-    gap: 6px;
-    flex-shrink: 0;
+    gap: 8px;
+    margin-top: 10px;
+    justify-content: center;
   }
-  .fc-badge {
-    padding: 5px 12px;
+  .fc-choice-btn {
+    padding: 6px 18px;
     border-radius: 6px;
     border: 1.5px solid var(--gray-300);
-    font-size: 0.72rem;
-    font-weight: 700;
+    font-size: 0.75rem;
+    font-weight: 600;
     cursor: pointer;
     background: var(--white);
-    transition: all 0.13s;
+    transition: all 0.14s;
     letter-spacing: 0.05em;
-    white-space: nowrap;
-    user-select: none;
   }
-  .fc-badge.m-btn { color: var(--green-700); }
-  .fc-badge.m-btn:hover:not(.active) { border-color: var(--green-400); background: var(--green-50); }
-  .fc-badge.m-btn.active {
+  .fc-choice-btn.most { color: var(--green-700); }
+  .fc-choice-btn.most.active {
     background: var(--green-700);
     border-color: var(--green-700);
     color: #fff;
   }
-  .fc-badge.l-btn { color: #92400e; }
-  .fc-badge.l-btn:hover:not(.active) { border-color: #fbbf24; background: #fefce8; }
-  .fc-badge.l-btn.active {
+  .fc-choice-btn.least { color: #92400e; }
+  .fc-choice-btn.least.active {
     background: #f59e0b;
     border-color: #f59e0b;
     color: #fff;
   }
+  .fc-choice-btn:hover:not(.active) { border-color: var(--green-400); background: var(--green-50); }
 
-  /* ── SJT CARD ── */
+  .fc-pair-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .fc-stmt-text {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: var(--off-white);
+    border: 1.5px solid var(--border);
+    border-radius: 10px 10px 0 0;
+    padding: 14px 16px 10px;
+    transition: all 0.15s;
+  }
+  .fc-stmt-text.selected-most { background: var(--green-50); border-color: var(--green-400); }
+  .fc-stmt-text.selected-least { background: #fefce8; border-color: #fbbf24; }
+  .fc-stmt-btns {
+    display: flex;
+    border: 1.5px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .fc-stmt-btns .fc-choice-btn {
+    flex: 1;
+    border-radius: 0;
+    border: none;
+    border-right: 1px solid var(--border);
+    padding: 7px 0;
+    font-size: 0.72rem;
+  }
+  .fc-stmt-btns .fc-choice-btn:last-child { border-right: none; }
+
+  /* ── SJT CARD: Ranking ── */
   .sjt-card {
     background: var(--white);
     border: 1px solid var(--border);
@@ -479,17 +513,47 @@
   .sjt-options {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 10px;
   }
-  .sjt-option {
+  .sjt-option-rank {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
+    align-items: center;
+    gap: 12px;
+    background: var(--off-white);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    transition: all 0.15s;
   }
+  .sjt-option-rank.ranked-1 { background: #f0fdf4; border-color: #86efac; }
+  .sjt-option-rank.ranked-2 { background: #eff6ff; border-color: #93c5fd; }
+  .sjt-option-rank.ranked-3 { background: #fefce8; border-color: #fde68a; }
+  .sjt-option-rank.ranked-4 { background: #fff8f8; border-color: #fecaca; }
+  .sjt-rank-badge {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--gray-100);
+    border: 1.5px solid var(--gray-300);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--gray-500);
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .sjt-option-rank.ranked-1 .sjt-rank-badge { background: #dcfce7; border-color: #4ade80; color: #15803d; }
+  .sjt-option-rank.ranked-2 .sjt-rank-badge { background: #dbeafe; border-color: #60a5fa; color: #1d4ed8; }
+  .sjt-option-rank.ranked-3 .sjt-rank-badge { background: #fef9c3; border-color: #facc15; color: #854d0e; }
+  .sjt-option-rank.ranked-4 .sjt-rank-badge { background: #fee2e2; border-color: #f87171; color: #991b1b; }
   .sjt-option-text {
     font-size: 0.88rem;
     color: var(--gray-700);
     line-height: 1.5;
+    flex: 1;
   }
   .sjt-option-text strong {
     font-family: 'DM Mono', monospace;
@@ -497,44 +561,87 @@
     color: var(--gray-500);
     margin-right: 6px;
   }
-  .rating-scale {
+  .sjt-rank-btns {
     display: flex;
-    align-items: center;
-    gap: 8px;
+    gap: 4px;
+    flex-shrink: 0;
   }
-  .rating-label {
-    font-size: 0.7rem;
-    color: var(--gray-400);
-    min-width: 80px;
-    font-weight: 500;
-  }
-  .rating-label.right { text-align: right; }
-  .rating-btns {
-    display: flex;
-    gap: 6px;
-  }
-  .rating-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
+  .sjt-rank-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
     border: 1.5px solid var(--gray-300);
     background: var(--white);
     font-family: 'DM Mono', monospace;
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-size: 0.78rem;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.13s;
-    color: var(--gray-600);
+    color: var(--gray-500);
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  .rating-btn:hover { border-color: var(--green-400); background: var(--green-50); color: var(--green-800); }
-  .rating-btn.active {
-    background: var(--green-700);
-    border-color: var(--green-700);
-    color: #fff;
+  .sjt-rank-btn:hover { border-color: var(--green-400); background: var(--green-50); color: var(--green-800); }
+  .sjt-rank-btn.active-1 { background: #15803d; border-color: #15803d; color: #fff; }
+  .sjt-rank-btn.active-2 { background: #1d4ed8; border-color: #1d4ed8; color: #fff; }
+  .sjt-rank-btn.active-3 { background: #d97706; border-color: #d97706; color: #fff; }
+  .sjt-rank-btn.active-4 { background: #991b1b; border-color: #991b1b; color: #fff; }
+
+  /* ── CONSCIENTIOUSNESS SCALE ── */
+  .con-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-sm);
   }
+  .con-card.error { border-color: var(--red); background: #fff8f8; }
+  .con-item-text {
+    font-size: 0.95rem;
+    color: var(--gray-700);
+    line-height: 1.55;
+    margin-bottom: 14px;
+  }
+  .con-scale {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .con-scale-label {
+    font-size: 0.7rem;
+    color: var(--gray-400);
+    min-width: 90px;
+    font-weight: 500;
+  }
+  .con-scale-label.right { text-align: right; }
+  .con-btns {
+    display: flex;
+    gap: 6px;
+    flex: 1;
+    justify-content: center;
+  }
+  .con-btn {
+    min-width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    border: 1.5px solid var(--gray-300);
+    background: var(--white);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.13s;
+    color: var(--gray-600);
+    padding: 0 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .con-btn:hover { border-color: var(--green-400); background: var(--green-50); color: var(--green-800); }
+  .con-btn.active { background: var(--green-700); border-color: var(--green-700); color: #fff; }
 
   /* ── SUBMIT AREA ── */
   .submit-area {
@@ -944,201 +1051,7 @@
 
   .nav-buttons { display: flex; gap: 12px; align-items: center; }
 
-  /* ── CON LIKERT ITEMS ── */
-  .con-item-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 22px 28px;
-    margin-bottom: 14px;
-    box-shadow: var(--shadow-sm);
-    transition: box-shadow 0.18s;
-  }
-  .con-item-card:hover { box-shadow: var(--shadow-md); }
-  .con-item-card.error { border-color: var(--red); background: #fff8f8; }
-  .con-item-num {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.72rem;
-    font-weight: 500;
-    color: #7c3aed;
-    margin-bottom: 10px;
-    letter-spacing: 0.08em;
-  }
-  .con-item-text {
-    font-size: 0.94rem;
-    color: var(--gray-800);
-    line-height: 1.55;
-    margin-bottom: 16px;
-    font-weight: 500;
-  }
-  .con-likert-row {
-    display: flex;
-    align-items: center;
-    gap: 0;
-  }
-  .con-likert-label {
-    font-size: 0.7rem;
-    color: var(--gray-400);
-    font-weight: 500;
-    min-width: 100px;
-    flex-shrink: 0;
-  }
-  .con-likert-label.right { text-align: right; }
-  .con-likert-btns {
-    display: flex;
-    gap: 8px;
-    flex: 1;
-    justify-content: center;
-  }
-  .con-likert-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 1.5px solid var(--gray-300);
-    background: var(--white);
-    font-family: 'DM Mono', monospace;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.13s;
-    color: var(--gray-500);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .con-likert-btn:hover { border-color: #c4b5fd; background: #f5f3ff; color: #7c3aed; }
-  .con-likert-btn.active {
-    background: #7c3aed;
-    border-color: #7c3aed;
-    color: #fff;
-  }
-  .con-anchor-row {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 6px;
-    font-size: 0.65rem;
-    color: var(--gray-400);
-    padding: 0 100px;
-  }
-  .con-section-header {
-    background: linear-gradient(135deg, #f5f3ff, #ede9fe);
-    border: 1px solid #c4b5fd;
-    border-radius: 14px;
-    padding: 20px 24px;
-    margin-bottom: 24px;
-  }
-  .con-section-header .eyebrow {
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #7c3aed;
-    margin-bottom: 6px;
-  }
-  .con-section-header h2 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.5rem;
-    color: #3b0764;
-    margin-bottom: 6px;
-  }
-  .con-section-header p {
-    font-size: 0.88rem;
-    color: #6d28d9;
-    line-height: 1.5;
-  }
-
-  /* Conscientiousness result bar */
-  .con-result-card {
-    background: linear-gradient(135deg, #f5f3ff, #ede9fe);
-    border: 1px solid #c4b5fd;
-    border-radius: 14px;
-    padding: 24px 28px;
-    margin-top: 24px;
-  }
-  .con-result-card h3 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.1rem;
-    color: #3b0764;
-    margin-bottom: 6px;
-  }
-  .con-result-card .con-desc {
-    font-size: 0.85rem;
-    color: #6d28d9;
-    margin-bottom: 16px;
-    line-height: 1.5;
-  }
-  .con-bar-track {
-    height: 10px;
-    background: #ddd6fe;
-    border-radius: 99px;
-    overflow: hidden;
-    margin-bottom: 6px;
-  }
-  .con-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #7c3aed, #a78bfa);
-    border-radius: 99px;
-    transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
-  }
-  .con-score-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.78rem;
-    color: #7c3aed;
-    font-weight: 600;
-  }
-  .con-level-badge {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    margin-top: 10px;
-  }
-  .con-level-badge.CL1 { background: #fee2e2; color: #991b1b; }
-  .con-level-badge.CL2 { background: #fef3c7; color: #92400e; }
-  .con-level-badge.CL3 { background: #ede9fe; color: #6d28d9; }
-  .con-level-badge.CL4 { background: #4c1d95; color: #ddd6fe; }
-
-  /* ── CONFIDENCE INDICATOR ── */
-  .confidence-card {
-    border-radius: 12px;
-    padding: 18px 22px;
-    margin-top: 20px;
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-  }
-  .confidence-card.conf-high     { background: #f0fdf4; border: 1.5px solid #86efac; }
-  .confidence-card.conf-moderate { background: #fefce8; border: 1.5px solid #fde047; }
-  .confidence-card.conf-review   { background: #fefce8; border: 1.5px solid #fde047; }
-  .confidence-card.conf-diverge  { background: #fff7ed; border: 1.5px solid #fdba74; }
-  .conf-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 1px; }
-  .conf-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
-  .conf-high .conf-label { color: #15803d; }
-  .conf-moderate .conf-label, .conf-review .conf-label { color: #854d0e; }
-  .conf-diverge .conf-label { color: #9a3412; }
-  .conf-desc { font-size: 0.85rem; line-height: 1.55; color: var(--gray-700); }
-
-  /* ── SCORE TRIO CHIPS ── */
-  .score-trio { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
-  .score-chip-v2 {
-    background: rgba(255,255,255,0.13);
-    border: 1px solid rgba(255,255,255,0.22);
-    border-radius: 10px;
-    padding: 12px 16px;
-    text-align: center;
-    min-width: 90px;
-    flex: 1;
-  }
-  .score-chip-v2 .scv-val { font-family: 'DM Mono', monospace; font-size: 1.7rem; font-weight: 600; color: var(--green-200); line-height: 1; margin-bottom: 2px; }
-  .score-chip-v2 .scv-max { font-size: 0.68rem; color: rgba(255,255,255,0.4); }
-  .score-chip-v2 .scv-lbl { font-size: 0.67rem; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.5); margin-top: 3px; }
-  .score-chip-v2 .scv-band { font-size: 0.7rem; font-weight: 600; margin-top: 5px; padding: 2px 7px; border-radius: 4px; display: inline-block; }
-  .band-strong   { background: rgba(134,239,172,0.25); color: #bbf7d0; }
-  .band-moderate { background: rgba(253,224,71,0.2);   color: #fef08a; }
-  .band-low      { background: rgba(252,165,165,0.2);  color: #fecaca; }
+  canvas { display: block; }
 
   @media (max-width: 640px) {
     .admin-grid { grid-template-columns: 1fr; }
@@ -1173,7 +1086,7 @@
         <div class="lbl">Minutes</div>
       </div>
       <div class="info-card">
-        <div class="num">76</div>
+        <div class="num">64</div>
         <div class="lbl">Questions</div>
       </div>
       <div class="info-card">
@@ -1185,10 +1098,11 @@
     <div class="instructions-box">
       <h3>Before You Begin</h3>
       <ul>
-        <li>The first section presents pairs of statements. Click <strong>Most</strong> on the one that best describes you — the other is automatically marked as <strong>Least</strong>. You can change your answer at any time.</li>
-        <li>The second section asks how well each statement describes you on a 1–5 scale.</li>
-        <li>The third section presents short scenarios. For each one, select the response you would be most likely to take and the one you would be least likely to take.</li>
+        <li>For each behavioral pair, select "Most Like Me" on the statement that best describes you and "Least Like Me" on the one that least describes you — one click completes the pair automatically.</li>
+        <li>You must select both Most and Least for every pair. They cannot be the same statement.</li>
         <li>Go with your first instinct. Answer based on how you actually behave, not how you think you should.</li>
+        <li>In the situational section, rank the four responses from most likely (1) to least likely (4) for how you would actually respond.</li>
+        <li>The final section asks how well each statement describes you on a 1–5 scale.</li>
         <li>Complete the assessment in a single sitting for best results.</li>
       </ul>
     </div>
@@ -1201,7 +1115,7 @@
 <div id="screen-background" class="screen">
   <div class="bg-form-wrap">
     <div class="section-header">
-      <div class="eyebrow">Section 1 of 3</div>
+      <div class="eyebrow">Section 1 of 4</div>
       <h2>Background Information</h2>
     </div>
 
@@ -1245,35 +1159,14 @@
   </div>
   <div class="assessment-wrap">
     <div class="section-header" style="margin-bottom:8px">
-      <div class="eyebrow">Section 2 of 3</div>
+      <div class="eyebrow">Section 2 of 4</div>
       <h2 style="font-family:'DM Serif Display',serif;font-size:1.7rem;color:var(--green-900)">Behavioral Assessment</h2>
     </div>
-    <p style="color:var(--gray-500);font-size:0.88rem;margin-bottom:28px">For each item, click <strong>Most</strong> on the statement that best describes you. The other statement will automatically be marked as <strong>Least</strong>. You can change your choice at any time.</p>
+    <p style="color:var(--gray-500);font-size:0.88rem;margin-bottom:28px">For each pair, click <strong>Most</strong> on the statement that is most like you, or <strong>Least</strong> on the one that is least like you. One click automatically completes the pair.</p>
     <div id="fc-questions-container"></div>
     <div class="submit-area">
-      <button class="btn-primary" onclick="submitFC()">Continue to Conscientiousness Section</button>
+      <button class="btn-primary" onclick="submitFC()">Continue to Situational Section</button>
       <span class="error-msg" id="fc-error">Please complete all items before continuing.</span>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════ SCREEN: CONSCIENTIOUSNESS ═══════════════════════════════ -->
-<div id="screen-con" class="screen">
-  <div class="progress-bar-wrap">
-    <div class="progress-label">Section 3/4</div>
-    <div class="progress-track"><div class="progress-fill" style="width:66%"></div></div>
-    <div class="progress-pct">66%</div>
-  </div>
-  <div class="assessment-wrap">
-    <div class="con-section-header">
-      <div class="eyebrow">Section 3 of 4</div>
-      <h2>How You Work</h2>
-      <p>Rate how well each statement describes you using the scale below. There are no right or wrong answers — respond based on how you actually tend to operate day to day.</p>
-    </div>
-    <div id="con-questions-container"></div>
-    <div class="submit-area">
-      <button class="btn-primary" onclick="submitCON()">Continue to Situational Section</button>
-      <span class="error-msg" id="con-error">Please respond to all items before continuing.</span>
     </div>
   </div>
 </div>
@@ -1281,20 +1174,41 @@
 <!-- ═══════════════════════════════ SCREEN: SJT ═══════════════════════════════ -->
 <div id="screen-sjt" class="screen">
   <div class="progress-bar-wrap">
+    <div class="progress-label">Section 3/4</div>
+    <div class="progress-track"><div class="progress-fill" style="width:65%"></div></div>
+    <div class="progress-pct">65%</div>
+  </div>
+  <div class="assessment-wrap">
+    <div class="section-header" style="margin-bottom:8px">
+      <div class="eyebrow">Section 3 of 4</div>
+      <h2 style="font-family:'DM Serif Display',serif;font-size:1.7rem;color:var(--green-900)">Situational Judgment</h2>
+    </div>
+    <p style="color:var(--gray-500);font-size:0.88rem;margin-bottom:28px">For each scenario, rank the four responses from <strong>1 = Most like what I'd do</strong> to <strong>4 = Least like what I'd do</strong>. Each rank can only be used once per scenario.</p>
+    <div id="sjt-container"></div>
+    <div class="submit-area">
+      <button class="btn-primary" onclick="submitSJT()">Continue to Personality Section</button>
+      <span class="error-msg" id="sjt-error">Please rank all options in every scenario before continuing.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SCREEN: CONSCIENTIOUSNESS ═══════════════════════════════ -->
+<div id="screen-con" class="screen">
+  <div class="progress-bar-wrap">
     <div class="progress-label">Section 4/4</div>
-    <div class="progress-track"><div class="progress-fill" style="width:75%"></div></div>
-    <div class="progress-pct">75%</div>
+    <div class="progress-track"><div class="progress-fill" style="width:88%"></div></div>
+    <div class="progress-pct">88%</div>
   </div>
   <div class="assessment-wrap">
     <div class="section-header" style="margin-bottom:8px">
       <div class="eyebrow">Section 4 of 4</div>
-      <h2 style="font-family:'DM Serif Display',serif;font-size:1.7rem;color:var(--green-900)">Situational Judgment</h2>
+      <h2 style="font-family:'DM Serif Display',serif;font-size:1.7rem;color:var(--green-900)">Work Style Inventory</h2>
     </div>
-    <p style="color:var(--gray-500);font-size:0.88rem;margin-bottom:28px">For each scenario, read all three response options and select the one you would be <strong>Most likely</strong> to take and the one you would be <strong>Least likely</strong> to take. Click Most on your preferred option — the other two will appear as unchosen. You can change your selection at any time.</p>
-    <div id="sjt-container"></div>
+    <p style="color:var(--gray-500);font-size:0.88rem;margin-bottom:28px">Rate how accurately each statement describes the way you typically work, on a scale from <strong>1 (Not at all like me)</strong> to <strong>5 (Very much like me)</strong>. Answer based on how you actually behave, not how you think you should.</p>
+    <div id="con-container"></div>
     <div class="submit-area">
-      <button class="btn-primary" onclick="submitSJT()">View My Results</button>
-      <span class="error-msg" id="sjt-error">Please rate all options in every scenario before submitting.</span>
+      <button class="btn-primary" onclick="submitCon()">View My Results</button>
+      <span class="error-msg" id="con-error">Please rate all items before submitting.</span>
     </div>
   </div>
 </div>
@@ -1321,210 +1235,236 @@
 
 <script>
 // ══════════════════════════════════════════════
-// DATA: FC QUESTIONS
+// DATA: FC QUESTIONS (40 items)
+// ~10 items reframed to general/everyday contexts
+// Urgency items reframed for Farmer (customer-responsive) context
+// Competencies repeated in different pairings for distribution coverage
 // ══════════════════════════════════════════════
 const FC_QUESTIONS = [
+  // ── Block 1: Core Hunter/Farmer pairings ──
   { id:1,  a:{text:"I actively seek out people or organizations who have never worked with me before.",comp:"NBAD",role:"H"}, b:{text:"I invest time getting to know the personal and professional goals of the people I work with regularly.",comp:"RDN",role:"F"} },
-  { id:2,  a:{text:"I pursue new accounts even when my existing business keeps me fully occupied.",comp:"NBAD",role:"H"}, b:{text:"I proactively reach out to existing clients to share relevant information before they have to ask.",comp:"AR",role:"F"} },
+  { id:2,  a:{text:"I keep going after new accounts even when my existing work keeps me fully occupied.",comp:"NBAD",role:"H"}, b:{text:"I proactively reach out to people I already work with to share relevant information before they have to ask.",comp:"AR",role:"F"} },
   { id:3,  a:{text:"Starting something from scratch energizes me more than maintaining something already in place.",comp:"NBAD",role:"H"}, b:{text:"I remember details about the people I work with — milestones, preferences, past conversations — and reference them.",comp:"RDN",role:"F"} },
   { id:4,  a:{text:"When someone pushes back on my position, I hold my ground and make my case rather than backing down.",comp:"CA",role:"H"}, b:{text:"I keep my tone steady and constructive even when a conversation becomes tense or frustrating.",comp:"ERPP",role:"F"} },
-  { id:5,  a:{text:"I target accounts that are currently served by someone else and work to win them over.",comp:"CA",role:"H"}, b:{text:"I maintain a calm, professional presence with clients even when they raise complaints or put me under pressure.",comp:"ERPP",role:"F"} },
-  { id:6,  a:{text:"Competing directly against others pushes me to perform at a higher level.",comp:"CA",role:"H"}, b:{text:"I am conscious of how my emotional state affects those around me and actively adjust it in professional settings.",comp:"ERPP",role:"F"} },
-  { id:7,  a:{text:"I move quickly and decisively rather than deliberating longer than the situation requires.",comp:"URO",role:"H"}, b:{text:"I follow through on every commitment I make, even the small ones that no one is tracking.",comp:"MFT",role:"F"} },
-  { id:8,  a:{text:"I create a sense of urgency in prospect conversations to accelerate their decision timeline.",comp:"URO",role:"H"}, b:{text:"I log every client interaction and agreed next step before moving on to my next task.",comp:"MFT",role:"F"} },
-  { id:9,  a:{text:"I measure my own success primarily by hitting specific, numeric targets within a set timeframe.",comp:"URO",role:"H"}, b:{text:"I would rather do fewer things with complete reliability than spread myself across too many commitments.",comp:"MFT",role:"F"} },
-  { id:10, a:{text:"I work best when I set my own priorities and execute on them without frequent check-ins.",comp:"ISD",role:"H"}, b:{text:"The people who depend on me know they can reach me when something urgent comes up.",comp:"AR",role:"F"} },
-  { id:11, a:{text:"I develop my own account or territory strategy rather than waiting for my manager to define it.",comp:"ISD",role:"H"}, b:{text:"I respond to messages from clients or colleagues as quickly as possible, even during busy periods.",comp:"AR",role:"F"} },
+  { id:5,  a:{text:"I target opportunities currently going to someone else and work to win them over.",comp:"CA",role:"H"}, b:{text:"I maintain a calm, professional presence even when someone raises a complaint or puts me under pressure.",comp:"ERPP",role:"F"} },
+  { id:6,  a:{text:"Competing directly against others pushes me to perform at a higher level.",comp:"CA",role:"H"}, b:{text:"I am conscious of how my emotional state affects those around me and actively manage it in professional settings.",comp:"ERPP",role:"F"} },
+  // Urgency items — reframed for Farmer/customer-responsive context
+  { id:7,  a:{text:"When a current customer has an urgent problem, I drop what I'm doing and address it — the relationship comes first.",comp:"URO",role:"H"}, b:{text:"I follow through on every commitment I make, even the small ones that no one is tracking.",comp:"MFT",role:"F"} },
+  { id:8,  a:{text:"I treat urgency around a customer's unresolved issue with the same priority as a new opportunity.",comp:"URO",role:"H"}, b:{text:"I log every interaction and agreed next step before moving on to my next task.",comp:"MFT",role:"F"} },
+  { id:9,  a:{text:"When something time-sensitive comes up with an account I already have, I respond immediately — not at my next scheduled check-in.",comp:"URO",role:"H"}, b:{text:"I would rather do fewer things with complete reliability than take on more and risk dropping something.",comp:"MFT",role:"F"} },
+  { id:10, a:{text:"I work best when I set my own priorities and execute on them without frequent direction from others.",comp:"ISD",role:"H"}, b:{text:"The people who depend on me know they can reach me when something urgent comes up.",comp:"AR",role:"F"} },
+  { id:11, a:{text:"I develop my own strategy for the areas I'm responsible for rather than waiting for someone else to define it.",comp:"ISD",role:"H"}, b:{text:"I respond to messages from people I work with as quickly as possible, even during busy periods.",comp:"AR",role:"F"} },
   { id:12, a:{text:"I am comfortable navigating ambiguity and creating my own structure when none is provided.",comp:"ISD",role:"H"}, b:{text:"I check in with the people who rely on me regularly, even when nothing urgent is happening.",comp:"AR",role:"F"} },
+
+  // ── Block 2: Universal vs Farmer ──
   { id:13, a:{text:"I establish rapport and credibility with someone I have never met within the first conversation.",comp:"RBH",role:"U"}, b:{text:"I invest in relationships deliberately so that when a difficult moment arrives, the trust is already there.",comp:"RDN",role:"F"} },
   { id:14, a:{text:"I regularly expand my network by reaching out to people I have not previously connected with.",comp:"RBH",role:"U"}, b:{text:"I anticipate what the people I work with will need before they express it.",comp:"RDN",role:"F"} },
-  { id:15, a:{text:"I am comfortable making first contact with prospective clients and opening conversations from scratch.",comp:"RBH",role:"U"}, b:{text:"I maintain detailed records of commitments, conversations, and open tasks so nothing slips through.",comp:"MFT",role:"F"} },
-  { id:16, a:{text:"Meeting new people and expanding who I know energizes me more than deepening a small number of relationships.",comp:"RBH",role:"U"}, b:{text:"I follow up on every promise I make to a client, whether or not anyone is monitoring it.",comp:"MFT",role:"F"} },
-  { id:17, a:{text:"I initiate contact with organizations that have no existing relationship with our company.",comp:"NBAD",role:"H"}, b:{text:"I treat every unreturned message or missed check-in as an opportunity to reconnect with a client.",comp:"AR",role:"F"} },
-  { id:18, a:{text:"Identifying and converting a new opportunity gives me more satisfaction than growing an existing one.",comp:"NBAD",role:"H"}, b:{text:"Being consistently accessible is one of the most important things I can offer to the people who depend on me.",comp:"AR",role:"F"} },
-  { id:19, a:{text:"I stay persistent and adjust my approach when a prospect needs more time before committing.",comp:"CA",role:"H"}, b:{text:"I keep track of personal and professional details about my long-term clients and use them to strengthen our relationship.",comp:"RDN",role:"F"} },
-  { id:20, a:{text:"When I negotiate, I advocate strongly for the outcome I want rather than defaulting to compromise.",comp:"CA",role:"H"}, b:{text:"I reach out to people I work with on a consistent basis, not just when I have something specific to ask.",comp:"RDN",role:"F"} },
-  { id:21, a:{text:"I track my progress against goals at least weekly and adjust my pace when I am behind.",comp:"URO",role:"H"}, b:{text:"I make myself available to clients outside standard hours when the situation genuinely calls for it.",comp:"AR",role:"F"} },
-  { id:22, a:{text:"I prefer a fast-paced environment where success is measured in concrete, numeric outcomes.",comp:"URO",role:"H"}, b:{text:"I respond to client and colleague messages within a short, predictable window so they know what to expect.",comp:"AR",role:"F"} },
+  { id:15, a:{text:"I am comfortable making first contact with someone and opening a conversation from scratch.",comp:"RBH",role:"U"}, b:{text:"I maintain detailed records of commitments, conversations, and open tasks so nothing slips through.",comp:"MFT",role:"F"} },
+  { id:16, a:{text:"Meeting new people energizes me more than deepening a small number of established relationships.",comp:"RBH",role:"U"}, b:{text:"I follow up on every promise I make, whether or not anyone is monitoring it.",comp:"MFT",role:"F"} },
+
+  // ── Block 3: More Hunter pairings + repeat competencies in new pairings ──
+  { id:17, a:{text:"I initiate contact with organizations or individuals that have no existing relationship with us.",comp:"NBAD",role:"H"}, b:{text:"I treat every unreturned message or missed check-in as an opportunity to rebuild availability with someone.",comp:"AR",role:"F"} },
+  { id:18, a:{text:"Identifying and developing a brand new opportunity gives me more satisfaction than growing an existing one.",comp:"NBAD",role:"H"}, b:{text:"Being consistently accessible is one of the most important things I can offer to the people who depend on me.",comp:"AR",role:"F"} },
+  { id:19, a:{text:"I persist in working toward a decision or commitment even when resistance shows up more than once.",comp:"CA",role:"H"}, b:{text:"I keep track of personal and professional details about people I work with over the long term.",comp:"RDN",role:"F"} },
+  { id:20, a:{text:"When I negotiate, I advocate strongly for the outcome I want rather than defaulting to compromise.",comp:"CA",role:"H"}, b:{text:"I reach out to people I work with consistently, not just when I have something specific to ask.",comp:"RDN",role:"F"} },
+  // Urgency + Universal pairings (new combinations)
+  { id:21, a:{text:"I track my progress against goals at least weekly and adjust my pace when I am behind.",comp:"URO",role:"H"}, b:{text:"I make myself available outside standard hours when a customer situation genuinely calls for it.",comp:"AR",role:"F"} },
+  { id:22, a:{text:"I prefer environments where success is measured in concrete, numeric outcomes.",comp:"URO",role:"H"}, b:{text:"I respond to messages within a short, predictable window so people know what to expect from me.",comp:"AR",role:"F"} },
   { id:23, a:{text:"I perform at my best when given a goal and the full autonomy to determine how to reach it.",comp:"ISD",role:"H"}, b:{text:"I consciously work to be a stabilizing, calming presence — especially when situations become stressful.",comp:"ERPP",role:"F"} },
-  { id:24, a:{text:"I generate my own opportunities and rely on my own judgment to decide where to focus.",comp:"ISD",role:"H"}, b:{text:"After a difficult interaction, I reset quickly and maintain a professional, positive presence for what comes next.",comp:"ERPP",role:"F"} },
-  { id:25, a:{text:"I am motivated by winning clients over from the competition.",comp:"CA",role:"H"}, b:{text:"I document the outcome and agreed next steps from every client meeting before it fades from memory.",comp:"MFT",role:"F"} },
-  { id:26, a:{text:"I find that healthy competition sharpens my focus and raises the quality of my work.",comp:"CA",role:"H"}, b:{text:"I prioritize completing commitments fully and on time over taking on new ones prematurely.",comp:"MFT",role:"F"} },
-  { id:27, a:{text:"After a setback or lost deal, I channel that energy into pursuing the next opportunity.",comp:"NBAD",role:"H"}, b:{text:"I stay visibly upbeat and professional even during a difficult patch — my team or clients would not know I am under pressure.",comp:"ERPP",role:"F"} },
-  { id:28, a:{text:"I am drawn to building new pipelines and territories more than optimizing established ones.",comp:"NBAD",role:"H"}, b:{text:"I adjust my communication style during tense situations to reduce friction rather than escalate it.",comp:"ERPP",role:"F"} },
-  { id:29, a:{text:"I am comfortable moving forward with momentum even when every detail is not yet finalized.",comp:"URO",role:"H"}, b:{text:"I build relationships with a long-term view — I invest more than the immediate situation requires.",comp:"RDN",role:"F"} },
-  { id:30, a:{text:"I use deadlines and time pressure as tools to keep myself and others moving forward.",comp:"URO",role:"H"}, b:{text:"Clients I have worked with for a long time would describe me as someone who genuinely knows them.",comp:"RDN",role:"F"} },
-  { id:31, a:{text:"I trust my own instincts and judgment when deciding how to approach a challenge.",comp:"ISD",role:"H"}, b:{text:"I keep a running list of open commitments and review it regularly to make sure nothing is overdue.",comp:"MFT",role:"F"} },
-  { id:32, a:{text:"I am energized by working independently and setting my own pace.",comp:"ISD",role:"H"}, b:{text:"I treat the accuracy and completeness of my records as a professional standard, not an administrative burden.",comp:"MFT",role:"F"} },
-  { id:33, a:{text:"I break the ice easily with new contacts and make them comfortable within the first few minutes.",comp:"RBH",role:"U"}, b:{text:"I manage my emotional reactions deliberately so they do not affect the quality of my work or interactions.",comp:"ERPP",role:"F"} },
-  { id:34, a:{text:"I am willing to approach someone I have never met and open a business conversation without a warm introduction.",comp:"RBH",role:"U"}, b:{text:"I maintain a reliable, positive presence with colleagues and clients regardless of how my day is going.",comp:"ERPP",role:"F"} },
-  { id:35, a:{text:"I recover quickly after a setback and return to full performance without a prolonged adjustment period.",comp:"STR",role:"U"}, b:{text:"I follow up with new contacts within 24 hours of meeting them to keep the conversation alive.",comp:"RBH",role:"U"} },
-  { id:36, a:{text:"I find practical solutions when facing unexpected problems rather than waiting for better conditions.",comp:"PSSO",role:"U"}, b:{text:"I stay effective and focused even when my schedule is unpredictable or my workload spikes unexpectedly.",comp:"STR",role:"U"} },
-  { id:37, a:{text:"I share updates with stakeholders proactively — before they have to ask — even when nothing is urgent.",comp:"PC",role:"U"}, b:{text:"I prioritize speed and momentum in my work over waiting until every detail is finalized.",comp:"URO",role:"H"} },
-  { id:38, a:{text:"When I encounter an obstacle, I work through it independently and systematically before escalating.",comp:"PSSO",role:"U"}, b:{text:"I keep the people around me informed so they are never caught off guard by a change or development.",comp:"PC",role:"U"} },
-  { id:39, a:{text:"I stay organized and effective even when my workload spikes or becomes unpredictable.",comp:"STR",role:"U"}, b:{text:"I bring a calm and steady energy to my team or clients, particularly when pressure is high.",comp:"ERPP",role:"F"} },
-  { id:40, a:{text:"I notify the people affected by a problem or change before they discover it on their own.",comp:"PC",role:"U"}, b:{text:"I find creative ways forward when I hit a wall rather than waiting for someone else to solve it.",comp:"PSSO",role:"U"} },
-  { id:41, a:{text:"I push myself to close a deal before the end of a reporting period, even when the prospect needs more time.",comp:"URO",role:"H"}, b:{text:"I set ambitious personal timelines and hold myself accountable to them without needing external pressure.",comp:"ISD",role:"H"} },
-  { id:42, a:{text:"I track exactly where each prospect is in the process and know what it will take to move each one forward.",comp:"URO",role:"H"}, b:{text:"I find new ways to reach potential clients that others have not thought to try.",comp:"NBAD",role:"H"} },
-  { id:43, a:{text:"I am comfortable starting conversations that may not convert right away — the first step is opening the door.",comp:"NBAD",role:"H"}, b:{text:"When someone pushes back, I listen, adjust my approach, and come back with something stronger.",comp:"CA",role:"H"} },
-  { id:44, a:{text:"I notice when a client's tone or energy has shifted and respond to the underlying dynamic, not just the words.",comp:"ERPP",role:"F"}, b:{text:"I maintain the same level of care and reliability for every client, regardless of account size.",comp:"MFT",role:"F"} },
-  { id:45, a:{text:"I build enough trust with my clients that they tell me things they would not share with most of their vendors.",comp:"RDN",role:"F"}, b:{text:"I rarely let messages sit — my response time is something people notice and rely on.",comp:"AR",role:"F"} },
-  { id:46, a:{text:"I resolve a conflict with a client by focusing on their underlying concern, not just the surface complaint.",comp:"ERPP",role:"F"}, b:{text:"I track the status of every open item — client requests, follow-ups, pending decisions — so nothing is forgotten.",comp:"MFT",role:"F"} },
+  { id:24, a:{text:"I generate my own path forward and do not rely on a structured process to tell me where to focus.",comp:"ISD",role:"H"}, b:{text:"After a difficult interaction, I reset quickly and maintain a professional, positive presence for what comes next.",comp:"ERPP",role:"F"} },
+  { id:25, a:{text:"I am energized by convincing someone to make a change they had not previously considered.",comp:"CA",role:"H"}, b:{text:"I document the outcome and agreed next steps from every important conversation before it fades from memory.",comp:"MFT",role:"F"} },
+  { id:26, a:{text:"I find that healthy competition sharpens my focus and raises the quality of my work.",comp:"CA",role:"H"}, b:{text:"I prioritize completing my existing commitments fully before taking on new ones.",comp:"MFT",role:"F"} },
+
+  // ── Block 4: General / everyday context items (~10 reframed) ──
+  // These use everyday behavioral framing rather than work/sales-specific language
+  { id:27, a:{text:"After a setback or disappointment, I bounce back quickly and redirect my energy toward the next thing.",comp:"NBAD",role:"H"}, b:{text:"I stay visibly upbeat and composed even during a difficult stretch — people around me would not know I'm under pressure.",comp:"ERPP",role:"F"} },
+  { id:28, a:{text:"I naturally gravitate toward new projects and beginnings rather than refining or maintaining what exists.",comp:"NBAD",role:"H"}, b:{text:"I find ways to reduce tension in a difficult conversation rather than letting it escalate.",comp:"ERPP",role:"F"} },
+  { id:29, a:{text:"I am comfortable moving forward with a decision even when not every detail is settled.",comp:"URO",role:"H"}, b:{text:"I build relationships with a long-term view — I invest more than the immediate situation requires.",comp:"RDN",role:"F"} },
+  { id:30, a:{text:"I use personal deadlines and time pressure to keep myself moving toward goals.",comp:"URO",role:"H"}, b:{text:"People who have known me a long time would say I genuinely understand what matters to them.",comp:"RDN",role:"F"} },
+  { id:31, a:{text:"I trust my own instincts and judgment more than I rely on outside guidance.",comp:"ISD",role:"H"}, b:{text:"I keep a running list of open obligations and review it regularly to make sure nothing is overdue.",comp:"MFT",role:"F"} },
+  { id:32, a:{text:"I am energized by working independently and find heavy oversight or rigid structure limiting.",comp:"ISD",role:"H"}, b:{text:"I hold myself to a high standard of follow-through, not as a rule but as a matter of personal integrity.",comp:"MFT",role:"F"} },
+  { id:33, a:{text:"I put people at ease quickly when I meet them — the first few minutes of a new conversation come naturally to me.",comp:"RBH",role:"U"}, b:{text:"I manage my emotional reactions deliberately so they do not affect the quality of my interactions.",comp:"ERPP",role:"F"} },
+  { id:34, a:{text:"I am comfortable introducing myself to someone I do not know and starting a conversation without a prior connection.",comp:"RBH",role:"U"}, b:{text:"I maintain a consistent, positive presence with people regardless of how my day is going.",comp:"ERPP",role:"F"} },
+  { id:35, a:{text:"I recover quickly after a setback and return to full engagement without a prolonged adjustment period.",comp:"STR",role:"U"}, b:{text:"I follow up with new contacts promptly after meeting them so the connection does not go cold.",comp:"RBH",role:"U"} },
+  { id:36, a:{text:"I invest time building expertise in whatever I'm responsible for so I can answer questions confidently.",comp:"PTE",role:"U"}, b:{text:"I make myself available and responsive to the people who depend on me, even outside of standard hours.",comp:"AR",role:"F"} },
+
+  // ── Block 5: Universal pairings + cross-competency repeats ──
+  { id:37, a:{text:"I share updates with the people involved in something proactively — before they have to ask.",comp:"PC",role:"U"}, b:{text:"I prioritize speed and momentum in my work over waiting until every detail is finalized.",comp:"URO",role:"H"} },
+  { id:38, a:{text:"When I run into an obstacle, I work through it on my own before asking for help.",comp:"PSSO",role:"U"}, b:{text:"I complete tasks and close open loops before taking on new ones.",comp:"MFT",role:"F"} },
+  { id:39, a:{text:"I stay organized and effective even when my workload spikes or becomes unpredictable.",comp:"STR",role:"U"}, b:{text:"I bring a calm and steady energy to the people around me, particularly when pressure is high.",comp:"ERPP",role:"F"} },
+  { id:40, a:{text:"I let the people affected by a problem or change know about it before they find out on their own.",comp:"PC",role:"U"}, b:{text:"I stay in regular contact with the people I work with so the relationship does not only activate around transactions.",comp:"RDN",role:"F"} },
 ];
 
 // ══════════════════════════════════════════════
-// DATA: CONSCIENTIOUSNESS ITEMS
+// DATA: SJT SCENARIOS (10 items, 4 options each, RANKING format)
+// Scoring: rank 1 = 4 pts, rank 2 = 3 pts, rank 3 = 2 pts, rank 4 = 1 pt
+// SJT is scored INDEPENDENTLY from FC composites
 // ══════════════════════════════════════════════
-const CON_QUESTIONS = [
-  { id:'C1',  text:"I plan my tasks in advance rather than responding to whatever comes up first.",                        reverse: false },
-  { id:'C2',  text:"I double-check my work before sending it out.",                                                       reverse: false },
-  { id:'C3',  text:"When I say I will do something, I do it — even when no one is tracking it.",                          reverse: false },
-  { id:'C4',  text:"I tend to prioritize high-impact work and return to administrative tasks when the moment is right.",   reverse: true  },
-  { id:'C5',  text:"I stay organized even when my workload is high.",                                                     reverse: false },
-  { id:'C6',  text:"I prefer to keep moving and come back to tie up loose ends once the bigger picture is clearer.",      reverse: true  },
-  { id:'C7',  text:"I hold myself to the same standard regardless of whether anyone will notice.",                        reverse: false },
-  { id:'C8',  text:"I keep track of open commitments so nothing slips through.",                                          reverse: false },
-  { id:'C9',  text:"I tend to adapt my structure to the situation rather than maintaining a fixed routine.",               reverse: true  },
-  { id:'C10', text:"I review my own work critically before considering it done.",                                         reverse: false },
-];
 const SJT_SCENARIOS = [
   {
-    id:1, competencies:"New Business Acquisition Drive / Relationship Depth & Nurturing",
+    id:1, competencies:"New Business Acquisition / Relationship Depth",
     context:"You have just been assigned a new region with 40 contacts — some with prior history, some entirely new. Your calendar for the next two weeks is open.",
-    prompt:"Select the response you would be MOST likely to take and the one you would be LEAST likely to take:",
+    prompt:"Rank the responses from most likely (1) to least likely (4) to reflect how you would actually respond:",
     options:[
-      {key:"A", text:"I focus first on contacts with no prior history — those represent the biggest growth opportunities.", style:"H"},
-      {key:"B", text:"I start with contacts who already have a relationship with us — rebuilding those connections creates a foundation before approaching anyone new.", style:"F"},
-      {key:"C", text:"I review the full list, segment by potential value, and build a balanced plan covering both new and warm contacts.", style:"X"},
+      {key:"A", text:"I focus first on contacts with no prior history — those represent the biggest growth opportunities.", style:"H", eff:2},
+      {key:"B", text:"I start with contacts who already have a relationship with us — rebuilding those connections creates a foundation before approaching anyone new.", style:"F", eff:2},
+      {key:"C", text:"I review the full list, segment by potential value, and build a balanced plan covering both new and warm contacts.", style:"X", eff:2},
+      {key:"D", text:"I wait until I have more context about the region before reaching out to anyone.", style:"AV", eff:0},
     ]
   },
   {
-    id:2, competencies:"Competitive Assertiveness / Emotional Regulation & Positive Presence",
-    context:"You are in a meeting where a stakeholder pushes back hard on your recommendation. They are visibly frustrated and begin challenging your credibility in front of others.",
-    prompt:"Select the response you would be MOST likely to take and the one you would be LEAST likely to take:",
+    id:2, competencies:"Competitive Assertiveness / Emotional Regulation",
+    context:"You are in a meeting where someone pushes back hard on your recommendation. They are visibly frustrated and begin challenging your credibility in front of others.",
+    prompt:"Rank the responses from most likely (1) to least likely (4):",
     options:[
-      {key:"A", text:"I hold my position and continue making my case — I do not concede just because someone challenges me publicly.", style:"H"},
-      {key:"B", text:"I acknowledge their concern, validate what is reasonable in their pushback, and redirect toward a shared outcome.", style:"F"},
-      {key:"C", text:"I suggest taking a brief break and continuing one-on-one to lower the temperature first.", style:"X"},
+      {key:"A", text:"I hold my position and continue making my case — I do not concede just because someone challenges me publicly.", style:"H", eff:1},
+      {key:"B", text:"I acknowledge their concern, validate what is reasonable in their pushback, and redirect toward a shared outcome.", style:"F", eff:2},
+      {key:"C", text:"I suggest taking a brief break and continuing one-on-one to lower the temperature first.", style:"X", eff:2},
+      {key:"D", text:"I soften my position to reduce tension and plan to revisit it later.", style:"AV", eff:0},
     ]
   },
   {
     id:3, competencies:"Urgency & Results Orientation / Meticulous Follow-Through",
-    context:"Nearing the end of a high-pressure deadline period. Critical deliverables are done but several smaller commitments remain open. You are out of time.",
-    prompt:"Select the response you would be MOST likely to take and the one you would be LEAST likely to take:",
+    context:"Nearing the end of a high-pressure period, critical deliverables are done but several smaller commitments remain open. You are out of time.",
+    prompt:"Rank the responses from most likely (1) to least likely (4):",
     options:[
-      {key:"A", text:"I prioritize what moves the most important outcomes forward and accept that smaller items will have to wait or be dropped.", style:"H"},
-      {key:"B", text:"I restructure my schedule to make sure every commitment I made gets fulfilled, regardless of size.", style:"F"},
-      {key:"C", text:"I contact the people expecting smaller deliverables, acknowledge the delay, give a realistic new timeline, and honor it.", style:"X"},
+      {key:"A", text:"I prioritize what moves the most important outcomes forward and accept that smaller items will have to wait.", style:"H", eff:1},
+      {key:"B", text:"I restructure my schedule to make sure every commitment I made gets fulfilled, regardless of size.", style:"F", eff:1},
+      {key:"C", text:"I contact the people expecting smaller deliverables, acknowledge the delay, give a realistic new timeline, and honor it.", style:"X", eff:2},
+      {key:"D", text:"I complete what feels manageable and hope the rest goes unnoticed.", style:"AV", eff:0},
     ]
   },
   {
     id:4, competencies:"Independent Self-Direction / Availability & Responsiveness",
     context:"Your manager is unreachable for two weeks. A situation arises that normally requires their sign-off — not urgent enough to interrupt their leave, but waiting will cause meaningful delays.",
-    prompt:"Select the response you would be MOST likely to take and the one you would be LEAST likely to take:",
+    prompt:"Rank the responses from most likely (1) to least likely (4):",
     options:[
-      {key:"A", text:"I make the call myself — I have enough context to move this forward without approval.", style:"H"},
-      {key:"B", text:"I reach out to colleagues or adjacent stakeholders and work with them collectively to find a path forward.", style:"F"},
-      {key:"C", text:"I document my recommended course of action, send a brief note to my manager flagging it, and proceed unless they push back.", style:"X"},
+      {key:"A", text:"I make the call myself — I have enough context to move this forward without approval.", style:"H", eff:1},
+      {key:"B", text:"I reach out to colleagues or adjacent stakeholders and work with them collectively to find a path forward.", style:"F", eff:2},
+      {key:"C", text:"I document my recommended course of action, send a brief note to my manager flagging it, and proceed unless they push back.", style:"X", eff:2},
+      {key:"D", text:"I wait for my manager to return rather than risk acting outside my authority.", style:"AV", eff:0},
     ]
   },
   {
-    id:5, competencies:"Urgency & Results Orientation / Relationship Depth & Nurturing",
+    id:5, competencies:"Urgency & Results Orientation / Relationship Depth",
     context:"A colleague you have worked with closely for two years is going through a difficult personal situation. Their work quality has slipped and a shared project is at risk of missing its deadline.",
-    prompt:"Select the response you would be MOST likely to take and the one you would be LEAST likely to take:",
+    prompt:"Rank the responses from most likely (1) to least likely (4):",
     options:[
-      {key:"A", text:"I address the project risk directly — I have a deadline to protect and need an honest conversation about getting back on track.", style:"H"},
-      {key:"B", text:"I check in on them personally first — I want to understand what they need before I say anything about the project.", style:"F"},
-      {key:"C", text:"I offer to absorb more of the project temporarily to relieve their load while making clear we need a sustainable plan soon.", style:"X"},
+      {key:"A", text:"I address the project risk directly — I have a deadline to protect and need an honest conversation about getting back on track.", style:"H", eff:1},
+      {key:"B", text:"I check in on them personally first — I want to understand what they need before I say anything about the project.", style:"F", eff:2},
+      {key:"C", text:"I offer to absorb more of the project temporarily to relieve their load while making clear we need a sustainable plan soon.", style:"X", eff:2},
+      {key:"D", text:"I absorb all the extra work myself and say nothing to avoid an uncomfortable conversation.", style:"AV", eff:0},
     ]
   },
   {
     id:6, competencies:"Relationship Building / Meticulous Follow-Through",
     context:"You meet six new people at a professional event who express genuine interest in what you do. You have their contact details. The following week you are extremely busy.",
-    prompt:"Select the response you would be MOST likely to take and the one you would be LEAST likely to take:",
+    prompt:"Rank the responses from most likely (1) to least likely (4):",
     options:[
-      {key:"A", text:"I send brief, personalized follow-up messages to all six within the week — I do not let warm contacts go cold.", style:"H"},
-      {key:"B", text:"I prioritize two or three who seemed most promising and send them thoughtful follow-ups — I do not over-promise what I can maintain.", style:"F"},
-      {key:"C", text:"I set a reminder and follow up when my schedule opens — better late than not at all.", style:"X"},
+      {key:"A", text:"I send brief, personalized follow-up messages to all six within the week — I do not let warm contacts go cold.", style:"H", eff:2},
+      {key:"B", text:"I prioritize two or three who seemed most promising and send them thoughtful follow-ups — I do not over-promise what I can maintain.", style:"F", eff:2},
+      {key:"C", text:"I set a reminder and follow up when my schedule opens — better late than not at all.", style:"X", eff:1},
+      {key:"D", text:"I intend to follow up but the week overtakes me and I do not get to it.", style:"AV", eff:0},
     ]
   },
   {
     id:7, competencies:"Proactive Communication / Independent Self-Direction",
     context:"Early in a project you discover a key assumption the team made at the start is incorrect. Fixing it now means rework and delay. Staying quiet might work — or might create a larger problem later.",
-    prompt:"Select the response you would be MOST likely to take and the one you would be LEAST likely to take:",
+    prompt:"Rank the responses from most likely (1) to least likely (4):",
     options:[
-      {key:"A", text:"I flag it immediately to the relevant people — even though it means owning a difficult conversation about the delay.", style:"F"},
-      {key:"B", text:"I assess the risk myself and make a judgment call on whether it is worth raising based on likely severity.", style:"H"},
-      {key:"C", text:"I document the issue, propose a solution, and present both together — here is the problem, here is what I recommend.", style:"X"},
+      {key:"A", text:"I flag it immediately to the relevant people — even though it means owning a difficult conversation about the delay.", style:"F", eff:2},
+      {key:"B", text:"I assess the risk myself and make a judgment call on whether it is worth raising based on likely severity.", style:"H", eff:1},
+      {key:"C", text:"I document the issue, propose a solution, and present both together — here is the problem, here is what I recommend.", style:"X", eff:2},
+      {key:"D", text:"I continue as planned and raise it only if the problem materializes.", style:"AV", eff:0},
     ]
   },
   {
     id:8, competencies:"Competitive Assertiveness / Emotional Regulation",
     context:"A colleague consistently takes credit for joint work in front of leadership. You have noticed it several times.",
-    prompt:"Select the response you would be MOST likely to take and the one you would be LEAST likely to take:",
+    prompt:"Rank the responses from most likely (1) to least likely (4):",
     options:[
-      {key:"A", text:"I address it directly with the colleague — privately and professionally — and make clear I expect the pattern to stop.", style:"H"},
-      {key:"B", text:"I ensure my contributions are visible without direct confrontation — I make sure the right people have context.", style:"F"},
-      {key:"C", text:"I raise it with my manager as a team dynamic issue, not a personal complaint.", style:"X"},
+      {key:"A", text:"I address it directly with the colleague — privately and professionally — and make clear I expect the pattern to stop.", style:"H", eff:2},
+      {key:"B", text:"I ensure my contributions are visible without direct confrontation — I make sure the right people have context.", style:"F", eff:1},
+      {key:"C", text:"I raise it with my manager as a team dynamic issue, not a personal complaint.", style:"X", eff:2},
+      {key:"D", text:"I let it go to avoid conflict, even though it frustrates me.", style:"AV", eff:0},
     ]
   },
   {
-    id:9, competencies:"Stress Tolerance & Resilience / Availability & Responsiveness",
+    id:9, competencies:"Stress Tolerance / Availability & Responsiveness",
     context:"End of an exhausting week — two crises handled, no lunch three days running, unread messages still waiting. A colleague sends a non-urgent but genuine request for your input.",
-    prompt:"Select the response you would be MOST likely to take and the one you would be LEAST likely to take:",
+    prompt:"Rank the responses from most likely (1) to least likely (4):",
     options:[
-      {key:"A", text:"I respond briefly now — even a short reply keeps things moving and the person does not feel ignored.", style:"F"},
-      {key:"B", text:"I send a quick note letting them know I will get to it early next week — and actually do it.", style:"H"},
-      {key:"C", text:"If it takes under five minutes I respond now; if not, I defer with a specific date and honor it.", style:"X"},
+      {key:"A", text:"I respond briefly now — even a short reply keeps things moving and the person does not feel ignored.", style:"F", eff:1},
+      {key:"B", text:"I send a quick note letting them know I will get to it early next week — and actually do it.", style:"H", eff:2},
+      {key:"C", text:"If it takes under five minutes I respond now; if not, I defer with a specific date and honor it.", style:"X", eff:2},
+      {key:"D", text:"I see it, feel guilty, and neither respond nor formally defer.", style:"AV", eff:0},
     ]
   },
   {
-    id:10, competencies:"Problem-Solving & Solution Orientation / Relationship Depth",
+    id:10, competencies:"Problem-Solving / Relationship Depth",
     context:"A person you work with regularly comes to you visibly stressed about a problem outside your direct area. They are not formally asking for help — they seem to need to talk. You have a meeting in 20 minutes.",
-    prompt:"Select the response you would be MOST likely to take and the one you would be LEAST likely to take:",
+    prompt:"Rank the responses from most likely (1) to least likely (4):",
     options:[
-      {key:"A", text:"I listen briefly, ask what would be most helpful, and either help practically or connect them with someone who can.", style:"F"},
-      {key:"B", text:"I acknowledge what they are going through but gently redirect — I have limited time and limited scope on this problem.", style:"H"},
-      {key:"C", text:"I document the situation and follow up with a concrete offer of help after my meeting.", style:"X"},
+      {key:"A", text:"I listen briefly, ask what would be most helpful, and either help practically or connect them with someone who can.", style:"F", eff:2},
+      {key:"B", text:"I acknowledge what they are going through but gently redirect — I have limited time and limited scope on this problem.", style:"H", eff:1},
+      {key:"C", text:"I sit with them for the full 20 minutes, let them talk, and reschedule my meeting.", style:"X", eff:1},
+      {key:"D", text:"I tell them I cannot help right now and go to my meeting.", style:"AV", eff:0},
     ]
   },
 ];
 
 // ══════════════════════════════════════════════
-// IMPORTANCE WEIGHTS (from framework)
+// DATA: CONSCIENTIOUSNESS SCALE (10 items)
+// IPIP Big-Five Conscientiousness facets — validated applicant-sample items
+// Mix of standard and reverse-keyed (marked rev:true)
+// Likert 1-5: 1=Not at all like me, 5=Very much like me
+// Rev-keyed items are flipped in scoring: scored = 6 - response
+// ══════════════════════════════════════════════
+const CON_ITEMS = [
+  { id:1,  text:"I complete tasks on time, even when the deadline is not being monitored.",                              rev:false },
+  { id:2,  text:"I follow through on commitments even when circumstances make it inconvenient.",                         rev:false },
+  { id:3,  text:"I set high standards for my own work and feel dissatisfied when I fall short of them.",                 rev:false },
+  { id:4,  text:"I plan my work in advance rather than figuring it out as I go.",                                        rev:false },
+  { id:5,  text:"When I take on a task, I see it through to completion.",                                                rev:false },
+  { id:6,  text:"I keep track of what I have and have not done so nothing gets missed.",                                 rev:false },
+  { id:7,  text:"I push myself to do thorough, careful work even when a quicker approach would be acceptable.",          rev:false },
+  { id:8,  text:"I tend to put off tasks that require sustained effort.",                                                rev:true  },
+  { id:9,  text:"I sometimes leave things unfinished when something more interesting comes along.",                      rev:true  },
+  { id:10, text:"I am more focused on getting things done than on getting them done perfectly.",                         rev:true  },
+];
+
+// ══════════════════════════════════════════════
+// IMPORTANCE WEIGHTS
 // ══════════════════════════════════════════════
 const IMPORTANCE = {
-  // Hunter-specific
   NBAD: 0.95, CA: 0.90, URO: 0.85, ISD: 0.80,
-  // Farmer-specific
   RDN: 0.95, AR: 0.90, ERPP: 0.85, MFT: 0.85,
-  // Universal — Hunter importance
-  STR_H: 0.90, PC_H: 0.85, PSSO_H: 0.85, RBH_H: 0.85,
-  // Universal — Farmer importance
-  STR_F: 0.90, PC_F: 0.85, PSSO_F: 0.85, RBH_F: 0.85,
+  STR_H: 0.90, PTE_H: 0.80, PC_H: 0.85, PSSO_H: 0.85, RBH_H: 0.85,
+  STR_F: 0.90, PTE_F: 0.80, PC_F: 0.85, PSSO_F: 0.85, RBH_F: 0.85,
 };
 
 const COMP_META = {
   NBAD: {name:"New Business Acquisition Drive", role:"H"},
-  CA:   {name:"Competitive Assertiveness",       role:"H"},
-  URO:  {name:"Urgency & Results Orientation",   role:"H"},
-  ISD:  {name:"Independent Self-Direction",      role:"H"},
-  RDN:  {name:"Relationship Depth & Nurturing",  role:"F"},
-  AR:   {name:"Availability & Responsiveness",   role:"F"},
+  CA:   {name:"Competitive Assertiveness", role:"H"},
+  URO:  {name:"Urgency & Results Orientation", role:"H"},
+  ISD:  {name:"Independent Self-Direction", role:"H"},
+  RDN:  {name:"Relationship Depth & Nurturing", role:"F"},
+  AR:   {name:"Availability & Responsiveness", role:"F"},
   ERPP: {name:"Emotional Regulation & Positive Presence", role:"F"},
-  MFT:  {name:"Meticulous Follow-Through",       role:"F"},
-  STR:  {name:"Stress Tolerance & Resilience",   role:"U"},
-  PC:   {name:"Proactive Communication",         role:"U"},
+  MFT:  {name:"Meticulous Follow-Through", role:"F"},
+  STR:  {name:"Stress Tolerance & Resilience", role:"U"},
+  PTE:  {name:"Product & Technical Expertise", role:"U"},
+  PC:   {name:"Proactive Communication", role:"U"},
   PSSO: {name:"Problem-Solving & Solution Orientation", role:"U"},
-  RBH:  {name:"Relationship Building",           role:"U"},
+  RBH:  {name:"Relationship Building", role:"U"},
 };
 
 // ══════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════
-let fcAnswers = {}; // {qid: {most: 'A'|'B', least: 'A'|'B'}}
-let conAnswers = {}; // {qid: 1–5 rating}
-let sjtAnswers = {}; // {scenId: {most: key, least: key}}
+let fcAnswers = {};    // {qid: {most: 'A'|'B', least: 'A'|'B'}}
+let sjtAnswers = {};   // {scenId: {A:rank, B:rank, C:rank, D:rank}} — rank 1..4
+let conAnswers = {};   // {itemId: 1..5}
 let bgData = {};
 
 // ══════════════════════════════════════════════
@@ -1558,94 +1498,107 @@ function switchTab(tab) {
 }
 
 // ══════════════════════════════════════════════
-// SHUFFLE UTILITY
-// ══════════════════════════════════════════════
-function shuffleArray(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-// Stores the display order for each FC question: {qid: ['A','B'] or ['B','A']}
-const fcDisplayOrder = {};
-// Stores the display order for each SJT scenario: {scenId: ['A','B','C'] shuffled}
-const sjtDisplayOrder = {};
-
-// ══════════════════════════════════════════════
-// RENDER FC QUESTIONS (one-click, randomized A/B)
+// RENDER FC QUESTIONS
+// Single-click UX: clicking Most on A auto-sets Least to B (and vice versa).
+// User can override by clicking Least explicitly on whichever side they want.
 // ══════════════════════════════════════════════
 function renderFC() {
   const container = document.getElementById('fc-questions-container');
   container.innerHTML = '';
 
-  FC_QUESTIONS.forEach((q) => {
-    // Randomize which statement appears on top
-    const order = Math.random() < 0.5 ? ['A', 'B'] : ['B', 'A'];
-    fcDisplayOrder[q.id] = order;
-
+  FC_QUESTIONS.forEach(q => {
     const card = document.createElement('div');
     card.className = 'q-card';
     card.id = `qcard-${q.id}`;
-    card.innerHTML = buildFCCardHTML(q.id, q.a.text, q.b.text, order, FC_QUESTIONS.length);
+    card.innerHTML = `
+      <div class="q-num">QUESTION ${q.id} / 40</div>
+      <div class="fc-pair">
+        <div class="fc-pair-container" id="fcp-${q.id}-A">
+          <div class="fc-stmt-text" id="stmt-${q.id}-A">
+            <div class="fc-letter">A</div>
+            <div class="fc-text">${q.a.text}</div>
+          </div>
+          <div class="fc-stmt-btns">
+            <button class="fc-choice-btn most" id="btn-${q.id}-A-most" onclick="selectFC(${q.id},'A','most')">▲ Most Like Me</button>
+            <button class="fc-choice-btn least" id="btn-${q.id}-A-least" onclick="selectFC(${q.id},'A','least')">▼ Least Like Me</button>
+          </div>
+        </div>
+        <div class="fc-pair-container" id="fcp-${q.id}-B">
+          <div class="fc-stmt-text" id="stmt-${q.id}-B">
+            <div class="fc-letter">B</div>
+            <div class="fc-text">${q.b.text}</div>
+          </div>
+          <div class="fc-stmt-btns">
+            <button class="fc-choice-btn most" id="btn-${q.id}-B-most" onclick="selectFC(${q.id},'B','most')">▲ Most Like Me</button>
+            <button class="fc-choice-btn least" id="btn-${q.id}-B-least" onclick="selectFC(${q.id},'B','least')">▼ Least Like Me</button>
+          </div>
+        </div>
+      </div>`;
     container.appendChild(card);
   });
 }
 
-function buildFCCardHTML(qid, textA, textB, order, total) {
-  const totalStr = total || FC_QUESTIONS.length;
-  const texts = { A: textA, B: textB };
-
-  const stmtsHTML = order.map(slot => `
-    <div class="fc-statement" id="stmt-${qid}-${slot}">
-      <div class="fc-text">${texts[slot]}</div>
-      <div class="fc-badge-wrap">
-        <button class="fc-badge m-btn" id="mb-${qid}-${slot}" onclick="selectFC(${JSON.stringify(qid)},'${slot}','most')">Most</button>
-        <button class="fc-badge l-btn" id="lb-${qid}-${slot}" onclick="selectFC(${JSON.stringify(qid)},'${slot}','least')">Least</button>
-      </div>
-    </div>`).join('');
-
-  return `
-    <div class="q-num">QUESTION ${qid} / ${totalStr}</div>
-    <div class="fc-pair">${stmtsHTML}</div>`;
-}
-
+// Single-click logic:
+// - Clicking "Most" on A → sets most=A, least=B (if least not yet set, or if least was A)
+// - Clicking "Least" on A → sets least=A, most=B (if most not yet set, or if most was A)
+// - Clicking an already-active button deselects it (clears that choice)
 function selectFC(qid, stmt, type) {
   if (!fcAnswers[qid]) fcAnswers[qid] = {};
+  const ans = fcAnswers[qid];
   const other = stmt === 'A' ? 'B' : 'A';
 
-  // If clicking Most: auto-set other as Least (and clear any conflicting state)
-  if (type === 'most') {
-    fcAnswers[qid].most = stmt;
-    fcAnswers[qid].least = other;
-  } else {
-    // Clicking Least: auto-set other as Most
-    fcAnswers[qid].least = stmt;
-    fcAnswers[qid].most = other;
+  // Toggle off if clicking the already-active choice
+  if (ans[type] === stmt) {
+    delete ans[type];
+    // Also clear the auto-set other side if it was set by this action
+    // (we track whether the other was auto-set via a flag)
+    if (ans['_auto_' + (type === 'most' ? 'least' : 'most')] === true) {
+      delete ans[type === 'most' ? 'least' : 'most'];
+      delete ans['_auto_' + (type === 'most' ? 'least' : 'most')];
+    }
+    updateFCCard(qid);
+    updateProgress();
+    return;
   }
 
-  updateFCCard(qid, fcAnswers, 'stmt', 'mb', 'lb');
+  const otherType = type === 'most' ? 'least' : 'most';
+
+  // If the same statement is already set for the other type, clear that
+  if (ans[otherType] === stmt) {
+    delete ans[otherType];
+    delete ans['_auto_' + otherType];
+  }
+
+  // Set the chosen side
+  ans[type] = stmt;
+  delete ans['_auto_' + type]; // manual click — not auto
+
+  // Auto-set the complement if it isn't already manually set
+  if (!ans[otherType]) {
+    ans[otherType] = other;
+    ans['_auto_' + otherType] = true;
+  }
+
+  updateFCCard(qid);
   updateProgress();
 }
 
-function updateFCCard(qid, answerStore, stmtPrefix, mPrefix, lPrefix) {
-  const ans = answerStore[qid] || {};
+function updateFCCard(qid) {
+  const ans = fcAnswers[qid] || {};
   const card = document.getElementById(`qcard-${qid}`);
   if (!card) return;
 
   ['A','B'].forEach(s => {
-    const stmt = document.getElementById(`${stmtPrefix}-${qid}-${s}`);
+    const stmt = document.getElementById(`stmt-${qid}-${s}`);
     if (!stmt) return;
-    stmt.classList.remove('is-most','is-least');
-    if (ans.most === s) stmt.classList.add('is-most');
-    if (ans.least === s) stmt.classList.add('is-least');
+    stmt.classList.remove('selected-most','selected-least');
+    if (ans.most === s) stmt.classList.add('selected-most');
+    if (ans.least === s) stmt.classList.add('selected-least');
 
-    const mBtn = document.getElementById(`${mPrefix}-${qid}-${s}`);
-    const lBtn = document.getElementById(`${lPrefix}-${qid}-${s}`);
-    if (mBtn) mBtn.classList.toggle('active', ans.most === s);
-    if (lBtn) lBtn.classList.toggle('active', ans.least === s);
+    const mostBtn = document.getElementById(`btn-${qid}-${s}-most`);
+    const leastBtn = document.getElementById(`btn-${qid}-${s}-least`);
+    if (mostBtn) mostBtn.classList.toggle('active', ans.most === s);
+    if (leastBtn) leastBtn.classList.toggle('active', ans.least === s);
   });
 
   card.classList.remove('error');
@@ -1678,91 +1631,28 @@ function submitFC() {
   }
 
   document.getElementById('fc-error').style.display = 'none';
-  renderCON();
-  showScreen('screen-con');
-}
-
-// ══════════════════════════════════════════════
-// RENDER CONSCIENTIOUSNESS — Likert 1–5
-// ══════════════════════════════════════════════
-function renderCON() {
-  const container = document.getElementById('con-questions-container');
-  container.innerHTML = '';
-
-  CON_QUESTIONS.forEach((q, idx) => {
-    const card = document.createElement('div');
-    card.className = 'con-item-card';
-    card.id = `concard-${q.id}`;
-
-    const btns = [1,2,3,4,5].map(n =>
-      `<button class="con-likert-btn" id="con-${q.id}-${n}" onclick="rateCON('${q.id}',${n})">${n}</button>`
-    ).join('');
-
-    card.innerHTML = `
-      <div class="con-item-num">ITEM ${idx + 1} / ${CON_QUESTIONS.length}</div>
-      <div class="con-item-text">${q.text}</div>
-      <div class="con-likert-row">
-        <div class="con-likert-label">Not at all like me</div>
-        <div class="con-likert-btns">${btns}</div>
-        <div class="con-likert-label right">Very much like me</div>
-      </div>
-      <div class="con-anchor-row">
-        <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
-      </div>`;
-    container.appendChild(card);
-  });
-}
-
-function rateCON(qid, rating) {
-  conAnswers[qid] = rating;
-  for (let n = 1; n <= 5; n++) {
-    const btn = document.getElementById(`con-${qid}-${n}`);
-    if (btn) btn.classList.toggle('active', n === rating);
-  }
-  document.getElementById(`concard-${qid}`) && document.getElementById(`concard-${qid}`).classList.remove('error');
-}
-
-function submitCON() {
-  const incomplete = CON_QUESTIONS.filter(q => !conAnswers[q.id]);
-
-  if (incomplete.length > 0) {
-    incomplete.forEach(q => {
-      const card = document.getElementById(`concard-${q.id}`);
-      if (card) card.classList.add('error');
-    });
-    document.getElementById('con-error').style.display = 'block';
-    const first = document.getElementById(`concard-${incomplete[0].id}`);
-    if (first) first.scrollIntoView({behavior:'smooth', block:'center'});
-    return;
-  }
-
-  document.getElementById('con-error').style.display = 'none';
   renderSJT();
   showScreen('screen-sjt');
 }
 
 // ══════════════════════════════════════════════
-// RENDER SJT — best-worst format, randomized option order
+// RENDER SJT — RANKING FORMAT (1–4)
 // ══════════════════════════════════════════════
 function renderSJT() {
   const container = document.getElementById('sjt-container');
   container.innerHTML = '';
 
   SJT_SCENARIOS.forEach(s => {
-    // Randomize the display order of the 3 options
-    const shuffledOpts = shuffleArray(s.options);
-    sjtDisplayOrder[s.id] = shuffledOpts.map(o => o.key);
-
     const card = document.createElement('div');
     card.className = 'sjt-card';
     card.id = `sjt-card-${s.id}`;
 
-    const optionsHTML = shuffledOpts.map(opt => `
-      <div class="fc-statement" id="sjt-stmt-${s.id}-${opt.key}">
-        <div class="fc-text">${opt.text}</div>
-        <div class="fc-badge-wrap">
-          <button class="fc-badge m-btn" id="sjt-mb-${s.id}-${opt.key}" onclick="selectSJT(${s.id},'${opt.key}','most')">Most</button>
-          <button class="fc-badge l-btn" id="sjt-lb-${s.id}-${opt.key}" onclick="selectSJT(${s.id},'${opt.key}','least')">Least</button>
+    let optionsHTML = s.options.map(opt => `
+      <div class="sjt-option-rank" id="sjt-opt-${s.id}-${opt.key}">
+        <div class="sjt-rank-badge" id="sjt-badge-${s.id}-${opt.key}">—</div>
+        <div class="sjt-option-text"><strong>${opt.key}.</strong>${opt.text}</div>
+        <div class="sjt-rank-btns">
+          ${[1,2,3,4].map(n => `<button class="sjt-rank-btn" id="sjt-btn-${s.id}-${opt.key}-${n}" onclick="rankSJT(${s.id},'${opt.key}',${n})">${n}</button>`).join('')}
         </div>
       </div>`).join('');
 
@@ -1770,51 +1660,64 @@ function renderSJT() {
       <div class="sjt-scenario-num">SCENARIO ${s.id} / 10</div>
       <div class="sjt-context">${s.context}</div>
       <div class="sjt-prompt">${s.prompt}</div>
-      <div class="fc-pair" style="margin-top:16px">${optionsHTML}</div>`;
+      <div class="sjt-options">${optionsHTML}</div>`;
     container.appendChild(card);
   });
 }
 
-function selectSJT(scenId, optKey, type) {
+function rankSJT(scenId, optKey, rank) {
   if (!sjtAnswers[scenId]) sjtAnswers[scenId] = {};
-  const opts = SJT_SCENARIOS.find(s => s.id === scenId).options.map(o => o.key);
-  const others = opts.filter(k => k !== optKey);
+  const a = sjtAnswers[scenId];
 
-  if (type === 'most') {
-    // If the chosen key was previously Least, clear it
-    if (sjtAnswers[scenId].least === optKey) sjtAnswers[scenId].least = null;
-    sjtAnswers[scenId].most = optKey;
+  // If this rank is already assigned to another option, clear it
+  Object.keys(a).forEach(k => {
+    if (a[k] === rank && k !== optKey) delete a[k];
+  });
+
+  // Toggle off if same
+  if (a[optKey] === rank) {
+    delete a[optKey];
   } else {
-    if (sjtAnswers[scenId].most === optKey) sjtAnswers[scenId].most = null;
-    sjtAnswers[scenId].least = optKey;
+    a[optKey] = rank;
   }
 
   updateSJTCard(scenId);
-  document.getElementById(`sjt-card-${scenId}`).classList.remove('error');
+  document.getElementById(`sjt-card-${scenId}`) && document.getElementById(`sjt-card-${scenId}`).classList.remove('error');
 }
 
 function updateSJTCard(scenId) {
-  const ans = sjtAnswers[scenId] || {};
-  const opts = SJT_SCENARIOS.find(s => s.id === scenId).options.map(o => o.key);
+  const s = SJT_SCENARIOS.find(s => s.id === scenId);
+  if (!s) return;
+  const a = sjtAnswers[scenId] || {};
 
-  opts.forEach(k => {
-    const stmt = document.getElementById(`sjt-stmt-${scenId}-${k}`);
-    const mBtn = document.getElementById(`sjt-mb-${scenId}-${k}`);
-    const lBtn = document.getElementById(`sjt-lb-${scenId}-${k}`);
-    if (!stmt) return;
+  s.options.forEach(opt => {
+    const rank = a[opt.key];
+    const optEl = document.getElementById(`sjt-opt-${scenId}-${opt.key}`);
+    const badge = document.getElementById(`sjt-badge-${scenId}-${opt.key}`);
+    if (!optEl || !badge) return;
 
-    stmt.classList.remove('is-most','is-least');
-    if (ans.most === k) stmt.classList.add('is-most');
-    if (ans.least === k) stmt.classList.add('is-least');
-    if (mBtn) mBtn.classList.toggle('active', ans.most === k);
-    if (lBtn) lBtn.classList.toggle('active', ans.least === k);
+    // Remove all rank classes
+    optEl.className = optEl.className.replace(/\s?ranked-\d/g, '').trim();
+    badge.textContent = rank ? rank : '—';
+    if (rank) {
+      optEl.classList.add(`ranked-${rank}`);
+    }
+
+    // Update rank buttons
+    [1,2,3,4].forEach(n => {
+      const btn = document.getElementById(`sjt-btn-${scenId}-${opt.key}-${n}`);
+      if (!btn) return;
+      btn.className = 'sjt-rank-btn';
+      if (a[opt.key] === n) btn.classList.add(`active-${n}`);
+    });
   });
 }
 
 function submitSJT() {
   const incomplete = SJT_SCENARIOS.filter(s => {
     const a = sjtAnswers[s.id] || {};
-    return !a.most || !a.least;
+    const ranks = s.options.map(o => a[o.key]).filter(Boolean);
+    return ranks.length < 4 || new Set(ranks).size < 4;
   });
 
   if (incomplete.length > 0) {
@@ -1829,200 +1732,260 @@ function submitSJT() {
   }
 
   document.getElementById('sjt-error').style.display = 'none';
+  renderCon();
+  showScreen('screen-con');
+}
+
+// ══════════════════════════════════════════════
+// RENDER CONSCIENTIOUSNESS SCALE
+// ══════════════════════════════════════════════
+function renderCon() {
+  const container = document.getElementById('con-container');
+  container.innerHTML = '';
+
+  CON_ITEMS.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'con-card';
+    card.id = `con-card-${item.id}`;
+
+    card.innerHTML = `
+      <div class="q-num">ITEM ${item.id} / 10</div>
+      <div class="con-item-text">${item.text}</div>
+      <div class="con-scale">
+        <div class="con-scale-label">Not at all like me</div>
+        <div class="con-btns">
+          ${[1,2,3,4,5].map(n => `<button class="con-btn" id="con-btn-${item.id}-${n}" onclick="rateCon(${item.id},${n})">${n}</button>`).join('')}
+        </div>
+        <div class="con-scale-label right">Very much like me</div>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+function rateCon(itemId, val) {
+  conAnswers[itemId] = val;
+  for (let n = 1; n <= 5; n++) {
+    const btn = document.getElementById(`con-btn-${itemId}-${n}`);
+    if (btn) btn.classList.toggle('active', n === val);
+  }
+  const card = document.getElementById(`con-card-${itemId}`);
+  if (card) card.classList.remove('error');
+}
+
+function submitCon() {
+  const incomplete = CON_ITEMS.filter(item => !conAnswers[item.id]);
+
+  if (incomplete.length > 0) {
+    incomplete.forEach(item => {
+      const card = document.getElementById(`con-card-${item.id}`);
+      if (card) card.classList.add('error');
+    });
+    document.getElementById('con-error').style.display = 'block';
+    const first = document.getElementById(`con-card-${incomplete[0].id}`);
+    if (first) first.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+
+  document.getElementById('con-error').style.display = 'none';
   const scores = computeScores();
   renderResults(scores);
   showScreen('screen-results');
 }
 
 // ══════════════════════════════════════════════
-// SCORING ENGINE — v3 clean architecture
+// SCORING ENGINE
 // ══════════════════════════════════════════════
 function computeScores() {
-
-  // ── Step 1: FC raw scores per competency (Most=2, Unchosen=1, Least=0)
+  // ── Step 1: FC raw scores
   const compRaw = {};
   FC_QUESTIONS.forEach(q => {
     const ans = fcAnswers[q.id] || {};
     const scoreA = ans.most === 'A' ? 2 : (ans.least === 'A' ? 0 : 1);
     const scoreB = ans.most === 'B' ? 2 : (ans.least === 'B' ? 0 : 1);
+
     if (!compRaw[q.a.comp]) compRaw[q.a.comp] = [];
     if (!compRaw[q.b.comp]) compRaw[q.b.comp] = [];
     compRaw[q.a.comp].push(scoreA);
     compRaw[q.b.comp].push(scoreB);
   });
 
-  // ── Step 2: Mean per competency (0–2 scale)
+  // ── Step 2: Mean score per competency (0–2)
   const compMean = {};
   Object.keys(compRaw).forEach(c => {
     const arr = compRaw[c];
     compMean[c] = arr.reduce((a,b) => a+b, 0) / arr.length;
   });
 
-  // ── Step 3: Separate role pools — Hunter, Farmer, Universal scored independently
-  // Each competency mean is already on 0–2. Pool mean = mean of constituent competency means.
-  // Normalize pool to 0–10 for display: (poolMean / 2) * 10
-
-  const hunterComps = ['NBAD','CA','URO','ISD'];
-  const farmerComps = ['RDN','AR','ERPP','MFT'];
-  const universalComps = ['STR','PC','PSSO','RBH'];
-
-  function poolScore(comps) {
-    const vals = comps.map(c => compMean[c] || 0);
-    const mean = vals.reduce((a,b) => a+b, 0) / vals.length;
-    return parseFloat(((mean / 2) * 10).toFixed(2)); // 0–10
-  }
-
-  const hunterScore    = poolScore(hunterComps);
-  const farmerScore    = poolScore(farmerComps);
-  const universalScore = poolScore(universalComps);
-
-  // ── Step 4: Tendency spectrum classification (no hard labels)
-  // Primary tendency determined by highest role score when gap ≥ 1.5 and score ≥ 5.5
-  const gap = Math.abs(hunterScore - farmerScore);
-  let tendency, tendencyDesc, tendencyShort;
-
-  if (hunterScore < 5.5 && farmerScore < 5.5) {
-    tendency      = 'LOWER_DRIVE';
-    tendencyShort = 'Lower Sales Drive';
-    tendencyDesc  = '';
-  } else if (gap < 1.5 && hunterScore >= 5.5 && farmerScore >= 5.5) {
-    tendency      = 'BALANCED';
-    tendencyShort = 'Balanced Tendencies';
-    tendencyDesc  = 'Hunter and Farmer tendencies are closely matched. This candidate shows flexibility across both new business acquisition and account management behaviors, and may be well-suited to blended or transitional roles.';
-  } else if (hunterScore > farmerScore) {
-    if (hunterScore >= 7.5 && gap >= 2.5) {
-      tendency      = 'STRONG_HUNTER';
-      tendencyShort = 'Strong Hunter Tendency';
-      tendencyDesc  = 'A clear preference for new business acquisition behaviors. This candidate is energized by prospecting, competition, and converting new accounts. Best suited to roles where pipeline generation is the primary measure of success.';
-    } else {
-      tendency      = 'MODERATE_HUNTER';
-      tendencyShort = 'Moderate Hunter Tendency';
-      tendencyDesc  = 'A leaning toward new business acquisition with some account management capability. This candidate can operate in either context but is most naturally driven by growth and new opportunity pursuit.';
-    }
-  } else {
-    if (farmerScore >= 7.5 && gap >= 2.5) {
-      tendency      = 'STRONG_FARMER';
-      tendencyShort = 'Strong Farmer Tendency';
-      tendencyDesc  = 'A clear preference for relationship management and account deepening. This candidate builds trust, maintains consistency, and creates long-term client value. Best suited to roles where retention and account growth are the primary measures.';
-    } else {
-      tendency      = 'MODERATE_FARMER';
-      tendencyShort = 'Moderate Farmer Tendency';
-      tendencyDesc  = 'A leaning toward relationship management with some new business capability. This candidate is most effective in sustained client relationships while retaining the ability to support acquisition when needed.';
-    }
-  }
-
-  // ── Step 5: SJT scoring — cross-validation only, NOT merged into composites
-  // Most=3, Unchosen=1, Least=0 per option
-  let hStyleTotal = 0, fStyleTotal = 0;
-  let hCount = 0, fCount = 0;
+  // ── Step 3: SJT scores (INDEPENDENT — ranking-based)
+  // rank 1 = 4 pts (most likely), rank 4 = 1 pt (least likely)
+  let hStyleRaw = 0, fStyleRaw = 0, avTotal = 0, avCount = 0;
+  let sjtEffNumerator = 0, sjtEffDenominator = 0;
 
   SJT_SCENARIOS.forEach(s => {
-    const ans = sjtAnswers[s.id] || {};
+    const a = sjtAnswers[s.id] || {};
     s.options.forEach(opt => {
-      const score = ans.most === opt.key ? 3 : (ans.least === opt.key ? 0 : 1);
-      if (opt.style === 'H') { hStyleTotal += score; hCount++; }
-      if (opt.style === 'F') { fStyleTotal += score; fCount++; }
+      const rank = a[opt.key] || 0;
+      const pts = rank > 0 ? (5 - rank) : 0; // rank1=4, rank2=3, rank3=2, rank4=1
+      if (opt.style === 'H') hStyleRaw += pts;
+      if (opt.style === 'F') fStyleRaw += pts;
+      if (opt.style === 'AV') { avTotal += pts; avCount++; }
+      sjtEffNumerator += pts * opt.eff;
+      sjtEffDenominator += 4 * 2; // max pts × max eff
     });
   });
 
-  const sjtHScore = hCount > 0 ? parseFloat(((hStyleTotal / hCount / 3) * 10).toFixed(2)) : 5;
-  const sjtFScore = fCount > 0 ? parseFloat(((fStyleTotal / fCount / 3) * 10).toFixed(2)) : 5;
+  // Normalize: max H or F raw = 10 scenarios × 4pts = 40 pts per style bucket
+  const hStyleNorm = (hStyleRaw / 40) * 10;
+  const fStyleNorm = (fStyleRaw / 40) * 10;
+  const sjtEffIndex = sjtEffDenominator > 0 ? sjtEffNumerator / sjtEffDenominator : 0;
+  const avMean = avCount > 0 ? avTotal / avCount : 0;
 
-  // ── Step 6: Confidence indicator — SJT vs FC cross-validation
-  // Logic: does the SJT dominant style match the FC primary tendency?
-  const fcPrimaryIsHunter = ['STRONG_HUNTER','MODERATE_HUNTER'].includes(tendency);
-  const fcPrimaryIsFarmer = ['STRONG_FARMER','MODERATE_FARMER'].includes(tendency);
-  const sjtDominantIsHunter = sjtHScore > sjtFScore + 1.0;
-  const sjtDominantIsFarmer = sjtFScore > sjtHScore + 1.0;
-  const sjtNeutral = Math.abs(sjtHScore - sjtFScore) <= 1.0;
+  // SJT Hunter/Farmer indexes (0–10 scale, independent)
+  // Hunter-Farmer lean from SJT
+  const sjtProfile = hStyleNorm > fStyleNorm + 1.0 ? 'HUNTER' :
+                     fStyleNorm > hStyleNorm + 1.0 ? 'FARMER' : 'BALANCED';
 
-  let confidence, confidenceDesc, confidenceCls;
+  // ── Step 4: FC-only composites (SJT excluded per spec)
+  const hunterTerms = [
+    { score: compMean['NBAD'] || 0, w: IMPORTANCE.NBAD },
+    { score: compMean['CA']   || 0, w: IMPORTANCE.CA },
+    { score: compMean['URO']  || 0, w: IMPORTANCE.URO },
+    { score: compMean['ISD']  || 0, w: IMPORTANCE.ISD },
+    { score: compMean['STR']  || 0, w: IMPORTANCE.STR_H },
+    { score: compMean['PTE']  || 0, w: IMPORTANCE.PTE_H },
+    { score: compMean['PC']   || 0, w: IMPORTANCE.PC_H },
+    { score: compMean['PSSO'] || 0, w: IMPORTANCE.PSSO_H },
+    { score: compMean['RBH']  || 0, w: IMPORTANCE.RBH_H },
+  ];
 
-  if (tendency === 'BALANCED' || tendency === 'LOWER_DRIVE') {
-    // For balanced/lower-drive, check if SJT shows a clear lean
-    if (sjtNeutral) {
-      confidence    = 'CONSISTENT';
-      confidenceCls = 'conf-high';
-      confidenceDesc = 'Both the behavioral items and situational scenarios show a balanced style. Results are mutually reinforcing.';
-    } else {
-      confidence    = 'REVIEW';
-      confidenceCls = 'conf-review';
-      confidenceDesc = 'The situational scenarios suggest a clearer directional lean (' + (sjtDominantIsHunter ? 'Hunter' : 'Farmer') + ') than the behavioral items alone. Explore this in the interview.';
-    }
-  } else if ((fcPrimaryIsHunter && sjtDominantIsHunter) || (fcPrimaryIsFarmer && sjtDominantIsFarmer)) {
-    confidence    = 'HIGH';
-    confidenceCls = 'conf-high';
-    confidenceDesc = 'Behavioral tendencies and situational judgment responses point in the same direction. Results are mutually reinforcing — high confidence in the reported tendency.';
-  } else if ((fcPrimaryIsHunter && sjtNeutral) || (fcPrimaryIsFarmer && sjtNeutral)) {
-    confidence    = 'MODERATE';
-    confidenceCls = 'conf-moderate';
-    confidenceDesc = 'The situational scenarios did not clearly confirm the behavioral tendency. The FC-based tendency is the primary signal. Use the interview to probe situational judgment directly.';
+  const farmerTerms = [
+    { score: compMean['RDN']  || 0, w: IMPORTANCE.RDN },
+    { score: compMean['AR']   || 0, w: IMPORTANCE.AR },
+    { score: compMean['ERPP'] || 0, w: IMPORTANCE.ERPP },
+    { score: compMean['MFT']  || 0, w: IMPORTANCE.MFT },
+    { score: compMean['STR']  || 0, w: IMPORTANCE.STR_F },
+    { score: compMean['PTE']  || 0, w: IMPORTANCE.PTE_F },
+    { score: compMean['PC']   || 0, w: IMPORTANCE.PC_F },
+    { score: compMean['PSSO'] || 0, w: IMPORTANCE.PSSO_F },
+    { score: compMean['RBH']  || 0, w: IMPORTANCE.RBH_F },
+  ];
+
+  function weightedMean(terms) {
+    const num = terms.reduce((s, t) => s + t.score * t.w, 0);
+    const den = terms.reduce((s, t) => s + t.w, 0);
+    return num / den;
+  }
+
+  const hunterComposite = weightedMean(hunterTerms);
+  const farmerComposite = weightedMean(farmerTerms);
+
+  // ── Step 5: Profile classification (FC-based)
+  const diff = Math.abs(hunterComposite - farmerComposite);
+  let profile;
+  if (hunterComposite < 0.85 || farmerComposite < 0.85) {
+    profile = 'DEVELOPING';
+  } else if (hunterComposite >= 1.45 && farmerComposite < 1.20) {
+    profile = 'HUNTER';
+  } else if (farmerComposite >= 1.45 && hunterComposite < 1.20) {
+    profile = 'FARMER';
+  } else if (diff <= 0.30 && hunterComposite >= 1.20 && farmerComposite >= 1.20) {
+    profile = 'HYBRID';
+  } else if (hunterComposite > farmerComposite) {
+    profile = 'HUNTER-LEANING';
   } else {
-    confidence    = 'DIVERGENT';
-    confidenceCls = 'conf-diverge';
-    confidenceDesc = 'The situational scenarios suggest a different behavioral style from the forced-choice section. This may reflect context-switching ability, social desirability in one section, or genuine role flexibility. Interview probe recommended.';
+    profile = 'FARMER-LEANING';
   }
 
-  // ── Step 7: Conscientiousness scoring — Likert 1–5 with reverse scoring
-  let conSum = 0, conCount = 0;
-  CON_QUESTIONS.forEach(q => {
-    const raw = conAnswers[q.id];
-    if (!raw) return;
-    conSum += q.reverse ? (6 - raw) : raw;
-    conCount++;
+  // ── Step 6: Flags — SJT cross-validates FC profile independently
+  const flags = [];
+  if (profile === 'HUNTER' || profile === 'HUNTER-LEANING') {
+    if (hStyleNorm < 6.5) flags.push({type:'warning', msg:`FC profile is Hunter-oriented but SJT Hunter style index is below threshold (${hStyleNorm.toFixed(1)}/10). Behavioral pattern may not be confirmed by situational judgment style.`});
+    if (fStyleNorm >= 6.5) flags.push({type:'warning', msg:`SJT Farmer style score (${fStyleNorm.toFixed(1)}/10) is high despite Hunter FC profile. May perform well in account management contexts.`});
+  }
+  if (profile === 'FARMER' || profile === 'FARMER-LEANING') {
+    if (fStyleNorm < 6.5) flags.push({type:'warning', msg:`FC profile is Farmer-oriented but SJT Farmer style index is below threshold (${fStyleNorm.toFixed(1)}/10).`});
+    if (hStyleNorm >= 6.5) flags.push({type:'warning', msg:`SJT Hunter style score (${hStyleNorm.toFixed(1)}/10) is elevated despite Farmer FC profile.`});
+  }
+  if (profile === 'HYBRID') {
+    if (Math.abs(hStyleNorm - fStyleNorm) > 1.5) flags.push({type:'warning', msg:`Hybrid FC profile but SJT shows style asymmetry (H:${hStyleNorm.toFixed(1)} vs F:${fStyleNorm.toFixed(1)}). Candidate may favor one mode in practice.`});
+  }
+  if (avMean >= 2.5) flags.push({type:'danger', msg:`Avoidance pattern elevated in SJT (mean rank points: ${avMean.toFixed(1)}). Review developmental readiness for independent deployment.`});
+  if (flags.length === 0) flags.push({type:'clear', msg:'No cross-validation flags. FC profile is consistent with SJT response style.'});
+
+  // ── Step 7: Conscientiousness score
+  let conRaw = 0;
+  CON_ITEMS.forEach(item => {
+    let val = conAnswers[item.id] || 3;
+    if (item.rev) val = 6 - val;
+    conRaw += val;
   });
-  const conMeanRaw = conCount > 0 ? conSum / conCount : 3;
-  const conScore   = parseFloat(((conMeanRaw - 1) / 4 * 10).toFixed(2)); // 0–10
+  // conRaw: 10–50. Normalize to 0–100.
+  const conScore = Math.round(((conRaw - 10) / 40) * 100);
+  const conLevel = conScore >= 80 ? 'High' : conScore >= 55 ? 'Moderate-High' : conScore >= 35 ? 'Moderate' : 'Low-Moderate';
 
-  function conLevel(s) {
-    if (s < 3.5) return {label:'Lower Structure',      cls:'CL1', desc:'Responses reflect a flexible, in-the-moment approach. Structured habits and follow-through consistency may benefit from development, particularly in high-volume or multi-account environments.'};
-    if (s < 6.0) return {label:'Situationally Structured', cls:'CL2', desc:'A pragmatic blend of structure and adaptability — disciplined where it matters most. This is a functional work style that suits most sales environments.'};
-    if (s < 8.2) return {label:'Consistently Structured',  cls:'CL3', desc:'Reliable habits of planning, follow-through, and thoroughness. A strong predictor of sustained performance, particularly in account management and relationship-intensive roles.'};
-    return              {label:'Highly Structured',     cls:'CL4', desc:'A strong preference for organization, completeness, and systematic execution. An asset in detail-intensive roles; watch for rigidity in fast-moving environments.'};
-  }
-  const conProficiency = conLevel(conScore);
-
-  // ── Step 8: Competency-level proficiency (for admin detail table)
-  function profLevel(mean) {
-    if (mean < 0.80) return {level:1, label:'Developing', cls:'L1'};
-    if (mean < 1.25) return {level:2, label:'Competent',  cls:'L2'};
-    if (mean < 1.70) return {level:3, label:'Proficient', cls:'L3'};
-    return                  {level:4, label:'Expert',     cls:'L4'};
+  // ── Step 8: Proficiency levels
+  function profLevel(score) {
+    if (score < 0.80) return {level:1, label:'Developing', cls:'L1'};
+    if (score < 1.25) return {level:2, label:'Competent', cls:'L2'};
+    if (score < 1.70) return {level:3, label:'Proficient', cls:'L3'};
+    return {level:4, label:'Expert', cls:'L4'};
   }
 
   const compDetails = {};
   Object.keys(COMP_META).forEach(c => {
     const mean = compMean[c] || 0;
-    compDetails[c] = { ...COMP_META[c], mean, proficiency: profLevel(mean), pct: (mean / 2) * 100 };
+    compDetails[c] = {
+      ...COMP_META[c],
+      mean,
+      proficiency: profLevel(mean),
+      pct: (mean / 2) * 100,
+    };
   });
 
   return {
-    compMean, compDetails,
-    hunterScore, farmerScore, universalScore,
-    tendency, tendencyShort, tendencyDesc,
-    sjtHScore, sjtFScore,
-    confidence, confidenceCls, confidenceDesc,
-    conScore, conMeanRaw, conProficiency,
-    bgData,
+    compMean, compDetails, profile,
+    hunterComposite, farmerComposite,
+    hStyleNorm, fStyleNorm, sjtEffIndex, avMean, sjtProfile,
+    conScore, conLevel, conRaw,
+    flags, bgData,
   };
 }
 
 // ══════════════════════════════════════════════
 // RENDER RESULTS
 // ══════════════════════════════════════════════
-function scoreBand(val) {
-  if (val >= 7.5) return {cls:'band-strong',   label:'Strong'};
-  if (val >= 5.5) return {cls:'band-moderate', label:'Moderate'};
-  return               {cls:'band-low',      label:'Lower'};
-}
-
-function confLabel(c) {
-  if (c === 'HIGH')      return {icon:'✓', text:'High Confidence'};
-  if (c === 'CONSISTENT') return {icon:'✓', text:'Consistent'};
-  if (c === 'MODERATE')  return {icon:'◎', text:'Review Recommended'};
-  if (c === 'REVIEW')    return {icon:'◎', text:'Review Recommended'};
-  return                        {icon:'⚑', text:'Patterns Diverge — Interview Probe Suggested'};
-}
+const PROFILE_COPY = {
+  HUNTER: {
+    icon: 'H',
+    title: 'Hunter Profile',
+    desc: 'You are strongly oriented toward new business acquisition. Your natural drive is to identify, pursue, and convert new accounts. You thrive in autonomous, competitive environments where success is measured in numbers and momentum.',
+  },
+  FARMER: {
+    icon: 'F',
+    title: 'Farmer Profile',
+    desc: 'You are strongly oriented toward account management and relationship deepening. You build lasting partnerships through consistency, reliability, and emotional attunement. Clients you work with long-term feel genuinely known and supported.',
+  },
+  HYBRID: {
+    icon: 'HF',
+    title: 'Hybrid Profile',
+    desc: 'You demonstrate strong capabilities in both new business acquisition and account management. You can flexibly shift between prospecting mode and relationship-building mode, making you well-suited for transitional markets or blended roles.',
+  },
+  'HUNTER-LEANING': {
+    icon: 'H+',
+    title: 'Hunter-Leaning Profile',
+    desc: 'Your orientation leans toward new business development with meaningful account management capability. You can perform well in either context but are most energized and effective in acquisition-driven roles.',
+  },
+  'FARMER-LEANING': {
+    icon: 'F+',
+    title: 'Farmer-Leaning Profile',
+    desc: 'Your orientation leans toward account management with meaningful new business capability. You are most effective in sustained relationship contexts while retaining the ability to acquire new accounts when required.',
+  },
+  DEVELOPING: {
+    icon: 'D',
+    title: 'Developing Profile',
+    desc: 'Your profile indicates meaningful development areas across key competencies. Targeted coaching, role clarity, and structured learning will accelerate your readiness for full independent deployment in either sales context.',
+  },
+};
 
 let adminChartsRendered = false;
 let scores = null;
@@ -2034,28 +1997,36 @@ function renderResults(s) {
 }
 
 function renderSummaryView(s) {
+  const pc = PROFILE_COPY[s.profile] || PROFILE_COPY['HYBRID'];
   const sortedComps = Object.entries(s.compDetails).sort((a,b) => b[1].mean - a[1].mean);
-  const top3 = sortedComps.slice(0, 3);
+  const top5 = sortedComps.slice(0, 5);
   const roleClass = { H:'hunter', F:'farmer', U:'universal' };
-
-  const top3HTML = top3.map(([,d]) =>
+  const top5HTML = top5.map(([c,d]) =>
     `<span class="competency-pill ${roleClass[d.role] || 'universal'}">${d.name}</span>`).join('');
 
   document.getElementById('summary-content').innerHTML = `
     <div class="summary-hero">
-      <div class="summary-hero-text" style="width:100%">
-        <div style="font-size:0.72rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--green-300);margin-bottom:8px">Assessment Complete</div>
-        <h2 style="font-family:'DM Serif Display',serif;font-size:2rem;margin-bottom:10px;color:#fff">Thank you for completing the assessment.</h2>
-        <p style="font-size:0.95rem;color:rgba(255,255,255,0.8);line-height:1.65;max-width:520px">Your results have been recorded. A member of our team will be in touch to walk you through your profile.</p>
+      <div class="profile-badge">
+        <div class="ptype">${pc.icon}</div>
+        <div class="plabel">Profile</div>
+      </div>
+      <div class="summary-hero-text">
+        <h2>${pc.title}</h2>
+        <p>${pc.desc}</p>
       </div>
     </div>
 
     <div class="strengths-section">
-      <h3>Your Top Competency Strengths</h3>
-      <p style="font-size:0.88rem;color:var(--gray-500);margin-bottom:14px;line-height:1.55">Based on your responses, these are the areas where your natural tendencies are strongest.</p>
-      <div class="competency-pill-row">${top3HTML}</div>
+      <h3>Your Top Strengths</h3>
+      <p style="font-size:0.88rem;color:var(--gray-500);margin-bottom:16px">Based on your responses, these are the competency areas where you showed the strongest natural tendencies.</p>
+      <div class="competency-pill-row">${top5HTML}</div>
+    </div>
+
+    <div style="background:var(--off-white);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-top:8px;text-align:center">
+      <p style="font-size:0.88rem;color:var(--gray-500);line-height:1.6">Thank you for completing the assessment. Your results have been recorded.</p>
     </div>
   `;
+
 }
 
 function renderAdminCharts() {
@@ -2063,50 +2034,67 @@ function renderAdminCharts() {
   adminChartsRendered = true;
 
   const s = scores;
-  const hBand = scoreBand(s.hunterScore);
-  const fBand = scoreBand(s.farmerScore);
-  const uBand = scoreBand(s.universalScore);
-  const cl    = confLabel(s.confidence);
+  const hunterPct = Math.round((s.hunterComposite / 2) * 100);
+  const farmerPct = Math.round((s.farmerComposite / 2) * 100);
+
+  const flagsHTML = s.flags.map(f =>
+    `<div class="flag-row ${f.type}"><div class="flag-dot ${f.type}"></div>${f.msg}</div>`
+  ).join('');
 
   const compTableRows = Object.entries(s.compDetails).map(([c,d]) => {
     const barColor = d.role === 'H' ? '#4aab57' : d.role === 'F' ? '#3b82f6' : '#f59e0b';
     return `<tr>
       <td><strong>${d.name}</strong></td>
       <td><span class="role-tag ${d.role}">${d.role === 'H' ? 'Hunter' : d.role === 'F' ? 'Farmer' : 'Universal'}</span></td>
-      <td><div class="comp-bar-track" style="width:120px"><div class="comp-bar-fill" style="width:${d.pct}%;background:${barColor}"></div></div></td>
+      <td>
+        <div class="comp-bar-track" style="width:120px">
+          <div class="comp-bar-fill" style="width:${d.pct}%;background:${barColor}"></div>
+        </div>
+      </td>
       <td style="font-family:'DM Mono',monospace;font-size:0.8rem">${d.mean.toFixed(2)}</td>
       <td><span class="level-badge ${d.proficiency.cls}">${d.proficiency.label}</span></td>
     </tr>`;
   }).join('');
 
+  // SJT per-scenario: convert rank-based scores back for display
   const sjtRowsHTML = SJT_SCENARIOS.map(s_item => {
-    const ans = sjtAnswers[s_item.id] || {};
-    return s_item.options.map(opt => {
-      const score = ans.most === opt.key ? 3 : (ans.least === opt.key ? 0 : 1);
-      return { key: opt.key, style: opt.style, score };
-    });
-  }).map((opts, idx) => {
-    const hOpt = opts.find(o => o.style === 'H');
-    const fOpt = opts.find(o => o.style === 'F');
-    const xOpt = opts.find(o => o.style === 'X');
-    const lbl = sc => sc === 3 ? 'Most' : sc === 0 ? 'Least' : 'Mid';
+    const a = sjtAnswers[s_item.id] || {};
+    const hOpt = s_item.options.find(o => o.style === 'H');
+    const fOpt = s_item.options.find(o => o.style === 'F');
+    const avOpt = s_item.options.find(o => o.style === 'AV');
+    // Convert rank to points: rank1=4pts, rank4=1pt
+    const rankToPts = r => r > 0 ? (5 - r) : 0;
+    const hPts = hOpt ? rankToPts(a[hOpt.key] || 0) : 0;
+    const fPts = fOpt ? rankToPts(a[fOpt.key] || 0) : 0;
+    const avPts = avOpt ? rankToPts(a[avOpt.key] || 0) : 0;
     return `<div class="sjt-row">
-      <div class="sjt-scenario-label">Scenario ${idx+1}</div>
+      <div class="sjt-scenario-label">Scenario ${s_item.id}</div>
       <div class="sjt-mini-bars">
         <div class="sjt-mini-bar-wrap">
-          <div class="sjt-mini-bar-lbl">Hunter — ${lbl(hOpt ? hOpt.score : 1)} (${hOpt ? hOpt.score : 1}/3)</div>
-          <div class="sjt-mini-track"><div class="sjt-mini-fill" style="width:${((hOpt ? hOpt.score : 1)/3)*100}%;background:#4aab57"></div></div>
+          <div class="sjt-mini-bar-lbl">Hunter (${hPts}/4 pts)</div>
+          <div class="sjt-mini-track"><div class="sjt-mini-fill" style="width:${(hPts/4)*100}%;background:#4aab57"></div></div>
         </div>
         <div class="sjt-mini-bar-wrap">
-          <div class="sjt-mini-bar-lbl">Farmer — ${lbl(fOpt ? fOpt.score : 1)} (${fOpt ? fOpt.score : 1}/3)</div>
-          <div class="sjt-mini-track"><div class="sjt-mini-fill" style="width:${((fOpt ? fOpt.score : 1)/3)*100}%;background:#3b82f6"></div></div>
+          <div class="sjt-mini-bar-lbl">Farmer (${fPts}/4 pts)</div>
+          <div class="sjt-mini-track"><div class="sjt-mini-fill" style="width:${(fPts/4)*100}%;background:#3b82f6"></div></div>
         </div>
         <div class="sjt-mini-bar-wrap">
-          <div class="sjt-mini-bar-lbl">Adaptive — ${lbl(xOpt ? xOpt.score : 1)} (${xOpt ? xOpt.score : 1}/3)</div>
-          <div class="sjt-mini-track"><div class="sjt-mini-fill" style="width:${((xOpt ? xOpt.score : 1)/3)*100}%;background:#f59e0b"></div></div>
+          <div class="sjt-mini-bar-lbl">Avoidance (${avPts}/4 pts)</div>
+          <div class="sjt-mini-track"><div class="sjt-mini-fill" style="width:${(avPts/4)*100}%;background:#ef4444"></div></div>
         </div>
       </div>
     </div>`;
+  }).join('');
+
+  // Conscientiousness item-level table
+  const conTableRows = CON_ITEMS.map(item => {
+    const raw = conAnswers[item.id] || 0;
+    const scored = item.rev ? (6 - raw) : raw;
+    return `<tr>
+      <td style="font-size:0.85rem">${item.text}${item.rev ? ' <span style="font-size:0.7rem;color:var(--gray-400)">[R]</span>' : ''}</td>
+      <td style="font-family:\'DM Mono\',monospace;font-size:0.8rem;text-align:center">${raw}</td>
+      <td style="font-family:\'DM Mono\',monospace;font-size:0.8rem;text-align:center;color:${scored>=4?'#15803d':scored<=2?'#991b1b':'#374151'}">${scored}</td>
+    </tr>`;
   }).join('');
 
   document.getElementById('admin-content').innerHTML = `
@@ -2122,71 +2110,70 @@ function renderAdminCharts() {
       </div>
     </div>
 
-    <!-- Primary Tendency + Scores -->
+    <!-- Flags -->
     <div class="admin-card full" style="margin-bottom:24px">
-      <h3>Behavioral Tendency — Primary Classification</h3>
-      <div style="display:flex;align-items:flex-start;gap:32px;flex-wrap:wrap">
-        <div style="flex:1;min-width:200px">
-          <div style="font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--green-900);margin-bottom:6px">${s.tendencyShort}</div>
-          <p style="font-size:0.88rem;color:var(--gray-600);line-height:1.6">${s.tendencyDesc}</p>
-        </div>
-        <div style="display:flex;gap:16px;flex-wrap:wrap;flex-shrink:0">
-          <div style="text-align:center;min-width:80px">
-            <div style="font-family:'DM Mono',monospace;font-size:1.8rem;color:#15803d;font-weight:600">${s.hunterScore.toFixed(1)}</div>
-            <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);margin-top:2px">Hunter</div>
-            <div style="font-size:0.72rem;font-weight:600;color:#15803d">${hBand.label}</div>
-          </div>
-          <div style="text-align:center;min-width:80px">
-            <div style="font-family:'DM Mono',monospace;font-size:1.8rem;color:#1d4ed8;font-weight:600">${s.farmerScore.toFixed(1)}</div>
-            <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);margin-top:2px">Farmer</div>
-            <div style="font-size:0.72rem;font-weight:600;color:#1d4ed8">${fBand.label}</div>
-          </div>
-          <div style="text-align:center;min-width:80px">
-            <div style="font-family:'DM Mono',monospace;font-size:1.8rem;color:#d97706;font-weight:600">${s.universalScore.toFixed(1)}</div>
-            <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);margin-top:2px">Universal</div>
-            <div style="font-size:0.72rem;font-weight:600;color:#d97706">${uBand.label}</div>
-          </div>
-        </div>
-      </div>
-      <div class="info-note" style="margin-top:16px;margin-bottom:0">
-        Scores are independent pool means (0–10) derived from forced-choice behavioral items. Hunter, Farmer, and Universal competencies are scored separately. Tendency bands: Strong ≥ 7.5, Moderate 5.5–7.4, Lower &lt; 5.5. These are prototype cut scores pending criterion validation.
-      </div>
+      <h3>Cross-Validation Flags (FC vs SJT)</h3>
+      ${flagsHTML}
     </div>
 
-    <!-- SJT Cross-Validation + Confidence -->
+    <!-- Archetype match (FC-only) -->
     <div class="admin-card full" style="margin-bottom:24px">
-      <h3>SJT Cross-Validation &amp; Result Confidence</h3>
-      <div style="display:flex;gap:24px;margin-bottom:20px;flex-wrap:wrap">
-        <div>
-          <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);margin-bottom:3px">SJT Hunter Style</div>
-          <div style="font-family:'DM Mono',monospace;font-size:1.5rem;color:#15803d;font-weight:600">${s.sjtHScore.toFixed(1)}<span style="font-size:0.8rem;color:var(--gray-400)">/10</span></div>
+      <h3>Role Archetype Fit (FC Composite)</h3>
+      <div class="archetype-match">
+        <div class="archetype-card hunter">
+          <div class="arc-title">Hunter Fit</div>
+          <div class="arc-score">${hunterPct}%</div>
+          <div class="arc-label">FC-only weighted composite</div>
+          <div class="arc-match-bar"><div class="arc-match-fill" style="width:${hunterPct}%"></div></div>
+          <div class="arc-match-pct">${s.hunterComposite.toFixed(3)} / 2.000</div>
         </div>
-        <div>
-          <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);margin-bottom:3px">SJT Farmer Style</div>
-          <div style="font-family:'DM Mono',monospace;font-size:1.5rem;color:#1d4ed8;font-weight:600">${s.sjtFScore.toFixed(1)}<span style="font-size:0.8rem;color:var(--gray-400)">/10</span></div>
-        </div>
-        <div>
-          <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);margin-bottom:3px">FC Primary Tendency</div>
-          <div style="font-size:1rem;font-weight:700;color:var(--green-800);margin-top:4px">${s.tendencyShort}</div>
-        </div>
-      </div>
-      <div class="confidence-card ${s.confidenceCls}">
-        <div class="conf-icon">${cl.icon}</div>
-        <div>
-          <div class="conf-label">${cl.text}</div>
-          <div class="conf-desc">${s.confidenceDesc}</div>
+        <div class="archetype-card farmer">
+          <div class="arc-title">Farmer Fit</div>
+          <div class="arc-score">${farmerPct}%</div>
+          <div class="arc-label">FC-only weighted composite</div>
+          <div class="arc-match-bar" style="background:#dcfce7"><div class="arc-match-fill" style="width:${farmerPct}%;background:linear-gradient(90deg,#1d4ed8,#60a5fa)"></div></div>
+          <div class="arc-match-pct">${s.farmerComposite.toFixed(3)} / 2.000</div>
         </div>
       </div>
-      <div class="info-note" style="margin-top:16px;margin-bottom:16px">
-        SJT scores are independent of the primary tendency scores — they are used only for cross-validation. SJT items are scored Most=3, Unchosen=1, Least=0, averaged and normalized to 0–10.
+      <div class="info-note">
+        FC composites are weighted means of forced-choice competency scores using role-specific importance weights. SJT is scored separately and used for cross-validation only, not incorporated into the composite.
       </div>
-      ${sjtRowsHTML}
+
+      <!-- Universal composite summary banner -->
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:4px">
+        ${(() => {
+          const universalKeys = ['STR','PTE','PC','PSSO','RBH'];
+          const uScores = universalKeys.map(k => s.compMean[k] || 0);
+          const uMean = uScores.reduce((a,b)=>a+b,0) / uScores.length;
+          const uOut10 = ((uMean / 2) * 10).toFixed(1);
+          const uLevel = uMean >= 1.60 ? { label:'Strong foundation across roles', dot:'🟢' }
+                       : uMean >= 1.20 ? { label:'Solid universal base', dot:'🟡' }
+                       : { label:'Universal competencies developing', dot:'🔴' };
+          const conColor2 = s.conScore >= 70 ? '#15803d' : s.conScore >= 45 ? '#d97706' : '#b91c1c';
+          const conDot = s.conScore >= 70 ? '🟢' : s.conScore >= 45 ? '🟡' : '🔴';
+          return `
+            <div style="flex:1;min-width:220px;background:var(--off-white);border:1px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:12px">
+              <span style="font-size:1.2rem">${uLevel.dot}</span>
+              <div>
+                <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-400);margin-bottom:2px">Universal Sales</div>
+                <div style="font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:700;color:#854d0e">${uOut10}<span style="font-size:0.75rem;color:var(--gray-400)">/10</span> <span style="font-size:0.82rem;font-weight:500;color:var(--gray-600)">${uLevel.label}</span></div>
+              </div>
+            </div>
+            <div style="flex:1;min-width:220px;background:var(--off-white);border:1px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:12px">
+              <span style="font-size:1.2rem">${conDot}</span>
+              <div>
+                <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-400);margin-bottom:2px">Conscientiousness</div>
+                <div style="font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:700;color:${conColor2}">${s.conScore}<span style="font-size:0.75rem;color:var(--gray-400)">/100</span> <span style="font-size:0.82rem;font-weight:500;color:var(--gray-600)">${s.conLevel}</span></div>
+              </div>
+            </div>`;
+        })()}
+      </div>
     </div>
 
     <!-- Radar + Competency bars -->
     <div class="admin-grid">
       <div class="admin-card" style="overflow:visible">
-        <h3>Competency Radar</h3>
+        <h3>Competency Radar (FC)</h3>
         <div id="radarWrap" style="position:relative;width:100%;"></div>
       </div>
       <div class="admin-card">
@@ -2210,35 +2197,77 @@ function renderAdminCharts() {
 
     <!-- Full competency table -->
     <div class="admin-card full" style="margin-bottom:24px;overflow-x:auto">
-      <h3>Detailed Competency Breakdown</h3>
+      <h3>Detailed Competency Breakdown (FC)</h3>
       <table class="comp-table">
         <thead>
           <tr>
-            <th>Competency</th><th>Category</th><th>Score Distribution</th><th>Mean (0–2)</th><th>Level</th>
+            <th>Competency</th>
+            <th>Category</th>
+            <th>Score Distribution</th>
+            <th>Mean (0–2)</th>
+            <th>Level</th>
           </tr>
         </thead>
         <tbody>${compTableRows}</tbody>
       </table>
     </div>
 
-    <!-- Conscientiousness -->
+    <!-- SJT Section — Independent -->
     <div class="admin-card full" style="margin-bottom:24px">
-      <h3>Conscientiousness Index</h3>
-      <div style="display:flex;align-items:flex-start;gap:32px;flex-wrap:wrap">
-        <div style="flex:1;min-width:200px">
-          <div style="font-family:'DM Mono',monospace;font-size:2rem;color:#7c3aed;font-weight:600;line-height:1">${s.conScore.toFixed(1)}<span style="font-size:1rem;color:#a78bfa">/10</span></div>
-          <div style="font-size:0.75rem;color:#a78bfa;margin-top:4px">Mean rating: ${s.conMeanRaw.toFixed(2)} / 5.00 (reverse-scored items adjusted)</div>
-          <span class="con-level-badge ${s.conProficiency.cls}" style="margin-top:10px;display:inline-block">${s.conProficiency.label}</span>
-          <div class="con-bar-track" style="margin-top:12px"><div class="con-bar-fill" style="width:${Math.round(s.conScore * 10)}%"></div></div>
-          <div style="display:flex;justify-content:space-between;font-size:0.68rem;color:#a78bfa;margin-top:4px">
-            <span>Low Conscientiousness</span><span>High Conscientiousness</span>
-          </div>
+      <h3>Situational Judgment Breakdown (Independent Scale)</h3>
+      <div style="display:flex;gap:28px;margin-bottom:20px;flex-wrap:wrap">
+        <div>
+          <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);margin-bottom:3px">Hunter Style Index</div>
+          <div style="font-family:'DM Mono',monospace;font-size:1.5rem;color:#15803d;font-weight:600">${s.hStyleNorm.toFixed(1)}<span style="font-size:0.8rem;color:var(--gray-400)">/10</span></div>
         </div>
-        <div style="flex:2;min-width:260px">
-          <div style="font-size:0.78rem;font-weight:600;color:#7c3aed;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Interpretive Note — Conscientiousness (C)</div>
-          <p style="font-size:0.88rem;color:var(--gray-700);line-height:1.6">${s.conProficiency.desc}</p>
-          <p style="font-size:0.82rem;color:var(--gray-500);margin-top:10px;line-height:1.5">Scored from ${CON_QUESTIONS.length} Likert items (1–5 scale), with ${CON_QUESTIONS.filter(q=>q.reverse).length} reverse-scored items to reduce acquiescence bias. Normalized to 0–10. Strong predictor of follow-through, reliability, and sustained account management performance.</p>
+        <div>
+          <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);margin-bottom:3px">Farmer Style Index</div>
+          <div style="font-family:'DM Mono',monospace;font-size:1.5rem;color:#1d4ed8;font-weight:600">${s.fStyleNorm.toFixed(1)}<span style="font-size:0.8rem;color:var(--gray-400)">/10</span></div>
         </div>
+        <div>
+          <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);margin-bottom:3px">SJT Profile Lean</div>
+          <div style="font-family:'DM Mono',monospace;font-size:1.5rem;color:var(--green-700);font-weight:600">${s.sjtProfile}</div>
+        </div>
+        <div>
+          <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);margin-bottom:3px">Avoidance Mean Pts</div>
+          <div style="font-family:'DM Mono',monospace;font-size:1.5rem;color:${s.avMean >= 2.5 ? '#b91c1c' : '#6b7280'};font-weight:600">${s.avMean.toFixed(1)}<span style="font-size:0.8rem;color:var(--gray-400)">/4</span></div>
+        </div>
+      </div>
+      ${sjtRowsHTML}
+    </div>
+
+    <!-- Conscientiousness Section -->
+    <div class="admin-card full" style="margin-bottom:24px">
+      <h3>Conscientiousness Scale (Big Five — IPIP)</h3>
+      <div style="display:flex;gap:28px;margin-bottom:20px;flex-wrap:wrap;align-items:flex-end">
+        <div>
+          <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);margin-bottom:3px">Composite Score</div>
+          <div style="font-family:'DM Mono',monospace;font-size:2rem;color:var(--green-700);font-weight:600">${s.conScore}<span style="font-size:0.8rem;color:var(--gray-400)">/100</span></div>
+        </div>
+        <div>
+          <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);margin-bottom:3px">Level</div>
+          <div style="font-size:1.2rem;font-weight:700;color:var(--green-800)">${s.conLevel}</div>
+        </div>
+        <div>
+          <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);margin-bottom:3px">Raw Sum (10–50)</div>
+          <div style="font-family:'DM Mono',monospace;font-size:1.2rem;color:var(--gray-500)">${s.conRaw}</div>
+        </div>
+      </div>
+      <div class="comp-bar-track" style="height:12px;margin-bottom:20px">
+        <div class="comp-bar-fill" style="width:${s.conScore}%;background:linear-gradient(90deg,var(--green-500),var(--green-700))"></div>
+      </div>
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th style="text-align:center">Raw</th>
+            <th style="text-align:center">Scored</th>
+          </tr>
+        </thead>
+        <tbody>${conTableRows}</tbody>
+      </table>
+      <div class="info-note" style="margin-top:16px">
+        [R] = reverse-keyed item (scored = 6 − response). Work-contextualized 10-item scale covering dependability, achievement striving, and orderliness facets — developed for applied selection contexts to reduce ceiling effects and faking. Higher scores reflect stronger conscientiousness, follow-through, and work quality standards.
       </div>
     </div>
 
@@ -2251,7 +2280,7 @@ function renderAdminCharts() {
 }
 
 // ══════════════════════════════════════════════
-// RADAR CHART — SVG with HTML labels
+// RADAR CHART
 // ══════════════════════════════════════════════
 function drawRadar(s) {
   const wrap = document.getElementById('radarWrap');
@@ -2263,11 +2292,10 @@ function drawRadar(s) {
   const roles  = comps.map(([,d]) => d.role);
   const names  = comps.map(([,d]) => d.name);
 
-  // SVG viewport — generous padding so spokes have room
   const VW = 420, VH = 420;
   const cx = VW / 2, cy = VH / 2;
-  const R  = 130; // spoke radius
-  const LABEL_R = R + 44; // label anchor distance
+  const R  = 130;
+  const LABEL_R = R + 44;
 
   const roleColor = { H:'#4aab57', F:'#3b82f6', U:'#f59e0b' };
   const roleDark  = { H:'#166534', F:'#1e40af', U:'#92400e' };
@@ -2276,44 +2304,33 @@ function drawRadar(s) {
   const ang  = i => (2 * Math.PI * i / n) - Math.PI / 2;
   const ptXY = (i, r) => [cx + r * Math.cos(ang(i)), cy + r * Math.sin(ang(i))];
 
-  // ── Grid rings ──
   let gridSVG = '';
   const rings = [0.25, 0.5, 0.75, 1.0];
   rings.forEach((frac, ri) => {
     const pts = Array.from({length:n}, (_,i) => ptXY(i, R * frac).join(',')).join(' ');
     gridSVG += `<polygon points="${pts}" fill="${ri < 3 ? roleBg.H : 'none'}" stroke="rgba(0,0,0,0.07)" stroke-width="1"/>`;
   });
-  // ring value labels
   rings.forEach(frac => {
     const [rx, ry] = ptXY(0, R * frac);
     gridSVG += `<text x="${rx + 4}" y="${ry - 3}" font-size="8" fill="#aaa" font-family="DM Mono, monospace">${(frac * 2).toFixed(1)}</text>`;
   });
 
-  // ── Spokes ──
   let spokesSVG = '';
   for (let i = 0; i < n; i++) {
     const [px, py] = ptXY(i, R);
     spokesSVG += `<line x1="${cx}" y1="${cy}" x2="${px}" y2="${py}" stroke="rgba(0,0,0,0.09)" stroke-width="1"/>`;
   }
 
-  // ── Data polygon ──
   const dataPoints = Array.from({length:n}, (_,i) => ptXY(i, R * Math.max(0.02, values[i])).join(',')).join(' ');
-  const dataSVG = `
-    <polygon points="${dataPoints}" fill="rgba(45,106,53,0.13)" stroke="#2d6a35" stroke-width="2" stroke-linejoin="round"/>
-  `;
+  const dataSVG = `<polygon points="${dataPoints}" fill="rgba(45,106,53,0.13)" stroke="#2d6a35" stroke-width="2" stroke-linejoin="round"/>`;
 
-  // ── Dots ──
   let dotsSVG = '';
   for (let i = 0; i < n; i++) {
     const [px, py] = ptXY(i, R * Math.max(0.02, values[i]));
     const col = roleColor[roles[i]];
-    dotsSVG += `
-      <circle cx="${px}" cy="${py}" r="6" fill="${col}" stroke="white" stroke-width="2"/>
-      <circle cx="${px}" cy="${py}" r="3" fill="white"/>
-    `;
+    dotsSVG += `<circle cx="${px}" cy="${py}" r="6" fill="${col}" stroke="white" stroke-width="2"/><circle cx="${px}" cy="${py}" r="3" fill="white"/>`;
   }
 
-  // ── Legend ──
   const legendSVG = `
     <g transform="translate(${cx - 84}, ${VH - 18})">
       <circle cx="0"  cy="0" r="5" fill="#4aab57"/>
@@ -2324,77 +2341,37 @@ function drawRadar(s) {
       <text x="130" y="4" font-size="10" fill="#555" font-family="DM Sans, sans-serif" font-weight="600">Universal</text>
     </g>`;
 
-  const svgInner = `${gridSVG}${spokesSVG}${dataSVG}${dotsSVG}${legendSVG}`;
-
-  // ── Build HTML label overlays ──
-  // We position absolutely over the SVG using percentage coords
   let labelsHTML = '';
   for (let i = 0; i < n; i++) {
     const [lx, ly] = ptXY(i, LABEL_R);
-    // Convert SVG coords to percentage of VW/VH
     const pctX = (lx / VW) * 100;
     const pctY = (ly / VH) * 100;
-
-    // Determine text-align and translate based on position relative to center
-    const dx = lx - cx;
-    const dy = ly - cy;
-    const isLeft   = dx < -12;
-    const isRight  = dx > 12;
-    const isTop    = dy < -12;
-    const isBottom = dy > 12;
-
-    let txX = '-50%';
-    let textAlign = 'center';
+    const dx = lx - cx, dy = ly - cy;
+    const isLeft = dx < -12, isRight = dx > 12, isTop = dy < -12, isBottom = dy > 12;
+    let txX = '-50%', textAlign = 'center';
     if (isLeft)  { txX = '-100%'; textAlign = 'right'; }
     if (isRight) { txX = '0%';    textAlign = 'left'; }
-
     let txY = '-50%';
     if (isTop)    txY = '-100%';
     if (isBottom) txY = '0%';
-
     const col = roleDark[roles[i]];
     const bgCol = roles[i] === 'H' ? '#f0fdf4' : roles[i] === 'F' ? '#eff6ff' : '#fffbeb';
     const bdCol = roles[i] === 'H' ? '#bbf7d0' : roles[i] === 'F' ? '#bfdbfe' : '#fef08a';
-
-    // Wrap long names
     const words = names[i].split(' ');
-    const lines = [];
-    let line = '';
+    const lines = []; let line = '';
     words.forEach(w => {
       if ((line + ' ' + w).trim().length > 16 && line) { lines.push(line.trim()); line = w; }
       else line = (line + ' ' + w).trim();
     });
     if (line) lines.push(line);
-
     const labelText = lines.map(l => `<div style="line-height:1.25">${l}</div>`).join('');
-
-    labelsHTML += `
-      <div style="
-        position:absolute;
-        left:${pctX}%;
-        top:${pctY}%;
-        transform: translate(${txX}, ${txY});
-        font-family:'DM Sans',sans-serif;
-        font-size:10px;
-        font-weight:600;
-        color:${col};
-        text-align:${textAlign};
-        background:${bgCol};
-        border:1px solid ${bdCol};
-        border-radius:5px;
-        padding:3px 6px;
-        pointer-events:none;
-        white-space:nowrap;
-        max-width:110px;
-        white-space:normal;
-        z-index:10;
-      ">${labelText}</div>`;
+    labelsHTML += `<div style="position:absolute;left:${pctX}%;top:${pctY}%;transform:translate(${txX},${txY});font-family:'DM Sans',sans-serif;font-size:10px;font-weight:600;color:${col};text-align:${textAlign};background:${bgCol};border:1px solid ${bdCol};border-radius:5px;padding:3px 6px;pointer-events:none;max-width:110px;white-space:normal;z-index:10">${labelText}</div>`;
   }
 
   wrap.style.position = 'relative';
   wrap.innerHTML = `
     <svg viewBox="0 0 ${VW} ${VH}" width="100%" style="display:block;overflow:visible">
-      ${svgInner}
+      ${gridSVG}${spokesSVG}${dataSVG}${dotsSVG}${legendSVG}
     </svg>
     ${labelsHTML}
   `;
